@@ -34,7 +34,8 @@ const KPI_COLORS = {
 };
 
 const T = {
-  en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"↑ Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Persian)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock"},
+  en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"↑ Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Local)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock"},
+  he:{dashboard:"לוח בקרה",itemsMgmt:"פריטים",inventory:"מלאי",purchases:"רכישות",consumption:"צריכה",returns:"החזרות",orders:"הזמנות",suppliers:"ספקים",activityLog:"יומן פעילות",totalValue:"ערך מלאי כולל",totalPurchases:"סך הוצאות",lowAlerts:"התראות מלאי נמוך",pendingApprovals:"ממתין לאישור",spendDept:"הוצאות לפי מחלקה",spendSupplier:"הוצאות לפי ספק",recentPurchases:"רכישות אחרונות",recentConsumption:"צריכה אחרונה",newPurchase:"+ רכישה חדשה",logConsumption:"+ רישום צריכה",newOrder:"+ הזמנה חדשה",addItem:"+ הוסף פריט",addReturn:"+ הוסף החזרה",exportExcel:"↑ ייצוא Excel",approve:"אשר",reject:"דחה",receive:"קבל",edit:"ערוך",del:"מחק",save:"שמור",search:"חפש...",allDepts:"כל המחלקות",date:"תאריך",product:"מוצר",qty:"כמות",unitPrice:"מחיר יחידה",total:"סך הכל",supplier:"ספק",department:"מחלקה",invoice:"חשבונית",orderNo:"מספר הזמנה",received:"התקבל",note:"הערה",location:"מיקום",operator:"מפעיל",status:"סטטוס",actions:"פעולות",code:"קוד",unit:"יחידה",purchased:"נרכש",consumed:"נצרך",returned:"הוחזר",stock:"מלאי",avgPrice:"מחיר ממוצע",stockValue:"ערך",lowStock:"מלאי נמוך",ok:"תקין",noAccess:"אין גישה לחלק זה.",approvalNote:"רכישות חדשות דורשות אישור מנהל לפני עדכון המלאי.",loading:"טוען...",logout:"התנתק",discrepancy:"זוהתה צריכה חריגה",staffWelcome:"רשום את הצריכה שלך כאן",selectProduct:"בחר מוצר...",selectDept:"בחר מחלקה...",selectLocation:"בחר מיקום...",minStock:"מלאי מינימלי",itemCode:"קוד פריט",itemName:"שם פריט",itemNameFa:"שם (מקומי)",reason:"סיבה",fromLocation:"ממיקום",receivedBy:"התקבל על ידי",deliveredTo:"נמסר ל",deliveryPerson:"נמסר על ידי",image:"תמונה",returnQty:"כמות החזרה",editItem:"ערוך פריט",newItem:"פריט חדש",overview:"סקירה",catalog:"קטלוג",transactions:"תנועות",insights:"תובנות",products:"מוצרים",approved:"אושרו",needsAttention:"דורש תשומת לב",allItemsOk:"הכל תקין",awaitingApproval:"ממתין לאישור",queueClear:"התור ריק",stockHealth:"מצב המלאי",topItems:"פריטים מובילים",inStock:"במלאי"},
   fa:{dashboard:"داشبورد",itemsMgmt:"کالاها",inventory:"موجودی انبار",purchases:"خریدها",consumption:"مصرف",returns:"برگشت به انبار",orders:"سفارش‌ها",suppliers:"تأمین‌کنندگان",activityLog:"گزارش فعالیت",totalValue:"ارزش کل انبار",totalPurchases:"جمع خریدها",lowAlerts:"هشدار کم‌موجودی",pendingApprovals:"در انتظار تأیید",spendDept:"هزینه بر اساس دپارتمان",spendSupplier:"هزینه بر اساس تأمین‌کننده",recentPurchases:"آخرین خریدها",recentConsumption:"آخرین مصرف‌ها",newPurchase:"+ ثبت خرید",logConsumption:"+ ثبت مصرف",newOrder:"+ سفارش جدید",addItem:"+ افزودن کالا",addReturn:"+ ثبت برگشتی",exportExcel:"↑ خروجی اکسل",approve:"تأیید",reject:"رد",receive:"تحویل",edit:"ویرایش",del:"حذف",save:"ذخیره",search:"جستجو...",allDepts:"همه دپارتمان‌ها",date:"تاریخ",product:"کالا",qty:"تعداد",unitPrice:"قیمت واحد",total:"جمع کل",supplier:"تأمین‌کننده",department:"دپارتمان",invoice:"فاکتور",orderNo:"شماره سفارش",received:"تاریخ دریافت",note:"توضیحات",location:"محل مصرف",operator:"اپراتور",status:"وضعیت",actions:"عملیات",code:"کد",unit:"واحد",purchased:"خریداری شده",consumed:"مصرف شده",returned:"برگشتی",stock:"موجودی",avgPrice:"میانگین قیمت",stockValue:"ارزش",lowStock:"کم‌موجودی",ok:"مطلوب",noAccess:"شما دسترسی به این بخش را ندارید.",approvalNote:"خریدهای جدید نیاز به تأیید مدیر دارند.",loading:"در حال بارگذاری...",logout:"خروج",discrepancy:"مصرف غیرعادی شناسایی شد",staffWelcome:"مصرف خود را اینجا ثبت کنید",selectProduct:"انتخاب کالا...",selectDept:"انتخاب دپارتمان...",selectLocation:"انتخاب محل...",minStock:"حداقل موجودی",itemCode:"کد کالا",itemName:"نام کالا",itemNameFa:"نام (فارسی)",reason:"دلیل",fromLocation:"از محل",receivedBy:"دریافت‌کننده",deliveredTo:"تحویل به",deliveryPerson:"تحویل‌دهنده",image:"تصویر",returnQty:"مقدار برگشتی",editItem:"ویرایش کالا",newItem:"کالای جدید",overview:"نمای کلی",catalog:"کاتالوگ",transactions:"تراکنش‌ها",insights:"تحلیل",products:"کالا",approved:"تأیید شده",needsAttention:"نیاز به توجه",allItemsOk:"همه‌چیز خوبه",awaitingApproval:"در انتظار تأیید",queueClear:"صف خالیه",stockHealth:"وضعیت موجودی",topItems:"کالاهای پرارزش",inStock:"در انبار"}
 };
 
@@ -114,6 +115,8 @@ export default function App() {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
   const [imgPreview, setImgPreview] = useState(null);
+  const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 900);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const imgRef = useRef();
   const t = T[lang];
   const TH = THEMES[theme];
@@ -122,6 +125,11 @@ export default function App() {
   useEffect(() => { localStorage.setItem("stocktrack-theme", theme); }, [theme]);
   useEffect(() => { localStorage.setItem("stocktrack-lang", lang); }, [lang]);
   useEffect(() => { const i = setInterval(()=>setNow(new Date()), 1000); return ()=>clearInterval(i); }, []);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 900);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -303,8 +311,8 @@ export default function App() {
   // Common style helpers using current theme
   const card = {background:TH.bgCard,border:`1px solid ${TH.border}`,borderRadius:14,padding:18};
   const cardTitle = {color:TH.textHeading,fontWeight:700,fontSize:13,marginBottom:14,paddingBottom:12,borderBottom:`1px solid ${TH.divider}`,display:"flex",justifyContent:"space-between",alignItems:"center"};
-  const h1Style = {color:TH.textHeading,fontSize:22,fontWeight:800,margin:"0 0 4px",letterSpacing:"-0.5px"};
-  const subStyle = {color:TH.textMuted,fontSize:13,marginBottom:24};
+  const h1Style = {color:TH.textHeading,fontSize:isMobile?18:22,fontWeight:800,margin:"0 0 4px",letterSpacing:"-0.5px"};
+  const subStyle = {color:TH.textMuted,fontSize:isMobile?12:13,marginBottom:isMobile?16:24};
   const tableStyle = {width:"100%",borderCollapse:"collapse",fontSize:13,background:TH.bgCard,borderRadius:12,overflow:"hidden",border:`1px solid ${TH.border}`};
   const thStyle = {background:TH.bgInput,color:TH.textMuted,fontWeight:600,padding:"11px 12px",textAlign:"left",borderBottom:`1px solid ${TH.divider}`,fontSize:11,whiteSpace:"nowrap",textTransform:"uppercase",letterSpacing:"0.04em"};
   const tdStyle = {padding:"11px 12px",color:TH.text,verticalAlign:"middle",borderBottom:`1px solid ${TH.divider}`};
@@ -319,63 +327,84 @@ export default function App() {
   const timeStr = now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 
   return (
-    <div dir={lang==="fa"?"rtl":"ltr"} style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:TH.bg,color:TH.text,fontFamily:lang==="fa"?"'Vazirmatn','Tahoma',sans-serif":"'Inter','Segoe UI',system-ui,sans-serif"}}>
+    <div dir={lang==="fa"||lang==="he"?"rtl":"ltr"} style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:TH.bg,color:TH.text,fontFamily:lang==="fa"?"'Vazirmatn','Tahoma',sans-serif":lang==="he"?"'Heebo','Arial',sans-serif":"'Inter','Segoe UI',system-ui,sans-serif"}}>
 
       {/* ═══ TOP HEADER ═══ */}
-      <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,borderBottom:`1px solid ${TH.headerBorder}`,height:60,display:"flex",alignItems:"center",padding:"0 24px",gap:16,flexShrink:0}}>
-        <div style={{display:"flex",alignItems:"center",gap:10,minWidth:200}}>
-          <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#fff",fontWeight:800}}>▦</div>
-          <div>
+      <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,borderBottom:`1px solid ${TH.headerBorder}`,height:isMobile?54:60,display:"flex",alignItems:"center",padding:isMobile?"0 12px":"0 24px",gap:isMobile?8:16,flexShrink:0}}>
+        {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>☰</button>}
+        <div style={{display:"flex",alignItems:"center",gap:10,minWidth:isMobile?0:200}}>
+          <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#fff",fontWeight:800,flexShrink:0}}>▦</div>
+          {!isMobile&&<div>
             <div style={{color:TH.textHeading,fontWeight:800,fontSize:15,letterSpacing:"-0.3px"}}>StockTrack</div>
             <div style={{color:TH.accent,fontSize:10,fontWeight:600,letterSpacing:"0.06em"}}>● LIVE</div>
-          </div>
+          </div>}
         </div>
 
         <div style={{flex:1}}/>
 
-        <div style={{display:"flex",alignItems:"center",gap:12,color:TH.textMuted,fontSize:13,fontFamily:"ui-monospace,monospace"}}>
+        {!isMobile&&<div style={{display:"flex",alignItems:"center",gap:12,color:TH.textMuted,fontSize:13,fontFamily:"ui-monospace,monospace"}}>
           <span>{dateStr}</span>
           <span style={{color:TH.accent,fontWeight:600}}>{timeStr}</span>
-        </div>
+        </div>}
 
         {/* Theme toggle */}
-        <button onClick={()=>setTheme(theme==="dark"?"light":"dark")} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:9,color:TH.text,padding:"7px 12px",cursor:"pointer",fontSize:14,fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>
+        <button onClick={()=>setTheme(theme==="dark"?"light":"dark")} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:9,color:TH.text,padding:isMobile?"7px 9px":"7px 12px",cursor:"pointer",fontSize:14,fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>
           {theme==="dark"?"☀":"🌙"}
-          <span style={{fontSize:11,color:TH.textMuted}}>{theme==="dark"?"Light":"Dark"}</span>
+          {!isMobile&&<span style={{fontSize:11,color:TH.textMuted}}>{theme==="dark"?"Light":"Dark"}</span>}
         </button>
 
         {/* Lang toggle */}
         <div style={{display:"flex",background:TH.bgInput,borderRadius:9,padding:3,gap:2,border:`1px solid ${TH.border}`}}>
-          {["en","fa"].map(l=>(
-            <button key={l} onClick={()=>setLang(l)} style={{padding:"5px 12px",border:"none",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:700,background:lang===l?TH.accent:"transparent",color:lang===l?"#fff":TH.textMuted,fontFamily:"inherit"}}>{l==="en"?"EN":"FA"}</button>
+          {[{c:"en",l:"EN"},{c:"he",l:"HE"},{c:"fa",l:"FA"}].map(({c,l})=>(
+            <button key={c} onClick={()=>setLang(c)} style={{padding:isMobile?"5px 7px":"5px 10px",border:"none",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:700,background:lang===c?TH.accent:"transparent",color:lang===c?"#fff":TH.textMuted,fontFamily:"inherit"}}>{l}</button>
           ))}
         </div>
 
         {/* User badge */}
-        <div style={{display:"flex",alignItems:"center",gap:9,padding:"5px 11px 5px 5px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:30}}>
-          <div style={{width:28,height:28,borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:12}}>{user?.email?.charAt(0).toUpperCase()||"A"}</div>
-          <div style={{fontSize:11,lineHeight:1.2}}>
+        <div style={{display:"flex",alignItems:"center",gap:isMobile?0:9,padding:isMobile?"3px":"5px 11px 5px 5px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:30}}>
+          <div style={{width:isMobile?26:28,height:isMobile?26:28,borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:12}}>{user?.email?.charAt(0).toUpperCase()||"A"}</div>
+          {!isMobile&&<div style={{fontSize:11,lineHeight:1.2}}>
             <div style={{color:TH.text,fontWeight:600}}>{isAdmin?"Admin":"Staff"}</div>
             <div style={{color:TH.textMuted,fontSize:10}}>{user?.email?.split("@")[0]}</div>
-          </div>
+          </div>}
         </div>
 
         {/* Logout */}
-        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>↪ {t.logout}</button>
+        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>↪{!isMobile&&" "+t.logout}</button>
       </header>
 
       {/* ═══ MAIN LAYOUT ═══ */}
-      <div style={{display:"flex",flex:1,minHeight:0}}>
+      <div style={{display:"flex",flex:1,minHeight:0,position:"relative"}}>
+
+        {/* Mobile overlay backdrop */}
+        {isMobile&&sidebarOpen&&<div onClick={()=>setSidebarOpen(false)} style={{position:"fixed",inset:0,top:54,background:"rgba(0,0,0,.5)",zIndex:90,backdropFilter:"blur(2px)"}}/>}
 
         {/* ═══ SIDEBAR ═══ */}
-        <aside style={{width:230,background:TH.sidebar,borderRight:`1px solid ${TH.sidebarBorder}`,display:"flex",flexDirection:"column",padding:"18px 0 16px",flexShrink:0,overflow:"auto"}}>
+        <aside style={{
+          width:isMobile?260:230,
+          background:TH.sidebar,
+          borderRight:`1px solid ${TH.sidebarBorder}`,
+          display:"flex",
+          flexDirection:"column",
+          padding:"18px 0 16px",
+          flexShrink:0,
+          overflow:"auto",
+          position:isMobile?"fixed":"relative",
+          top:isMobile?54:0,
+          bottom:isMobile?0:"auto",
+          left: isMobile && lang!=="fa" && lang!=="he" ? (sidebarOpen?0:-280) : "auto",
+          right: isMobile && (lang==="fa" || lang==="he") ? (sidebarOpen?0:-280) : "auto",
+          zIndex:95,
+          transition:"left .3s, right .3s",
+          boxShadow: isMobile&&sidebarOpen?"0 10px 30px rgba(0,0,0,.4)":"none",
+        }}>
           {NAV_GROUPS.filter(g=>g.items.some(k=>allTabs.includes(k))).map(group=>(
             <div key={group.key} style={{marginBottom:14}}>
               <div style={{padding:"0 22px 8px",color:TH.textDim,fontSize:10,fontWeight:700,letterSpacing:"0.12em"}}>{t[group.key]?.toUpperCase()||group.key.toUpperCase()}</div>
               {group.items.filter(k=>allTabs.includes(k)).map(k=>{
                 const isActive = tab===k;
                 return(
-                  <button key={k} onClick={()=>{setTab(k);setSearch("");setDeptFilter("All");}} style={{display:"flex",alignItems:"center",gap:11,width:"100%",padding:"9px 22px",background:isActive?TH.accentBg:"transparent",border:"none",borderLeft:`3px solid ${isActive?TH.accent:"transparent"}`,color:isActive?TH.accent:TH.textMuted,cursor:"pointer",fontSize:13,textAlign:"left",fontFamily:"inherit",fontWeight:isActive?600:500}}>
+                  <button key={k} onClick={()=>{setTab(k);setSearch("");setDeptFilter("All");if(isMobile)setSidebarOpen(false);}} style={{display:"flex",alignItems:"center",gap:11,width:"100%",padding:"9px 22px",background:isActive?TH.accentBg:"transparent",border:"none",borderLeft:`3px solid ${isActive?TH.accent:"transparent"}`,color:isActive?TH.accent:TH.textMuted,cursor:"pointer",fontSize:13,textAlign:"left",fontFamily:"inherit",fontWeight:isActive?600:500}}>
                     <span style={{fontSize:14,width:18,textAlign:"center",flexShrink:0}}>{TAB_ICONS[k]}</span>
                     <span style={{flex:1}}>{t[k]||k}</span>
                     {k==="purchases"&&pendingCount>0&&isAdmin&&<span style={{background:"#f59e0b",color:"#fff",borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{pendingCount}</span>}
@@ -389,7 +418,7 @@ export default function App() {
         </aside>
 
         {/* ═══ MAIN CONTENT ═══ */}
-        <main style={{flex:1,padding:"24px 28px",overflowY:"auto",overflowX:"hidden",minWidth:0}}>
+        <main style={{flex:1,padding:isMobile?"16px 14px":"24px 28px",overflowY:"auto",overflowX:"hidden",minWidth:0,width:"100%"}}>
 
           {/* ═══ DASHBOARD ═══ */}
           {tab==="dashboard"&&isAdmin&&<>
@@ -407,7 +436,7 @@ export default function App() {
             </div>
 
             {/* BIG KPI CARDS — Caesar style */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:14,marginBottom:24}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(auto-fit,minmax(190px,1fr))",gap:isMobile?10:14,marginBottom:isMobile?16:24}}>
               {[
                 {label:t.totalValue,    val:curr(Math.round(totalValue)), sub:`${inventory.length} ${t.products}`,  c:KPI_COLORS.blue,    ico:"◈"},
                 {label:t.totalPurchases,val:curr(Math.round(totalSpend)),  sub:`${purchases.filter(p=>p.status==="approved").length} ${t.approved}`, c:KPI_COLORS.cyan,    ico:"↓"},
@@ -425,7 +454,7 @@ export default function App() {
             </div>
 
             {/* SECONDARY STATS (small boxes like Caesar) */}
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(100px,1fr))",gap:10,marginBottom:24}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(4,1fr)":"repeat(auto-fit,minmax(100px,1fr))",gap:isMobile?6:10,marginBottom:isMobile?16:24}}>
               {[
                 {l:"Items",       v:items.length,                           c:TH.accent},
                 {l:"Purchases",   v:purchases.length,                       c:"#22d3ee"},
@@ -470,7 +499,7 @@ export default function App() {
             )}
 
             {/* CHARTS */}
-            <div style={{display:"grid",gridTemplateColumns:"1.4fr 1fr",gap:16,marginBottom:24}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1.4fr 1fr",gap:16,marginBottom:24}}>
               <div style={card}>
                 <div style={cardTitle}><span>{t.spendDept}</span><span style={{color:TH.textMuted,fontSize:11,fontWeight:500}}>{deptData.length}</span></div>
                 <ResponsiveContainer width="100%" height={220}>
@@ -506,7 +535,7 @@ export default function App() {
                   <span style={{color:"#ef4444"}}>● Critical</span>
                 </div>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:"10px 24px"}}>
+              <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(280px,1fr))",gap:"10px 24px"}}>
                 {inventory.map(item=>{
                   const pct=item.min_stock>0?Math.min(100,Math.round((item.stock/item.min_stock)*100)):100;
                   const color=item.stock<=0?"#ef4444":item.stock<item.min_stock?"#f59e0b":"#10b981";
@@ -526,7 +555,7 @@ export default function App() {
             </div>
 
             {/* BOTTOM ROW */}
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:16}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"1fr 1fr 1fr",gap:16}}>
               <div style={card}>
                 <div style={cardTitle}>{t.topItems}</div>
                 {[...inventory].sort((a,b)=>b.totalValue-a.totalValue).slice(0,5).map((item,i)=>(
@@ -570,7 +599,7 @@ export default function App() {
                 <button onClick={()=>openM("item",{code:"",name:"",name_fa:"",unit:"unit",min_stock:0,supplier:"",image_url:""})} style={addBtn}>{t.addItem}</button>
               </div>
             </div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))",gap:16}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(290px,1fr))",gap:16}}>
               {items.filter(i=>i.name.toLowerCase().includes(search.toLowerCase())||i.code.toLowerCase().includes(search.toLowerCase())).map((item,idx)=>{
                 const inv=inventory.find(i=>i.id===item.id);
                 const color=inv?.stock<=0?"#ef4444":inv?.low?"#f59e0b":"#10b981";
@@ -747,7 +776,7 @@ export default function App() {
           {/* ═══ SUPPLIERS ═══ */}
           {tab==="suppliers"&&isAdmin&&<>
             <div style={{marginBottom:20}}><h1 style={h1Style}>{t.suppliers}</h1><div style={subStyle}>{lang==="fa"?"تأمین‌کنندگان و آمار خرید":"Vendor analytics."}</div></div>
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))",gap:16}}>
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(290px,1fr))",gap:16}}>
               {SUPPLIERS_LIST.map((sup,si)=>{
                 const sp=purchases.filter(p=>p.supplier===sup&&p.status==="approved");
                 const total=sp.reduce((s,p)=>s+p.qty*p.unitPrice,0);
