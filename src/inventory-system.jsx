@@ -131,11 +131,30 @@ export default function App() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // ─── SECURITY: Auto-logout after 30 min of inactivity ───
+  useEffect(() => {
+    let timer;
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        try { await logAction("Auto Logout (Idle)", `Session expired after 30min idle by:${user?.email}`); } catch(e){}
+        supabase.auth.signOut();
+      }, 30*60*1000); // 30 minutes
+    };
+    const events = ["mousedown","keydown","scroll","touchstart"];
+    events.forEach(e => window.addEventListener(e, reset, {passive:true}));
+    reset();
+    return () => {
+      clearTimeout(timer);
+      events.forEach(e => window.removeEventListener(e, reset));
+    };
+  }, [user]);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
         setUser(user);
-        const admin = ADMIN_EMAILS.includes(user.email) || user.user_metadata?.role === "admin";
+        const admin = user.app_metadata?.role === "admin" || ADMIN_EMAILS.includes(user.email) || user.user_metadata?.role === "admin";
         setIsAdmin(admin);
         setTab(admin ? "dashboard" : "consumption");
       }
@@ -166,7 +185,13 @@ export default function App() {
   }
 
   async function logAction(action, details) {
-    await supabase.from("activity_log").insert([{action,details,user_email:user?.email,created_at:new Date().toISOString()}]);
+    await supabase.from("activity_log").insert([{
+      action,
+      details,
+      user_email: user?.email,
+      user_agent: typeof navigator!=="undefined" ? navigator.userAgent.slice(0,255) : null,
+      created_at: new Date().toISOString()
+    }]);
   }
 
   const inventory = useMemo(() => items.map(item => {
@@ -219,8 +244,16 @@ export default function App() {
 
   async function saveItem() {
     if(!form.code||!form.name) return alert("Code and Name are required");
+    // Security: validate image_url is safe (data: URL for images or http(s) URL)
+    if(form.image_url && !/^(data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,|https?:\/\/)/.test(form.image_url)){
+      return alert("Invalid image — must be an uploaded image or HTTPS URL");
+    }
+    // Security: length limits
+    if((form.code||"").length>50||(form.name||"").length>200||(form.supplier||"").length>200){
+      return alert("Field too long");
+    }
     setSaving(true);
-    const rec = {code:form.code,name:form.name,name_fa:form.name_fa||"",name_he:form.name_he||"",unit:form.unit||"unit",min_stock:Number(form.min_stock||0),supplier:form.supplier||"",image_url:form.image_url||null};
+    const rec = {code:String(form.code).slice(0,50),name:String(form.name).slice(0,200),name_fa:String(form.name_fa||"").slice(0,200),name_he:String(form.name_he||"").slice(0,200),unit:String(form.unit||"unit").slice(0,30),min_stock:Math.max(0,Number(form.min_stock||0)),supplier:String(form.supplier||"").slice(0,200),image_url:form.image_url||null};
     if(form.id) {
       const old = items.find(i=>i.id===form.id);
       await supabase.from("items").update(rec).eq("id",form.id);
@@ -242,9 +275,12 @@ export default function App() {
 
   async function savePurchase() {
     if(!form.date||!form.itemId||!form.qty||!form.unitPrice) return alert("Fill required fields");
+    const qty = Number(form.qty), price = Number(form.unitPrice);
+    if(qty<0||price<0) return alert("Quantity and price must be non-negative");
+    if(qty>1000000||price>10000000) return alert("Value too large");
     setSaving(true);
     const it = items.find(i=>i.id===Number(form.itemId));
-    const rec = {date:form.date,item_id:Number(form.itemId),qty:Number(form.qty),unit_price:Number(form.unitPrice),supplier:form.supplier||"",invoice:form.invoice||"",order_no:form.orderNo||"",received_date:form.receivedDate||"",department:form.department||"",note:form.note||"",status:isAdmin?"approved":"pending",created_by:user?.email};
+    const rec = {date:String(form.date).slice(0,30),item_id:Number(form.itemId),qty,unit_price:price,supplier:String(form.supplier||"").slice(0,200),invoice:String(form.invoice||"").slice(0,100),order_no:String(form.orderNo||"").slice(0,100),received_date:String(form.receivedDate||"").slice(0,30),department:String(form.department||"").slice(0,100),note:String(form.note||"").slice(0,500),status:isAdmin?"approved":"pending",created_by:user?.email};
     if(form.id) { await supabase.from("purchases").update(rec).eq("id",form.id); await logAction("Edit Purchase", `ID:${form.id} item:${it?.name} qty:${form.qty} price:${form.unitPrice} by:${user?.email}`); }
     else { await supabase.from("purchases").insert([rec]); await logAction("New Purchase", `item:${it?.name} qty:${form.qty} price:${form.unitPrice} supplier:${form.supplier} status:${rec.status} by:${user?.email}`); }
     await loadAll(); closeM(); setSaving(false);
