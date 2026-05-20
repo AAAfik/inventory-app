@@ -73,7 +73,7 @@ const NAV_GROUPS = [
   {key:"overview",     items:["dashboard"]},
   {key:"catalog",      items:["itemsMgmt","inventory"]},
   {key:"transactions", items:["purchases","consumption","returns","orders"]},
-  {key:"insights",     items:["suppliers","activityLog"]},
+  {key:"insights",     items:["reports","suppliers","activityLog"]},
 ];
 const TAB_ICONS = {reports:"📋",dashboard:"◈",itemsMgmt:"⊞",inventory:"▦",purchases:"↓",consumption:"↗",returns:"↩",orders:"◎",suppliers:"⊡",activityLog:"📋"};
 
