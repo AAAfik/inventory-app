@@ -34,12 +34,23 @@ const KPI_COLORS = {
 };
 
 const T = {
-  en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"↑ Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Persian)",itemNameHe:"Name (Hebrew)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock",reports:"Reports",reportsDesc:"Generate custom reports — select sections, then download as Excel",selectReports:"Select reports to include",selectAll:"Select All",clearAll:"Clear",generateReport:"↓ Generate Report (Excel)",reportInventory:"INVENTORY",reportTransactions:"TRANSACTIONS",reportAnalytics:"ANALYTICS",reportAudit:"AUDIT",inventorySummary:"Inventory Summary",inventorySummaryDesc:"All items with stock, value, and status",lowStockReport:"Low Stock Items",lowStockDesc:"Items below minimum threshold",topItemsByValue:"Top Items by Value",topItemsByValueDesc:"Most valuable inventory items",allPurchasesReport:"All Purchases",allPurchasesDesc:"Complete list with full details",approvedPurchases:"Approved Purchases",approvedPurchasesDesc:"Confirmed spending, financial focus",pendingPurchases:"Pending Approvals",pendingPurchasesDesc:"Awaiting admin decision",consumptionDetail:"Consumption Detail",consumptionDetailDesc:"Who took what, where, when",returnsReport:"Returns",returnsDesc:"Stock returned to warehouse",ordersReport:"Orders",ordersReportDesc:"Pending and confirmed orders",consumptionByDept:"Consumption by Department",consumptionByDeptDesc:"Aggregated usage per location",consumptionByOperator:"Consumption by Operator",consumptionByOperatorDesc:"Who used how much",deliveryReport:"Delivery Report",deliveryReportDesc:"Who delivered what to whom",suppliersReport:"Suppliers Summary",suppliersReportDesc:"Vendor spending analytics",financialSummary:"Financial Summary",financialSummaryDesc:"Totals, KPIs, key metrics",anomaliesReport:"Anomaly Detection",anomaliesDesc:"Unusual consumption patterns",activityLogReport:"Activity Log",activityLogDesc:"Complete audit trail with users and timestamps",reportGenerated:"Report generated successfully",noReportsSelected:"Please select at least one report"},
-  he:{dashboard:"לוח בקרה",itemsMgmt:"פריטים",inventory:"מלאי",purchases:"רכישות",consumption:"צריכה",returns:"החזרות",orders:"הזמנות",suppliers:"ספקים",activityLog:"יומן פעילות",totalValue:"ערך מלאי כולל",totalPurchases:"סך הוצאות",lowAlerts:"התראות מלאי נמוך",pendingApprovals:"ממתין לאישור",spendDept:"הוצאות לפי מחלקה",spendSupplier:"הוצאות לפי ספק",recentPurchases:"רכישות אחרונות",recentConsumption:"צריכה אחרונה",newPurchase:"+ רכישה חדשה",logConsumption:"+ רישום צריכה",newOrder:"+ הזמנה חדשה",addItem:"+ הוסף פריט",addReturn:"+ הוסף החזרה",exportExcel:"↑ ייצוא Excel",approve:"אשר",reject:"דחה",receive:"קבל",edit:"ערוך",del:"מחק",save:"שמור",search:"חפש...",allDepts:"כל המחלקות",date:"תאריך",product:"מוצר",qty:"כמות",unitPrice:"מחיר יחידה",total:"סך הכל",supplier:"ספק",department:"מחלקה",invoice:"חשבונית",orderNo:"מספר הזמנה",received:"התקבל",note:"הערה",location:"מיקום",operator:"מפעיל",status:"סטטוס",actions:"פעולות",code:"קוד",unit:"יחידה",purchased:"נרכש",consumed:"נצרך",returned:"הוחזר",stock:"מלאי",avgPrice:"מחיר ממוצע",stockValue:"ערך",lowStock:"מלאי נמוך",ok:"תקין",noAccess:"אין גישה לחלק זה.",approvalNote:"רכישות חדשות דורשות אישור מנהל לפני עדכון המלאי.",loading:"טוען...",logout:"התנתק",discrepancy:"זוהתה צריכה חריגה",staffWelcome:"רשום את הצריכה שלך כאן",selectProduct:"בחר מוצר...",selectDept:"בחר מחלקה...",selectLocation:"בחר מיקום...",minStock:"מלאי מינימלי",itemCode:"קוד פריט",itemName:"שם פריט",itemNameFa:"שם (פרסית)",itemNameHe:"שם (עברית)",reason:"סיבה",fromLocation:"ממיקום",receivedBy:"התקבל על ידי",deliveredTo:"נמסר ל",deliveryPerson:"נמסר על ידי",image:"תמונה",returnQty:"כמות החזרה",editItem:"ערוך פריט",newItem:"פריט חדש",overview:"סקירה",catalog:"קטלוג",transactions:"תנועות",insights:"תובנות",products:"מוצרים",approved:"אושרו",needsAttention:"דורש תשומת לב",allItemsOk:"הכל תקין",awaitingApproval:"ממתין לאישור",queueClear:"התור ריק",stockHealth:"מצב המלאי",topItems:"פריטים מובילים",inStock:"במלאי",reports:"דוחות",reportsDesc:"צור דוחות מותאמים — בחר חלקים והורד כ-Excel",selectReports:"בחר דוחות לכלול",selectAll:"בחר הכל",clearAll:"נקה",generateReport:"↓ צור דוח (Excel)",reportInventory:"מלאי",reportTransactions:"תנועות",reportAnalytics:"ניתוח",reportAudit:"ביקורת",inventorySummary:"סיכום מלאי",inventorySummaryDesc:"כל הפריטים עם מלאי וערך",lowStockReport:"מלאי נמוך",lowStockDesc:"פריטים מתחת לסף",topItemsByValue:"פריטים מובילים",topItemsByValueDesc:"הפריטים היקרים ביותר",allPurchasesReport:"כל הרכישות",allPurchasesDesc:"רשימה מלאה עם פרטים",approvedPurchases:"רכישות מאושרות",approvedPurchasesDesc:"הוצאות שאושרו",pendingPurchases:"ממתינות לאישור",pendingPurchasesDesc:"ממתין להחלטת מנהל",consumptionDetail:"פירוט צריכה",consumptionDetailDesc:"מי לקח, מה, מאיפה, מתי",returnsReport:"החזרות",returnsDesc:"מלאי שהוחזר למחסן",ordersReport:"הזמנות",ordersReportDesc:"הזמנות ממתינות ומאושרות",consumptionByDept:"צריכה לפי מחלקה",consumptionByDeptDesc:"שימוש מצטבר לפי מיקום",consumptionByOperator:"צריכה לפי מפעיל",consumptionByOperatorDesc:"מי השתמש בכמה",deliveryReport:"דוח אספקה",deliveryReportDesc:"מי מסר מה למי",suppliersReport:"סיכום ספקים",suppliersReportDesc:"ניתוח הוצאות לפי ספק",financialSummary:"סיכום פיננסי",financialSummaryDesc:"סך הכל, מדדים ראשיים",anomaliesReport:"זיהוי חריגות",anomaliesDesc:"דפוסי צריכה חריגים",activityLogReport:"יומן פעילות",activityLogDesc:"דרך ביקורת מלאה",reportGenerated:"הדוח נוצר בהצלחה",noReportsSelected:"בחר לפחות דוח אחד"},
-  fa:{dashboard:"داشبورد",itemsMgmt:"کالاها",inventory:"موجودی انبار",purchases:"خریدها",consumption:"مصرف",returns:"برگشت به انبار",orders:"سفارش‌ها",suppliers:"تأمین‌کنندگان",activityLog:"گزارش فعالیت",totalValue:"ارزش کل انبار",totalPurchases:"جمع خریدها",lowAlerts:"هشدار کم‌موجودی",pendingApprovals:"در انتظار تأیید",spendDept:"هزینه بر اساس دپارتمان",spendSupplier:"هزینه بر اساس تأمین‌کننده",recentPurchases:"آخرین خریدها",recentConsumption:"آخرین مصرف‌ها",newPurchase:"+ ثبت خرید",logConsumption:"+ ثبت مصرف",newOrder:"+ سفارش جدید",addItem:"+ افزودن کالا",addReturn:"+ ثبت برگشتی",exportExcel:"↑ خروجی اکسل",approve:"تأیید",reject:"رد",receive:"تحویل",edit:"ویرایش",del:"حذف",save:"ذخیره",search:"جستجو...",allDepts:"همه دپارتمان‌ها",date:"تاریخ",product:"کالا",qty:"تعداد",unitPrice:"قیمت واحد",total:"جمع کل",supplier:"تأمین‌کننده",department:"دپارتمان",invoice:"فاکتور",orderNo:"شماره سفارش",received:"تاریخ دریافت",note:"توضیحات",location:"محل مصرف",operator:"اپراتور",status:"وضعیت",actions:"عملیات",code:"کد",unit:"واحد",purchased:"خریداری شده",consumed:"مصرف شده",returned:"برگشتی",stock:"موجودی",avgPrice:"میانگین قیمت",stockValue:"ارزش",lowStock:"کم‌موجودی",ok:"مطلوب",noAccess:"شما دسترسی به این بخش را ندارید.",approvalNote:"خریدهای جدید نیاز به تأیید مدیر دارند.",loading:"در حال بارگذاری...",logout:"خروج",discrepancy:"مصرف غیرعادی شناسایی شد",staffWelcome:"مصرف خود را اینجا ثبت کنید",selectProduct:"انتخاب کالا...",selectDept:"انتخاب دپارتمان...",selectLocation:"انتخاب محل...",minStock:"حداقل موجودی",itemCode:"کد کالا",itemName:"نام کالا",itemNameFa:"نام (فارسی)",itemNameHe:"نام (عبری)",reason:"دلیل",fromLocation:"از محل",receivedBy:"دریافت‌کننده",deliveredTo:"تحویل به",deliveryPerson:"تحویل‌دهنده",image:"تصویر",returnQty:"مقدار برگشتی",editItem:"ویرایش کالا",newItem:"کالای جدید",overview:"نمای کلی",catalog:"کاتالوگ",transactions:"تراکنش‌ها",insights:"تحلیل",products:"کالا",approved:"تأیید شده",needsAttention:"نیاز به توجه",allItemsOk:"همه‌چیز خوبه",awaitingApproval:"در انتظار تأیید",queueClear:"صف خالیه",stockHealth:"وضعیت موجودی",topItems:"کالاهای پرارزش",inStock:"در انبار",reports:"گزارش‌ها",reportsDesc:"گزارش‌های دلخواه بساز — بخش‌ها رو انتخاب کن، Excel دانلود کن",selectReports:"گزارش‌های مورد نظر رو انتخاب کن",selectAll:"انتخاب همه",clearAll:"حذف انتخاب",generateReport:"↓ ساخت گزارش (Excel)",reportInventory:"موجودی انبار",reportTransactions:"تراکنش‌ها",reportAnalytics:"تحلیل",reportAudit:"حسابرسی",inventorySummary:"خلاصه موجودی",inventorySummaryDesc:"همه کالاها با موجودی، ارزش و وضعیت",lowStockReport:"کالاهای کم‌موجود",lowStockDesc:"کالاهای زیر حداقل تعریف شده",topItemsByValue:"کالاهای پرارزش",topItemsByValueDesc:"باارزش‌ترین اقلام انبار",allPurchasesReport:"کل خریدها",allPurchasesDesc:"لیست کامل با همه جزئیات",approvedPurchases:"خریدهای تأیید شده",approvedPurchasesDesc:"هزینه‌های تأیید شده، تمرکز مالی",pendingPurchases:"در انتظار تأیید",pendingPurchasesDesc:"در انتظار تصمیم مدیر",consumptionDetail:"جزئیات مصرف",consumptionDetailDesc:"کی چی برداشت، از کجا، کی",returnsReport:"برگشتی‌ها",returnsDesc:"کالاهای برگشتی به انبار",ordersReport:"سفارش‌ها",ordersReportDesc:"سفارش‌های در انتظار و تأیید شده",consumptionByDept:"مصرف بر اساس دپارتمان",consumptionByDeptDesc:"مصرف تجمیعی بر اساس محل",consumptionByOperator:"مصرف بر اساس اپراتور",consumptionByOperatorDesc:"کی چقدر مصرف کرده",deliveryReport:"گزارش تحویل",deliveryReportDesc:"کی چی به کی تحویل داده",suppliersReport:"خلاصه تأمین‌کنندگان",suppliersReportDesc:"تحلیل هزینه بر اساس تأمین‌کننده",financialSummary:"خلاصه مالی",financialSummaryDesc:"جمع‌ها، شاخص‌ها، اعداد کلیدی",anomaliesReport:"تشخیص غیرعادی",anomaliesDesc:"الگوهای مصرف غیرعادی",activityLogReport:"گزارش فعالیت",activityLogDesc:"مسیر کامل حسابرسی با کاربر و زمان",reportGenerated:"گزارش با موفقیت ساخته شد",noReportsSelected:"حداقل یک گزارش انتخاب کن"}
+  en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"↑ Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Persian)",itemNameHe:"Name (Hebrew)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock",reports:"Reports",pools:"Pools",poolOverview:"Pool Overview",poolLog:"Log Chemical",poolHistory:"History",poolDashboard:"Pool Dashboard",poolStatus:"Status",poolBaseline:"Baseline (kg/mo)",poolActual:"Actual (kg/mo)",poolLogEntry:"Log Chemical Usage",noLogs:"No logs this month",loggedBy:"Logged By",waterQuality:"Water Quality",phLevel:"pH Level",clPpm:"Chlorine (ppm)",poolReport:"Pool Report",budgetUsed:"Budget Used",allPools:"All Pools",poolType:"Type",volume:"Volume",logChemical:"Log Chemical",reportsDesc:"Generate custom reports — select sections, then download as Excel",selectReports:"Select reports to include",selectAll:"Select All",clearAll:"Clear",generateReport:"↓ Generate Report (Excel)",reportInventory:"INVENTORY",reportTransactions:"TRANSACTIONS",reportAnalytics:"ANALYTICS",reportAudit:"AUDIT",inventorySummary:"Inventory Summary",inventorySummaryDesc:"All items with stock, value, and status",lowStockReport:"Low Stock Items",lowStockDesc:"Items below minimum threshold",topItemsByValue:"Top Items by Value",topItemsByValueDesc:"Most valuable inventory items",allPurchasesReport:"All Purchases",allPurchasesDesc:"Complete list with full details",approvedPurchases:"Approved Purchases",approvedPurchasesDesc:"Confirmed spending, financial focus",pendingPurchases:"Pending Approvals",pendingPurchasesDesc:"Awaiting admin decision",consumptionDetail:"Consumption Detail",consumptionDetailDesc:"Who took what, where, when",returnsReport:"Returns",returnsDesc:"Stock returned to warehouse",ordersReport:"Orders",ordersReportDesc:"Pending and confirmed orders",consumptionByDept:"Consumption by Department",consumptionByDeptDesc:"Aggregated usage per location",consumptionByOperator:"Consumption by Operator",consumptionByOperatorDesc:"Who used how much",deliveryReport:"Delivery Report",deliveryReportDesc:"Who delivered what to whom",suppliersReport:"Suppliers Summary",suppliersReportDesc:"Vendor spending analytics",financialSummary:"Financial Summary",financialSummaryDesc:"Totals, KPIs, key metrics",anomaliesReport:"Anomaly Detection",anomaliesDesc:"Unusual consumption patterns",activityLogReport:"Activity Log",activityLogDesc:"Complete audit trail with users and timestamps",reportGenerated:"Report generated successfully",noReportsSelected:"Please select at least one report"},
+  he:{dashboard:"לוח בקרה",itemsMgmt:"פריטים",inventory:"מלאי",purchases:"רכישות",consumption:"צריכה",returns:"החזרות",orders:"הזמנות",suppliers:"ספקים",activityLog:"יומן פעילות",totalValue:"ערך מלאי כולל",totalPurchases:"סך הוצאות",lowAlerts:"התראות מלאי נמוך",pendingApprovals:"ממתין לאישור",spendDept:"הוצאות לפי מחלקה",spendSupplier:"הוצאות לפי ספק",recentPurchases:"רכישות אחרונות",recentConsumption:"צריכה אחרונה",newPurchase:"+ רכישה חדשה",logConsumption:"+ רישום צריכה",newOrder:"+ הזמנה חדשה",addItem:"+ הוסף פריט",addReturn:"+ הוסף החזרה",exportExcel:"↑ ייצוא Excel",approve:"אשר",reject:"דחה",receive:"קבל",edit:"ערוך",del:"מחק",save:"שמור",search:"חפש...",allDepts:"כל המחלקות",date:"תאריך",product:"מוצר",qty:"כמות",unitPrice:"מחיר יחידה",total:"סך הכל",supplier:"ספק",department:"מחלקה",invoice:"חשבונית",orderNo:"מספר הזמנה",received:"התקבל",note:"הערה",location:"מיקום",operator:"מפעיל",status:"סטטוס",actions:"פעולות",code:"קוד",unit:"יחידה",purchased:"נרכש",consumed:"נצרך",returned:"הוחזר",stock:"מלאי",avgPrice:"מחיר ממוצע",stockValue:"ערך",lowStock:"מלאי נמוך",ok:"תקין",noAccess:"אין גישה לחלק זה.",approvalNote:"רכישות חדשות דורשות אישור מנהל לפני עדכון המלאי.",loading:"טוען...",logout:"התנתק",discrepancy:"זוהתה צריכה חריגה",staffWelcome:"רשום את הצריכה שלך כאן",selectProduct:"בחר מוצר...",selectDept:"בחר מחלקה...",selectLocation:"בחר מיקום...",minStock:"מלאי מינימלי",itemCode:"קוד פריט",itemName:"שם פריט",itemNameFa:"שם (פרסית)",itemNameHe:"שם (עברית)",reason:"סיבה",fromLocation:"ממיקום",receivedBy:"התקבל על ידי",deliveredTo:"נמסר ל",deliveryPerson:"נמסר על ידי",image:"תמונה",returnQty:"כמות החזרה",editItem:"ערוך פריט",newItem:"פריט חדש",overview:"סקירה",catalog:"קטלוג",transactions:"תנועות",insights:"תובנות",products:"מוצרים",approved:"אושרו",needsAttention:"דורש תשומת לב",allItemsOk:"הכל תקין",awaitingApproval:"ממתין לאישור",queueClear:"התור ריק",stockHealth:"מצב המלאי",topItems:"פריטים מובילים",inStock:"במלאי",reports:"דוחות",pools:"בריכות",poolOverview:"סקירת בריכות",poolLog:"רישום כימיקלים",poolHistory:"היסטוריה",poolDashboard:"לוח בקרה",poolStatus:"סטטוס",poolBaseline:"בסיס (ק\"ג/חודש)",poolActual:"בפועל (ק\"ג)",poolLogEntry:"רשום שימוש בכימיקל",noLogs:"אין רישומים החודש",loggedBy:"נרשם על ידי",waterQuality:"איכות מים",phLevel:"רמת pH",clPpm:"כלור (ppm)",poolReport:"דוח בריכות",budgetUsed:"שימוש בתקציב",allPools:"כל הבריכות",poolType:"סוג",volume:"נפח",logChemical:"כימיקל",reportsDesc:"צור דוחות מותאמים — בחר חלקים והורד כ-Excel",selectReports:"בחר דוחות לכלול",selectAll:"בחר הכל",clearAll:"נקה",generateReport:"↓ צור דוח (Excel)",reportInventory:"מלאי",reportTransactions:"תנועות",reportAnalytics:"ניתוח",reportAudit:"ביקורת",inventorySummary:"סיכום מלאי",inventorySummaryDesc:"כל הפריטים עם מלאי וערך",lowStockReport:"מלאי נמוך",lowStockDesc:"פריטים מתחת לסף",topItemsByValue:"פריטים מובילים",topItemsByValueDesc:"הפריטים היקרים ביותר",allPurchasesReport:"כל הרכישות",allPurchasesDesc:"רשימה מלאה עם פרטים",approvedPurchases:"רכישות מאושרות",approvedPurchasesDesc:"הוצאות שאושרו",pendingPurchases:"ממתינות לאישור",pendingPurchasesDesc:"ממתין להחלטת מנהל",consumptionDetail:"פירוט צריכה",consumptionDetailDesc:"מי לקח, מה, מאיפה, מתי",returnsReport:"החזרות",returnsDesc:"מלאי שהוחזר למחסן",ordersReport:"הזמנות",ordersReportDesc:"הזמנות ממתינות ומאושרות",consumptionByDept:"צריכה לפי מחלקה",consumptionByDeptDesc:"שימוש מצטבר לפי מיקום",consumptionByOperator:"צריכה לפי מפעיל",consumptionByOperatorDesc:"מי השתמש בכמה",deliveryReport:"דוח אספקה",deliveryReportDesc:"מי מסר מה למי",suppliersReport:"סיכום ספקים",suppliersReportDesc:"ניתוח הוצאות לפי ספק",financialSummary:"סיכום פיננסי",financialSummaryDesc:"סך הכל, מדדים ראשיים",anomaliesReport:"זיהוי חריגות",anomaliesDesc:"דפוסי צריכה חריגים",activityLogReport:"יומן פעילות",activityLogDesc:"דרך ביקורת מלאה",reportGenerated:"הדוח נוצר בהצלחה",noReportsSelected:"בחר לפחות דוח אחד"},
+  fa:{dashboard:"داشبورد",itemsMgmt:"کالاها",inventory:"موجودی انبار",purchases:"خریدها",consumption:"مصرف",returns:"برگشت به انبار",orders:"سفارش‌ها",suppliers:"تأمین‌کنندگان",activityLog:"گزارش فعالیت",totalValue:"ارزش کل انبار",totalPurchases:"جمع خریدها",lowAlerts:"هشدار کم‌موجودی",pendingApprovals:"در انتظار تأیید",spendDept:"هزینه بر اساس دپارتمان",spendSupplier:"هزینه بر اساس تأمین‌کننده",recentPurchases:"آخرین خریدها",recentConsumption:"آخرین مصرف‌ها",newPurchase:"+ ثبت خرید",logConsumption:"+ ثبت مصرف",newOrder:"+ سفارش جدید",addItem:"+ افزودن کالا",addReturn:"+ ثبت برگشتی",exportExcel:"↑ خروجی اکسل",approve:"تأیید",reject:"رد",receive:"تحویل",edit:"ویرایش",del:"حذف",save:"ذخیره",search:"جستجو...",allDepts:"همه دپارتمان‌ها",date:"تاریخ",product:"کالا",qty:"تعداد",unitPrice:"قیمت واحد",total:"جمع کل",supplier:"تأمین‌کننده",department:"دپارتمان",invoice:"فاکتور",orderNo:"شماره سفارش",received:"تاریخ دریافت",note:"توضیحات",location:"محل مصرف",operator:"اپراتور",status:"وضعیت",actions:"عملیات",code:"کد",unit:"واحد",purchased:"خریداری شده",consumed:"مصرف شده",returned:"برگشتی",stock:"موجودی",avgPrice:"میانگین قیمت",stockValue:"ارزش",lowStock:"کم‌موجودی",ok:"مطلوب",noAccess:"شما دسترسی به این بخش را ندارید.",approvalNote:"خریدهای جدید نیاز به تأیید مدیر دارند.",loading:"در حال بارگذاری...",logout:"خروج",discrepancy:"مصرف غیرعادی شناسایی شد",staffWelcome:"مصرف خود را اینجا ثبت کنید",selectProduct:"انتخاب کالا...",selectDept:"انتخاب دپارتمان...",selectLocation:"انتخاب محل...",minStock:"حداقل موجودی",itemCode:"کد کالا",itemName:"نام کالا",itemNameFa:"نام (فارسی)",itemNameHe:"نام (عبری)",reason:"دلیل",fromLocation:"از محل",receivedBy:"دریافت‌کننده",deliveredTo:"تحویل به",deliveryPerson:"تحویل‌دهنده",image:"تصویر",returnQty:"مقدار برگشتی",editItem:"ویرایش کالا",newItem:"کالای جدید",overview:"نمای کلی",catalog:"کاتالوگ",transactions:"تراکنش‌ها",insights:"تحلیل",products:"کالا",approved:"تأیید شده",needsAttention:"نیاز به توجه",allItemsOk:"همه‌چیز خوبه",awaitingApproval:"در انتظار تأیید",queueClear:"صف خالیه",stockHealth:"وضعیت موجودی",topItems:"کالاهای پرارزش",inStock:"در انبار",reports:"گزارش‌ها",pools:"استخرها",poolOverview:"نمای کلی استخرها",poolLog:"ثبت مواد شیمیایی",poolHistory:"تاریخچه",poolDashboard:"داشبورد استخر",poolStatus:"وضعیت",poolBaseline:"پایه (kg/ماه)",poolActual:"واقعی (kg)",poolLogEntry:"ثبت مصرف مواد",noLogs:"ثبتی این ماه نیست",loggedBy:"ثبت‌کننده",waterQuality:"کیفیت آب",phLevel:"pH",clPpm:"کلر (ppm)",poolReport:"گزارش استخر",budgetUsed:"بودجه مصرفی",allPools:"همه استخرها",poolType:"نوع",volume:"حجم",logChemical:"ماده شیمیایی",reportsDesc:"گزارش‌های دلخواه بساز — بخش‌ها رو انتخاب کن، Excel دانلود کن",selectReports:"گزارش‌های مورد نظر رو انتخاب کن",selectAll:"انتخاب همه",clearAll:"حذف انتخاب",generateReport:"↓ ساخت گزارش (Excel)",reportInventory:"موجودی انبار",reportTransactions:"تراکنش‌ها",reportAnalytics:"تحلیل",reportAudit:"حسابرسی",inventorySummary:"خلاصه موجودی",inventorySummaryDesc:"همه کالاها با موجودی، ارزش و وضعیت",lowStockReport:"کالاهای کم‌موجود",lowStockDesc:"کالاهای زیر حداقل تعریف شده",topItemsByValue:"کالاهای پرارزش",topItemsByValueDesc:"باارزش‌ترین اقلام انبار",allPurchasesReport:"کل خریدها",allPurchasesDesc:"لیست کامل با همه جزئیات",approvedPurchases:"خریدهای تأیید شده",approvedPurchasesDesc:"هزینه‌های تأیید شده، تمرکز مالی",pendingPurchases:"در انتظار تأیید",pendingPurchasesDesc:"در انتظار تصمیم مدیر",consumptionDetail:"جزئیات مصرف",consumptionDetailDesc:"کی چی برداشت، از کجا، کی",returnsReport:"برگشتی‌ها",returnsDesc:"کالاهای برگشتی به انبار",ordersReport:"سفارش‌ها",ordersReportDesc:"سفارش‌های در انتظار و تأیید شده",consumptionByDept:"مصرف بر اساس دپارتمان",consumptionByDeptDesc:"مصرف تجمیعی بر اساس محل",consumptionByOperator:"مصرف بر اساس اپراتور",consumptionByOperatorDesc:"کی چقدر مصرف کرده",deliveryReport:"گزارش تحویل",deliveryReportDesc:"کی چی به کی تحویل داده",suppliersReport:"خلاصه تأمین‌کنندگان",suppliersReportDesc:"تحلیل هزینه بر اساس تأمین‌کننده",financialSummary:"خلاصه مالی",financialSummaryDesc:"جمع‌ها، شاخص‌ها، اعداد کلیدی",anomaliesReport:"تشخیص غیرعادی",anomaliesDesc:"الگوهای مصرف غیرعادی",activityLogReport:"گزارش فعالیت",activityLogDesc:"مسیر کامل حسابرسی با کاربر و زمان",reportGenerated:"گزارش با موفقیت ساخته شد",noReportsSelected:"حداقل یک گزارش انتخاب کن"}
 };
 
 const DEPTS = ["General Maintenance","Gardening","Cleaning","Pools","Security","Equipment Repairs"];
+const POOL_PRICES = {pwd56:3.60, pwd90:3.80, flo:1.35, alg:1.50, cla:1.40, lcl:1.00, lac:0.85};
+const POOL_CHEMICALS = [
+  {key:"qty_pwd56", label:"Pwd Chlorine 56%", unit:"kg", price:3.60},
+  {key:"qty_pwd90", label:"Pwd Chlorine 90%", unit:"kg", price:3.80},
+  {key:"qty_flo",   label:"Flocculant",        unit:"kg", price:1.35},
+  {key:"qty_alg",   label:"Algaecide",          unit:"kg", price:1.50},
+  {key:"qty_cla",   label:"Clarifier",           unit:"kg", price:1.40},
+  {key:"qty_lcl",   label:"Liquid Chlorine",     unit:"kg", price:1.00},
+  {key:"qty_lac",   label:"Liquid Acid",         unit:"kg", price:0.85},
+];
+
 const REPORT_CATEGORIES = [
   {key:"inventory",    icon:"📦"},
   {key:"transactions", icon:"💳"},
@@ -73,9 +84,10 @@ const NAV_GROUPS = [
   {key:"overview",     items:["dashboard"]},
   {key:"catalog",      items:["itemsMgmt","inventory"]},
   {key:"transactions", items:["purchases","consumption","returns","orders"]},
+  {key:"pools",        items:["pools"]},
   {key:"insights",     items:["reports","suppliers","activityLog"]},
 ];
-const TAB_ICONS = {reports:"📋",dashboard:"◈",itemsMgmt:"⊞",inventory:"▦",purchases:"↓",consumption:"↗",returns:"↩",orders:"◎",suppliers:"⊡",activityLog:"📋"};
+const TAB_ICONS = {reports:"📋",pools:"🏊",dashboard:"◈",itemsMgmt:"⊞",inventory:"▦",purchases:"↓",consumption:"↗",returns:"↩",orders:"◎",suppliers:"⊡",activityLog:"📋"};
 
 const fmt = n => Number(n||0).toLocaleString("en-US");
 const curr = n => `₺${fmt(n)}`;
@@ -144,6 +156,11 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 900);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reportSelections, setReportSelections] = useState({});
+  const [pools, setPools] = useState([]);
+  const [poolLogs, setPoolLogs] = useState([]);
+  const [poolSubTab, setPoolSubTab] = useState("overview");
+  const [selPoolId, setSelPoolId] = useState(null);
+  const [poolForm, setPoolForm] = useState({pool_id:"",log_date:new Date().toISOString().slice(0,10),qty_pwd56:0,qty_pwd90:0,qty_flo:0,qty_alg:0,qty_cla:0,qty_lcl:0,qty_lac:0,ph_level:"",cl_ppm:"",notes:""});
   const imgRef = useRef();
   const t = T[lang];
   const TH = THEMES[theme];
@@ -366,6 +383,36 @@ export default function App() {
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(logs.map(l=>({DateTime:l.created_at?new Date(l.created_at).toLocaleString("en-GB"):"",Action:l.action,Details:l.details,User:l.user_email}))), "Activity Log");
     const fname = `StockTrack_QuickExport_${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}.xlsx`;
     XLSX.writeFile(wb, fname);
+  }
+
+  // ─── POOL CHEMICAL LOG ────────────────────────────────────────
+  async function savePoolLog() {
+    if (!poolForm.pool_id || !poolForm.log_date) return alert("Select pool and date");
+    setSaving(true);
+    const rec = {
+      pool_id: Number(poolForm.pool_id),
+      log_date: poolForm.log_date,
+      qty_pwd56: Number(poolForm.qty_pwd56||0),
+      qty_pwd90: Number(poolForm.qty_pwd90||0),
+      qty_flo:   Number(poolForm.qty_flo||0),
+      qty_alg:   Number(poolForm.qty_alg||0),
+      qty_cla:   Number(poolForm.qty_cla||0),
+      qty_lcl:   Number(poolForm.qty_lcl||0),
+      qty_lac:   Number(poolForm.qty_lac||0),
+      ph_level:  poolForm.ph_level||null,
+      cl_ppm:    poolForm.cl_ppm||null,
+      notes:     poolForm.notes||"",
+      logged_by: user?.email||"",
+    };
+    const pool = pools.find(p=>p.id===rec.pool_id);
+    const totalCost = POOL_CHEMICALS.reduce((s,c)=>s+(rec[c.key]||0)*c.price, 0);
+    const res = await supabase.from("pool_chemical_logs").insert([rec]);
+    if (res.error) { setSaving(false); return alert("Error: "+res.error.message); }
+    await logAction("Pool Chemical Log", `pool:${pool?.name} date:${rec.log_date} cost:€${totalCost.toFixed(2)} by:${user?.email}`);
+    await loadAll();
+    setPoolForm({pool_id:poolForm.pool_id,log_date:poolForm.log_date,qty_pwd56:0,qty_pwd90:0,qty_flo:0,qty_alg:0,qty_cla:0,qty_lcl:0,qty_lac:0,ph_level:"",cl_ppm:"",notes:""});
+    setSaving(false);
+    alert("✓ Chemical log saved!");
   }
 
   // ─── QUICK EXPORT (sidebar button) ────────────────────────────
@@ -742,7 +789,7 @@ export default function App() {
   const filtPur  = purchases.filter(p=>deptFilter==="All"||p.department===deptFilter);
   const filtCons = consumptions.filter(c=>search===""||items.find(i=>i.id===c.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
   const filtRet  = returns.filter(r=>search===""||items.find(i=>i.id===r.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
-  const allTabs = isAdmin ? ["dashboard","itemsMgmt","inventory","purchases","consumption","returns","orders","reports","suppliers","activityLog"] : ["consumption"];
+  const allTabs = isAdmin ? ["dashboard","itemsMgmt","inventory","purchases","consumption","returns","orders","pools","reports","suppliers","activityLog"] : ["consumption"];
 
   if(loading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:TH.bg}}><div style={{color:TH.accent,fontSize:16}}>{t.loading}</div></div>;
 
@@ -1209,6 +1256,221 @@ export default function App() {
                 );})}</tbody>
               </table>
             </div>
+          </>}
+
+          {/* ═══ POOLS ═══ */}
+          {tab==="pools"&&isAdmin&&<>
+            <div style={{marginBottom:16}}>
+              <h1 style={h1Style}>🏊 {t.pools}</h1>
+              <div style={subStyle}>Chemical consumption monitoring for all 22 Caesar Resort pools.</div>
+            </div>
+
+            {/* Sub-tab nav */}
+            <div style={{display:"flex",gap:6,marginBottom:20,flexWrap:"wrap"}}>
+              {[["overview","📊 Overview"],["log","➕ Log Chemical"],["history","📋 History"]].map(([k,label])=>(
+                <button key={k} onClick={()=>setPoolSubTab(k)}
+                  style={{padding:"8px 16px",borderRadius:9,border:`1px solid ${poolSubTab===k?TH.accent:TH.border}`,background:poolSubTab===k?TH.accent:TH.bgInput,color:poolSubTab===k?"#fff":TH.text,cursor:"pointer",fontSize:13,fontFamily:"inherit",fontWeight:600}}>
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* ── OVERVIEW ── */}
+            {poolSubTab==="overview"&&(()=>{
+              const now = new Date();
+              const y = now.getFullYear(), m = now.getMonth();
+              const monthStart = `${y}-${String(m+1).padStart(2,"0")}-01`;
+              const daysElapsed = now.getDate();
+              const daysInMonth = new Date(y,m+1,0).getDate();
+              const factor = daysElapsed / daysInMonth;
+
+              return <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(310px,1fr))",gap:12}}>
+                {pools.map(pool=>{
+                  const monthLogs = poolLogs.filter(l=>l.pool_id===pool.id && l.log_date>=monthStart);
+                  const actual = POOL_CHEMICALS.reduce((s,c)=>{
+                    const qty = monthLogs.reduce((t,l)=>t+(Number(l[c.key])||0),0);
+                    return s+qty*c.price;
+                  },0);
+                  const baseline = POOL_CHEMICALS.reduce((s,c)=>s+(Number(pool["b_"+c.key.replace("qty_","")])||0)*c.price,0);
+                  const expectedSoFar = baseline * factor;
+                  const pct = expectedSoFar > 0 ? Math.round((actual/expectedSoFar)*100) : 0;
+                  const statusColor = pct===0?"#64748b":pct<=110?"#10b981":pct<=150?"#f59e0b":"#ef4444";
+                  const statusLabel = pct===0?"No logs":pct<=110?"OK":pct<=150?"Watch":"High";
+                  const lastLog = monthLogs.length ? monthLogs.slice().sort((a,b)=>b.log_date.localeCompare(a.log_date))[0] : null;
+                  const typeColors = {outdoor:"#3b82f6",indoor:"#6366f1",kids:"#10b981",river:"#0891b2"};
+                  return (
+                    <div key={pool.id} onClick={()=>{setSelPoolId(pool.id);setPoolSubTab("history");}}
+                      style={{background:TH.bgCard,border:`1px solid ${TH.border}`,borderRadius:12,padding:14,cursor:"pointer",transition:"border-color .15s",borderLeft:`3px solid ${statusColor}`}}>
+                      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}}>
+                        <div>
+                          <div style={{color:TH.textHeading,fontWeight:700,fontSize:13,marginBottom:2}}>{pool.name}</div>
+                          <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                            <span style={{background:typeColors[pool.pool_type]||"#64748b",color:"#fff",fontSize:9,fontWeight:700,padding:"2px 7px",borderRadius:20,letterSpacing:"0.05em"}}>{pool.pool_type?.toUpperCase()}</span>
+                            <span style={{color:TH.textMuted,fontSize:11}}>{pool.volume_m3} M³</span>
+                          </div>
+                        </div>
+                        <span style={{background:statusColor+"20",color:statusColor,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20}}>{statusLabel}</span>
+                      </div>
+                      <div style={{marginBottom:10}}>
+                        <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:TH.textMuted,marginBottom:4}}>
+                          <span>Spent this month</span>
+                          <span style={{color:TH.text,fontWeight:600}}>€{actual.toFixed(0)} / €{expectedSoFar.toFixed(0)} exp.</span>
+                        </div>
+                        <div style={{background:TH.bgInput,borderRadius:6,height:6,overflow:"hidden"}}>
+                          <div style={{background:statusColor,height:"100%",width:`${Math.min(100,pct)}%`,borderRadius:6,transition:"width .3s"}}/>
+                        </div>
+                        <div style={{fontSize:10,color:TH.textMuted,marginTop:3,textAlign:"right"}}>{pct}% of expected ({daysElapsed}d/{daysInMonth}d)</div>
+                      </div>
+                      <div style={{display:"flex",justifyContent:"space-between",fontSize:11,color:TH.textMuted}}>
+                        <span>Month baseline: €{baseline.toFixed(0)}</span>
+                        <span>{lastLog ? `Last: ${lastLog.log_date}` : "No logs yet"}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>;
+            })()}
+
+            {/* ── LOG CHEMICAL ── */}
+            {poolSubTab==="log"&&(
+              <div style={{maxWidth:620}}>
+                <div style={{...card,marginBottom:16}}>
+                  <div style={{...cardTitle}}>Log Chemical Usage — {new Date().toLocaleDateString()}</div>
+
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+                    {/* Pool Selector */}
+                    <div style={{gridColumn:"1/-1"}}>
+                      <label style={{fontSize:11,color:TH.textMuted,display:"block",marginBottom:6,fontWeight:600}}>POOL *</label>
+                      <select value={poolForm.pool_id} onChange={e=>setPoolForm({...poolForm,pool_id:e.target.value})}
+                        style={{width:"100%",padding:"9px 12px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit"}}>
+                        <option value="">Select pool...</option>
+                        {pools.map(p=><option key={p.id} value={p.id}>{p.name} ({p.volume_m3} M³)</option>)}
+                      </select>
+                    </div>
+
+                    {/* Date */}
+                    <div>
+                      <label style={{fontSize:11,color:TH.textMuted,display:"block",marginBottom:6,fontWeight:600}}>DATE *</label>
+                      <input type="date" value={poolForm.log_date} onChange={e=>setPoolForm({...poolForm,log_date:e.target.value})}
+                        style={{width:"100%",padding:"9px 12px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit",boxSizing:"border-box"}}/>
+                    </div>
+
+                    {/* pH & Cl */}
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                      <div>
+                        <label style={{fontSize:11,color:TH.textMuted,display:"block",marginBottom:6,fontWeight:600}}>pH</label>
+                        <input type="text" placeholder="e.g. 7.2" value={poolForm.ph_level} onChange={e=>setPoolForm({...poolForm,ph_level:e.target.value})}
+                          style={{width:"100%",padding:"9px 12px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit",boxSizing:"border-box"}}/>
+                      </div>
+                      <div>
+                        <label style={{fontSize:11,color:TH.textMuted,display:"block",marginBottom:6,fontWeight:600}}>Cl (ppm)</label>
+                        <input type="text" placeholder="e.g. 1.5" value={poolForm.cl_ppm} onChange={e=>setPoolForm({...poolForm,cl_ppm:e.target.value})}
+                          style={{width:"100%",padding:"9px 12px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit",boxSizing:"border-box"}}/>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Chemical quantities */}
+                  <div style={{marginBottom:16}}>
+                    <div style={{fontSize:11,color:TH.textMuted,fontWeight:700,marginBottom:10,letterSpacing:"0.08em"}}>CHEMICALS ADDED (kg)</div>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                      {POOL_CHEMICALS.map(c=>{
+                        const pool = pools.find(p=>p.id===Number(poolForm.pool_id));
+                        const baseKey = "b_"+c.key.replace("qty_","");
+                        const baseline = pool ? (Number(pool[baseKey]||0)/30).toFixed(1) : "—";
+                        return (
+                          <div key={c.key}>
+                            <label style={{fontSize:11,color:TH.textMuted,display:"block",marginBottom:4,fontWeight:500}}>
+                              {c.label} <span style={{color:TH.textDim,fontWeight:400}}>(daily≈{baseline}kg)</span>
+                            </label>
+                            <input type="number" min="0" step="0.1"
+                              value={poolForm[c.key]}
+                              onChange={e=>setPoolForm({...poolForm,[c.key]:e.target.value})}
+                              style={{width:"100%",padding:"8px 10px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit",boxSizing:"border-box"}}/>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Cost preview */}
+                  {(()=>{
+                    const total = POOL_CHEMICALS.reduce((s,c)=>s+(Number(poolForm[c.key]||0)*c.price),0);
+                    return total > 0 ? (
+                      <div style={{background:TH.accentBg,border:`1px solid ${TH.accent}`,borderRadius:8,padding:"10px 14px",marginBottom:14,fontSize:13,color:TH.accent,fontWeight:600}}>
+                        Total cost this entry: €{total.toFixed(2)}
+                      </div>
+                    ) : null;
+                  })()}
+
+                  {/* Notes */}
+                  <div style={{marginBottom:16}}>
+                    <label style={{fontSize:11,color:TH.textMuted,display:"block",marginBottom:6,fontWeight:600}}>NOTES</label>
+                    <input type="text" placeholder="Any observations..." value={poolForm.notes} onChange={e=>setPoolForm({...poolForm,notes:e.target.value})}
+                      style={{width:"100%",padding:"9px 12px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit",boxSizing:"border-box"}}/>
+                  </div>
+
+                  <button onClick={savePoolLog} disabled={saving}
+                    style={{...saveBtn,width:"100%",padding:"12px",fontSize:14}}>
+                    {saving?"Saving...":"✓ Save Chemical Log"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ── HISTORY ── */}
+            {poolSubTab==="history"&&(
+              <div>
+                {/* Pool filter */}
+                <div style={{marginBottom:16,display:"flex",gap:10,flexWrap:"wrap",alignItems:"center"}}>
+                  <select value={selPoolId||""} onChange={e=>setSelPoolId(e.target.value?Number(e.target.value):null)}
+                    style={{padding:"8px 12px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,fontSize:13,fontFamily:"inherit"}}>
+                    <option value="">All Pools</option>
+                    {pools.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
+                  </select>
+                  <span style={{color:TH.textMuted,fontSize:12}}>
+                    {(selPoolId ? poolLogs.filter(l=>l.pool_id===selPoolId) : poolLogs).length} entries
+                  </span>
+                </div>
+
+                <div style={{overflowX:"auto"}}>
+                  <table style={{...tableStyle,minWidth:700}}>
+                    <thead>
+                      <tr>
+                        {["Date","Pool","Pwd56","Pwd90","Flocculant","Algaecide","Clarifier","Liq Cl","Liq Acid","Cost €","pH","ppm","Notes","By"].map(h=>(
+                          <th key={h} style={thStyle}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(selPoolId ? poolLogs.filter(l=>l.pool_id===selPoolId) : poolLogs).slice(0,200).map(l=>{
+                        const pool = pools.find(p=>p.id===l.pool_id);
+                        const cost = POOL_CHEMICALS.reduce((s,c)=>s+(Number(l[c.key]||0)*c.price),0);
+                        return (
+                          <tr key={l.id} style={{borderBottom:`1px solid ${TH.divider}`}}>
+                            <td style={tdStyle}>{l.log_date}</td>
+                            <td style={{...tdStyle,fontWeight:600,color:TH.textHeading}}>{pool?.name||"?"}</td>
+                            {POOL_CHEMICALS.map(c=>(
+                              <td key={c.key} style={{...tdStyle,textAlign:"center",color:Number(l[c.key]||0)>0?TH.accent:TH.textDim}}>
+                                {Number(l[c.key]||0)>0 ? Number(l[c.key]).toFixed(1) : "—"}
+                              </td>
+                            ))}
+                            <td style={{...tdStyle,fontWeight:600,color:"#10b981"}}>€{cost.toFixed(2)}</td>
+                            <td style={{...tdStyle,textAlign:"center"}}>{l.ph_level||"—"}</td>
+                            <td style={{...tdStyle,textAlign:"center"}}>{l.cl_ppm||"—"}</td>
+                            <td style={{...tdStyle,color:TH.textMuted,maxWidth:150,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{l.notes||"—"}</td>
+                            <td style={{...tdStyle,color:TH.textMuted,fontSize:11}}>{(l.logged_by||"").split("@")[0]}</td>
+                          </tr>
+                        );
+                      })}
+                      {poolLogs.length===0&&(
+                        <tr><td colSpan={15} style={{...tdStyle,textAlign:"center",color:TH.textMuted,padding:32}}>No chemical logs yet. Use "Log Chemical" to add the first entry.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </>}
 
           {/* ═══ REPORTS ═══ */}
