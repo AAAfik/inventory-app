@@ -244,22 +244,23 @@ export default function App() {
 
   async function saveItem() {
     if(!form.code||!form.name) return alert("Code and Name are required");
-    // Security: validate image_url is safe (data: URL for images or http(s) URL)
     if(form.image_url && !/^(data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,|https?:\/\/)/.test(form.image_url)){
       return alert("Invalid image — must be an uploaded image or HTTPS URL");
     }
-    // Security: length limits
     if((form.code||"").length>50||(form.name||"").length>200||(form.supplier||"").length>200){
       return alert("Field too long");
     }
     setSaving(true);
-    const rec = {code:String(form.code).slice(0,50),name:String(form.name).slice(0,200),name_fa:String(form.name_fa||"").slice(0,200),name_he:String(form.name_he||"").slice(0,200),unit:String(form.unit||"unit").slice(0,30),min_stock:Math.max(0,Number(form.min_stock||0)),supplier:String(form.supplier||"").slice(0,200),image_url:form.image_url||null};
+    const rec = {code:String(form.code).slice(0,50),name:String(form.name).slice(0,200),unit:String(form.unit||"unit").slice(0,30),min_stock:Math.max(0,Number(form.min_stock||0)),supplier:String(form.supplier||"").slice(0,200),image_url:form.image_url||null};
+    let result;
     if(form.id) {
       const old = items.find(i=>i.id===form.id);
-      await supabase.from("items").update(rec).eq("id",form.id);
-      await logAction("Edit Item", `ID:${form.id} | new: name=${rec.name} unit=${rec.unit} min=${rec.min_stock} | old: name=${old?.name} unit=${old?.unit} min=${old?.min_stock} | by:${user?.email}`);
+      result = await supabase.from("items").update(rec).eq("id",form.id);
+      if(result.error){setSaving(false);return alert("Update failed: "+result.error.message);}
+      await logAction("Edit Item", `ID:${form.id} | new: name=${rec.name} | old: name=${old?.name} | by:${user?.email}`);
     } else {
-      await supabase.from("items").insert([rec]);
+      result = await supabase.from("items").insert([rec]);
+      if(result.error){setSaving(false);return alert("Insert failed: "+result.error.message+"\n\nLikely you don't have admin permission. Make sure your user has app_metadata.role=\"admin\" set in Supabase.");}
       await logAction("Add Item", `code:${form.code} name:${form.name} unit:${form.unit} min:${form.min_stock} by:${user?.email}`);
     }
     await loadAll(); closeM(); setSaving(false);
@@ -281,8 +282,9 @@ export default function App() {
     setSaving(true);
     const it = items.find(i=>i.id===Number(form.itemId));
     const rec = {date:String(form.date).slice(0,30),item_id:Number(form.itemId),qty,unit_price:price,supplier:String(form.supplier||"").slice(0,200),invoice:String(form.invoice||"").slice(0,100),order_no:String(form.orderNo||"").slice(0,100),received_date:String(form.receivedDate||"").slice(0,30),department:String(form.department||"").slice(0,100),note:String(form.note||"").slice(0,500),status:isAdmin?"approved":"pending",created_by:user?.email};
-    if(form.id) { await supabase.from("purchases").update(rec).eq("id",form.id); await logAction("Edit Purchase", `ID:${form.id} item:${it?.name} qty:${form.qty} price:${form.unitPrice} by:${user?.email}`); }
-    else { await supabase.from("purchases").insert([rec]); await logAction("New Purchase", `item:${it?.name} qty:${form.qty} price:${form.unitPrice} supplier:${form.supplier} status:${rec.status} by:${user?.email}`); }
+    let result;
+    if(form.id) { result = await supabase.from("purchases").update(rec).eq("id",form.id); if(result.error){setSaving(false);return alert("Update failed: "+result.error.message);} await logAction("Edit Purchase", `ID:${form.id} item:${it?.name} qty:${form.qty} price:${form.unitPrice} by:${user?.email}`); }
+    else { result = await supabase.from("purchases").insert([rec]); if(result.error){setSaving(false);return alert("Insert failed: "+result.error.message);} await logAction("New Purchase", `item:${it?.name} qty:${form.qty} price:${form.unitPrice} supplier:${form.supplier} status:${rec.status} by:${user?.email}`); }
     await loadAll(); closeM(); setSaving(false);
   }
 
@@ -336,7 +338,7 @@ export default function App() {
     XLSX.writeFile(wb,"stocktrack.xlsx");
   }
 
-  const filtInv  = inventory.filter(i=>{const s=search.toLowerCase();return i.name.toLowerCase().includes(s)||i.code.toLowerCase().includes(s)||(i.name_fa||"").toLowerCase().includes(s)||(i.name_he||"").toLowerCase().includes(s);});
+  const filtInv  = inventory.filter(i=>{const s=search.toLowerCase();return i.name.toLowerCase().includes(s)||i.code.toLowerCase().includes(s);});
   const filtPur  = purchases.filter(p=>deptFilter==="All"||p.department===deptFilter);
   const filtCons = consumptions.filter(c=>search===""||items.find(i=>i.id===c.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
   const filtRet  = returns.filter(r=>search===""||items.find(i=>i.id===r.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
@@ -468,7 +470,7 @@ export default function App() {
               <button onClick={()=>openM("purchase",{date:"",itemId:"",qty:"",unitPrice:"",supplier:"",invoice:"",orderNo:"",receivedDate:"",department:"",note:""})} style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,color:"#fff",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit",boxShadow:"0 4px 12px rgba(99,102,241,.25)"}}>{t.newPurchase}</button>
               <button onClick={()=>openM("consumption",{date:new Date().toISOString().slice(0,10),itemId:"",qty:"",location:"",operator:"",deliveredTo:"",deliveryPerson:"",note:""})} style={{background:"rgba(245,158,11,.12)",border:"1px solid rgba(245,158,11,.4)",borderRadius:10,color:"#f59e0b",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.logConsumption}</button>
               <button onClick={()=>openM("return",{date:new Date().toISOString().slice(0,10),itemId:"",qty:"",reason:"",fromLocation:"",receivedBy:"",note:""})} style={{background:"rgba(16,185,129,.1)",border:"1px solid rgba(16,185,129,.35)",borderRadius:10,color:"#10b981",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.addReturn}</button>
-              <button onClick={()=>openM("item",{code:"",name:"",name_fa:"",unit:"unit",min_stock:0,supplier:"",image_url:""})} style={{background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:10,color:TH.text,padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.addItem}</button>
+              <button onClick={()=>openM("item",{code:"",name:"",unit:"unit",min_stock:0,supplier:"",image_url:""})} style={{background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:10,color:TH.text,padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.addItem}</button>
             </div>
 
             {/* BIG KPI CARDS — Caesar style */}
@@ -632,11 +634,11 @@ export default function App() {
               <div><h1 style={h1Style}>{t.itemsMgmt}</h1><div style={subStyle}>{lang==="fa"?"مدیریت کالاهای انبار با تصویر و تنظیمات":"Manage items with images and settings."}</div></div>
               <div style={{display:"flex",gap:8}}>
                 <input placeholder={t.search} value={search} onChange={e=>setSearch(e.target.value)} style={srchInput}/>
-                <button onClick={()=>openM("item",{code:"",name:"",name_fa:"",unit:"unit",min_stock:0,supplier:"",image_url:""})} style={addBtn}>{t.addItem}</button>
+                <button onClick={()=>openM("item",{code:"",name:"",unit:"unit",min_stock:0,supplier:"",image_url:""})} style={addBtn}>{t.addItem}</button>
               </div>
             </div>
             <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(290px,1fr))",gap:16}}>
-              {items.filter(i=>{const s=search.toLowerCase();return i.name.toLowerCase().includes(s)||i.code.toLowerCase().includes(s)||(i.name_fa||"").toLowerCase().includes(s)||(i.name_he||"").toLowerCase().includes(s);}).map((item,idx)=>{
+              {items.filter(i=>{const s=search.toLowerCase();return i.name.toLowerCase().includes(s)||i.code.toLowerCase().includes(s);}).map((item,idx)=>{
                 const inv=inventory.find(i=>i.id===item.id);
                 const color=inv?.stock<=0?"#ef4444":inv?.low?"#f59e0b":"#10b981";
                 return(
@@ -646,8 +648,7 @@ export default function App() {
                       <div style={{minWidth:0,flex:1}}>
                         <span style={codeStyle}>{item.code}</span>
                         <div style={{color:TH.textHeading,fontWeight:700,fontSize:15,marginTop:6}}>{item.name}</div>
-                        {(lang==="fa"&&item.name_fa)&&<div style={{color:TH.textMuted,fontSize:12,marginTop:2}}>{item.name_fa}</div>}
-                        {(lang==="he"&&item.name_he)&&<div style={{color:TH.textMuted,fontSize:12,marginTop:2}}>{item.name_he}</div>}
+
                       </div>
                       <Badge label={inv?.low?t.lowStock:t.ok} color={color}/>
                     </div>
@@ -858,8 +859,6 @@ export default function App() {
           <Inp label={t.unit} value={form.unit} onChange={sf("unit")} placeholder="unit / kg / can..." theme={TH}/>
           <Inp label={`${t.itemName} *`} value={form.name} onChange={sf("name")} required theme={TH}/>
           <Inp label={t.minStock} value={form.min_stock} onChange={sf("min_stock")} type="number" theme={TH}/>
-          <Inp label={t.itemNameFa} value={form.name_fa} onChange={sf("name_fa")} theme={TH}/>
-          <Inp label={t.itemNameHe} value={form.name_he} onChange={sf("name_he")} theme={TH}/>
           <Inp label={t.supplier} value={form.supplier} onChange={sf("supplier")} theme={TH}/>
           <div/>
         </div>
