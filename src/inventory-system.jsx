@@ -34,12 +34,38 @@ const KPI_COLORS = {
 };
 
 const T = {
-  en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"↑ Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Persian)",itemNameHe:"Name (Hebrew)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock"},
-  he:{dashboard:"לוח בקרה",itemsMgmt:"פריטים",inventory:"מלאי",purchases:"רכישות",consumption:"צריכה",returns:"החזרות",orders:"הזמנות",suppliers:"ספקים",activityLog:"יומן פעילות",totalValue:"ערך מלאי כולל",totalPurchases:"סך הוצאות",lowAlerts:"התראות מלאי נמוך",pendingApprovals:"ממתין לאישור",spendDept:"הוצאות לפי מחלקה",spendSupplier:"הוצאות לפי ספק",recentPurchases:"רכישות אחרונות",recentConsumption:"צריכה אחרונה",newPurchase:"+ רכישה חדשה",logConsumption:"+ רישום צריכה",newOrder:"+ הזמנה חדשה",addItem:"+ הוסף פריט",addReturn:"+ הוסף החזרה",exportExcel:"↑ ייצוא Excel",approve:"אשר",reject:"דחה",receive:"קבל",edit:"ערוך",del:"מחק",save:"שמור",search:"חפש...",allDepts:"כל המחלקות",date:"תאריך",product:"מוצר",qty:"כמות",unitPrice:"מחיר יחידה",total:"סך הכל",supplier:"ספק",department:"מחלקה",invoice:"חשבונית",orderNo:"מספר הזמנה",received:"התקבל",note:"הערה",location:"מיקום",operator:"מפעיל",status:"סטטוס",actions:"פעולות",code:"קוד",unit:"יחידה",purchased:"נרכש",consumed:"נצרך",returned:"הוחזר",stock:"מלאי",avgPrice:"מחיר ממוצע",stockValue:"ערך",lowStock:"מלאי נמוך",ok:"תקין",noAccess:"אין גישה לחלק זה.",approvalNote:"רכישות חדשות דורשות אישור מנהל לפני עדכון המלאי.",loading:"טוען...",logout:"התנתק",discrepancy:"זוהתה צריכה חריגה",staffWelcome:"רשום את הצריכה שלך כאן",selectProduct:"בחר מוצר...",selectDept:"בחר מחלקה...",selectLocation:"בחר מיקום...",minStock:"מלאי מינימלי",itemCode:"קוד פריט",itemName:"שם פריט",itemNameFa:"שם (פרסית)",itemNameHe:"שם (עברית)",reason:"סיבה",fromLocation:"ממיקום",receivedBy:"התקבל על ידי",deliveredTo:"נמסר ל",deliveryPerson:"נמסר על ידי",image:"תמונה",returnQty:"כמות החזרה",editItem:"ערוך פריט",newItem:"פריט חדש",overview:"סקירה",catalog:"קטלוג",transactions:"תנועות",insights:"תובנות",products:"מוצרים",approved:"אושרו",needsAttention:"דורש תשומת לב",allItemsOk:"הכל תקין",awaitingApproval:"ממתין לאישור",queueClear:"התור ריק",stockHealth:"מצב המלאי",topItems:"פריטים מובילים",inStock:"במלאי"},
-  fa:{dashboard:"داشبورد",itemsMgmt:"کالاها",inventory:"موجودی انبار",purchases:"خریدها",consumption:"مصرف",returns:"برگشت به انبار",orders:"سفارش‌ها",suppliers:"تأمین‌کنندگان",activityLog:"گزارش فعالیت",totalValue:"ارزش کل انبار",totalPurchases:"جمع خریدها",lowAlerts:"هشدار کم‌موجودی",pendingApprovals:"در انتظار تأیید",spendDept:"هزینه بر اساس دپارتمان",spendSupplier:"هزینه بر اساس تأمین‌کننده",recentPurchases:"آخرین خریدها",recentConsumption:"آخرین مصرف‌ها",newPurchase:"+ ثبت خرید",logConsumption:"+ ثبت مصرف",newOrder:"+ سفارش جدید",addItem:"+ افزودن کالا",addReturn:"+ ثبت برگشتی",exportExcel:"↑ خروجی اکسل",approve:"تأیید",reject:"رد",receive:"تحویل",edit:"ویرایش",del:"حذف",save:"ذخیره",search:"جستجو...",allDepts:"همه دپارتمان‌ها",date:"تاریخ",product:"کالا",qty:"تعداد",unitPrice:"قیمت واحد",total:"جمع کل",supplier:"تأمین‌کننده",department:"دپارتمان",invoice:"فاکتور",orderNo:"شماره سفارش",received:"تاریخ دریافت",note:"توضیحات",location:"محل مصرف",operator:"اپراتور",status:"وضعیت",actions:"عملیات",code:"کد",unit:"واحد",purchased:"خریداری شده",consumed:"مصرف شده",returned:"برگشتی",stock:"موجودی",avgPrice:"میانگین قیمت",stockValue:"ارزش",lowStock:"کم‌موجودی",ok:"مطلوب",noAccess:"شما دسترسی به این بخش را ندارید.",approvalNote:"خریدهای جدید نیاز به تأیید مدیر دارند.",loading:"در حال بارگذاری...",logout:"خروج",discrepancy:"مصرف غیرعادی شناسایی شد",staffWelcome:"مصرف خود را اینجا ثبت کنید",selectProduct:"انتخاب کالا...",selectDept:"انتخاب دپارتمان...",selectLocation:"انتخاب محل...",minStock:"حداقل موجودی",itemCode:"کد کالا",itemName:"نام کالا",itemNameFa:"نام (فارسی)",itemNameHe:"نام (عبری)",reason:"دلیل",fromLocation:"از محل",receivedBy:"دریافت‌کننده",deliveredTo:"تحویل به",deliveryPerson:"تحویل‌دهنده",image:"تصویر",returnQty:"مقدار برگشتی",editItem:"ویرایش کالا",newItem:"کالای جدید",overview:"نمای کلی",catalog:"کاتالوگ",transactions:"تراکنش‌ها",insights:"تحلیل",products:"کالا",approved:"تأیید شده",needsAttention:"نیاز به توجه",allItemsOk:"همه‌چیز خوبه",awaitingApproval:"در انتظار تأیید",queueClear:"صف خالیه",stockHealth:"وضعیت موجودی",topItems:"کالاهای پرارزش",inStock:"در انبار"}
+  en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"↑ Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Persian)",itemNameHe:"Name (Hebrew)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock",reports:"Reports",reportsDesc:"Generate custom reports — select sections, then download as Excel",selectReports:"Select reports to include",selectAll:"Select All",clearAll:"Clear",generateReport:"↓ Generate Report (Excel)",reportInventory:"INVENTORY",reportTransactions:"TRANSACTIONS",reportAnalytics:"ANALYTICS",reportAudit:"AUDIT",inventorySummary:"Inventory Summary",inventorySummaryDesc:"All items with stock, value, and status",lowStockReport:"Low Stock Items",lowStockDesc:"Items below minimum threshold",topItemsByValue:"Top Items by Value",topItemsByValueDesc:"Most valuable inventory items",allPurchasesReport:"All Purchases",allPurchasesDesc:"Complete list with full details",approvedPurchases:"Approved Purchases",approvedPurchasesDesc:"Confirmed spending, financial focus",pendingPurchases:"Pending Approvals",pendingPurchasesDesc:"Awaiting admin decision",consumptionDetail:"Consumption Detail",consumptionDetailDesc:"Who took what, where, when",returnsReport:"Returns",returnsDesc:"Stock returned to warehouse",ordersReport:"Orders",ordersReportDesc:"Pending and confirmed orders",consumptionByDept:"Consumption by Department",consumptionByDeptDesc:"Aggregated usage per location",consumptionByOperator:"Consumption by Operator",consumptionByOperatorDesc:"Who used how much",deliveryReport:"Delivery Report",deliveryReportDesc:"Who delivered what to whom",suppliersReport:"Suppliers Summary",suppliersReportDesc:"Vendor spending analytics",financialSummary:"Financial Summary",financialSummaryDesc:"Totals, KPIs, key metrics",anomaliesReport:"Anomaly Detection",anomaliesDesc:"Unusual consumption patterns",activityLogReport:"Activity Log",activityLogDesc:"Complete audit trail with users and timestamps",reportGenerated:"Report generated successfully",noReportsSelected:"Please select at least one report"},
+  he:{dashboard:"לוח בקרה",itemsMgmt:"פריטים",inventory:"מלאי",purchases:"רכישות",consumption:"צריכה",returns:"החזרות",orders:"הזמנות",suppliers:"ספקים",activityLog:"יומן פעילות",totalValue:"ערך מלאי כולל",totalPurchases:"סך הוצאות",lowAlerts:"התראות מלאי נמוך",pendingApprovals:"ממתין לאישור",spendDept:"הוצאות לפי מחלקה",spendSupplier:"הוצאות לפי ספק",recentPurchases:"רכישות אחרונות",recentConsumption:"צריכה אחרונה",newPurchase:"+ רכישה חדשה",logConsumption:"+ רישום צריכה",newOrder:"+ הזמנה חדשה",addItem:"+ הוסף פריט",addReturn:"+ הוסף החזרה",exportExcel:"↑ ייצוא Excel",approve:"אשר",reject:"דחה",receive:"קבל",edit:"ערוך",del:"מחק",save:"שמור",search:"חפש...",allDepts:"כל המחלקות",date:"תאריך",product:"מוצר",qty:"כמות",unitPrice:"מחיר יחידה",total:"סך הכל",supplier:"ספק",department:"מחלקה",invoice:"חשבונית",orderNo:"מספר הזמנה",received:"התקבל",note:"הערה",location:"מיקום",operator:"מפעיל",status:"סטטוס",actions:"פעולות",code:"קוד",unit:"יחידה",purchased:"נרכש",consumed:"נצרך",returned:"הוחזר",stock:"מלאי",avgPrice:"מחיר ממוצע",stockValue:"ערך",lowStock:"מלאי נמוך",ok:"תקין",noAccess:"אין גישה לחלק זה.",approvalNote:"רכישות חדשות דורשות אישור מנהל לפני עדכון המלאי.",loading:"טוען...",logout:"התנתק",discrepancy:"זוהתה צריכה חריגה",staffWelcome:"רשום את הצריכה שלך כאן",selectProduct:"בחר מוצר...",selectDept:"בחר מחלקה...",selectLocation:"בחר מיקום...",minStock:"מלאי מינימלי",itemCode:"קוד פריט",itemName:"שם פריט",itemNameFa:"שם (פרסית)",itemNameHe:"שם (עברית)",reason:"סיבה",fromLocation:"ממיקום",receivedBy:"התקבל על ידי",deliveredTo:"נמסר ל",deliveryPerson:"נמסר על ידי",image:"תמונה",returnQty:"כמות החזרה",editItem:"ערוך פריט",newItem:"פריט חדש",overview:"סקירה",catalog:"קטלוג",transactions:"תנועות",insights:"תובנות",products:"מוצרים",approved:"אושרו",needsAttention:"דורש תשומת לב",allItemsOk:"הכל תקין",awaitingApproval:"ממתין לאישור",queueClear:"התור ריק",stockHealth:"מצב המלאי",topItems:"פריטים מובילים",inStock:"במלאי",reports:"דוחות",reportsDesc:"צור דוחות מותאמים — בחר חלקים והורד כ-Excel",selectReports:"בחר דוחות לכלול",selectAll:"בחר הכל",clearAll:"נקה",generateReport:"↓ צור דוח (Excel)",reportInventory:"מלאי",reportTransactions:"תנועות",reportAnalytics:"ניתוח",reportAudit:"ביקורת",inventorySummary:"סיכום מלאי",inventorySummaryDesc:"כל הפריטים עם מלאי וערך",lowStockReport:"מלאי נמוך",lowStockDesc:"פריטים מתחת לסף",topItemsByValue:"פריטים מובילים",topItemsByValueDesc:"הפריטים היקרים ביותר",allPurchasesReport:"כל הרכישות",allPurchasesDesc:"רשימה מלאה עם פרטים",approvedPurchases:"רכישות מאושרות",approvedPurchasesDesc:"הוצאות שאושרו",pendingPurchases:"ממתינות לאישור",pendingPurchasesDesc:"ממתין להחלטת מנהל",consumptionDetail:"פירוט צריכה",consumptionDetailDesc:"מי לקח, מה, מאיפה, מתי",returnsReport:"החזרות",returnsDesc:"מלאי שהוחזר למחסן",ordersReport:"הזמנות",ordersReportDesc:"הזמנות ממתינות ומאושרות",consumptionByDept:"צריכה לפי מחלקה",consumptionByDeptDesc:"שימוש מצטבר לפי מיקום",consumptionByOperator:"צריכה לפי מפעיל",consumptionByOperatorDesc:"מי השתמש בכמה",deliveryReport:"דוח אספקה",deliveryReportDesc:"מי מסר מה למי",suppliersReport:"סיכום ספקים",suppliersReportDesc:"ניתוח הוצאות לפי ספק",financialSummary:"סיכום פיננסי",financialSummaryDesc:"סך הכל, מדדים ראשיים",anomaliesReport:"זיהוי חריגות",anomaliesDesc:"דפוסי צריכה חריגים",activityLogReport:"יומן פעילות",activityLogDesc:"דרך ביקורת מלאה",reportGenerated:"הדוח נוצר בהצלחה",noReportsSelected:"בחר לפחות דוח אחד"},
+  fa:{dashboard:"داشبورد",itemsMgmt:"کالاها",inventory:"موجودی انبار",purchases:"خریدها",consumption:"مصرف",returns:"برگشت به انبار",orders:"سفارش‌ها",suppliers:"تأمین‌کنندگان",activityLog:"گزارش فعالیت",totalValue:"ارزش کل انبار",totalPurchases:"جمع خریدها",lowAlerts:"هشدار کم‌موجودی",pendingApprovals:"در انتظار تأیید",spendDept:"هزینه بر اساس دپارتمان",spendSupplier:"هزینه بر اساس تأمین‌کننده",recentPurchases:"آخرین خریدها",recentConsumption:"آخرین مصرف‌ها",newPurchase:"+ ثبت خرید",logConsumption:"+ ثبت مصرف",newOrder:"+ سفارش جدید",addItem:"+ افزودن کالا",addReturn:"+ ثبت برگشتی",exportExcel:"↑ خروجی اکسل",approve:"تأیید",reject:"رد",receive:"تحویل",edit:"ویرایش",del:"حذف",save:"ذخیره",search:"جستجو...",allDepts:"همه دپارتمان‌ها",date:"تاریخ",product:"کالا",qty:"تعداد",unitPrice:"قیمت واحد",total:"جمع کل",supplier:"تأمین‌کننده",department:"دپارتمان",invoice:"فاکتور",orderNo:"شماره سفارش",received:"تاریخ دریافت",note:"توضیحات",location:"محل مصرف",operator:"اپراتور",status:"وضعیت",actions:"عملیات",code:"کد",unit:"واحد",purchased:"خریداری شده",consumed:"مصرف شده",returned:"برگشتی",stock:"موجودی",avgPrice:"میانگین قیمت",stockValue:"ارزش",lowStock:"کم‌موجودی",ok:"مطلوب",noAccess:"شما دسترسی به این بخش را ندارید.",approvalNote:"خریدهای جدید نیاز به تأیید مدیر دارند.",loading:"در حال بارگذاری...",logout:"خروج",discrepancy:"مصرف غیرعادی شناسایی شد",staffWelcome:"مصرف خود را اینجا ثبت کنید",selectProduct:"انتخاب کالا...",selectDept:"انتخاب دپارتمان...",selectLocation:"انتخاب محل...",minStock:"حداقل موجودی",itemCode:"کد کالا",itemName:"نام کالا",itemNameFa:"نام (فارسی)",itemNameHe:"نام (عبری)",reason:"دلیل",fromLocation:"از محل",receivedBy:"دریافت‌کننده",deliveredTo:"تحویل به",deliveryPerson:"تحویل‌دهنده",image:"تصویر",returnQty:"مقدار برگشتی",editItem:"ویرایش کالا",newItem:"کالای جدید",overview:"نمای کلی",catalog:"کاتالوگ",transactions:"تراکنش‌ها",insights:"تحلیل",products:"کالا",approved:"تأیید شده",needsAttention:"نیاز به توجه",allItemsOk:"همه‌چیز خوبه",awaitingApproval:"در انتظار تأیید",queueClear:"صف خالیه",stockHealth:"وضعیت موجودی",topItems:"کالاهای پرارزش",inStock:"در انبار",reports:"گزارش‌ها",reportsDesc:"گزارش‌های دلخواه بساز — بخش‌ها رو انتخاب کن، Excel دانلود کن",selectReports:"گزارش‌های مورد نظر رو انتخاب کن",selectAll:"انتخاب همه",clearAll:"حذف انتخاب",generateReport:"↓ ساخت گزارش (Excel)",reportInventory:"موجودی انبار",reportTransactions:"تراکنش‌ها",reportAnalytics:"تحلیل",reportAudit:"حسابرسی",inventorySummary:"خلاصه موجودی",inventorySummaryDesc:"همه کالاها با موجودی، ارزش و وضعیت",lowStockReport:"کالاهای کم‌موجود",lowStockDesc:"کالاهای زیر حداقل تعریف شده",topItemsByValue:"کالاهای پرارزش",topItemsByValueDesc:"باارزش‌ترین اقلام انبار",allPurchasesReport:"کل خریدها",allPurchasesDesc:"لیست کامل با همه جزئیات",approvedPurchases:"خریدهای تأیید شده",approvedPurchasesDesc:"هزینه‌های تأیید شده، تمرکز مالی",pendingPurchases:"در انتظار تأیید",pendingPurchasesDesc:"در انتظار تصمیم مدیر",consumptionDetail:"جزئیات مصرف",consumptionDetailDesc:"کی چی برداشت، از کجا، کی",returnsReport:"برگشتی‌ها",returnsDesc:"کالاهای برگشتی به انبار",ordersReport:"سفارش‌ها",ordersReportDesc:"سفارش‌های در انتظار و تأیید شده",consumptionByDept:"مصرف بر اساس دپارتمان",consumptionByDeptDesc:"مصرف تجمیعی بر اساس محل",consumptionByOperator:"مصرف بر اساس اپراتور",consumptionByOperatorDesc:"کی چقدر مصرف کرده",deliveryReport:"گزارش تحویل",deliveryReportDesc:"کی چی به کی تحویل داده",suppliersReport:"خلاصه تأمین‌کنندگان",suppliersReportDesc:"تحلیل هزینه بر اساس تأمین‌کننده",financialSummary:"خلاصه مالی",financialSummaryDesc:"جمع‌ها، شاخص‌ها، اعداد کلیدی",anomaliesReport:"تشخیص غیرعادی",anomaliesDesc:"الگوهای مصرف غیرعادی",activityLogReport:"گزارش فعالیت",activityLogDesc:"مسیر کامل حسابرسی با کاربر و زمان",reportGenerated:"گزارش با موفقیت ساخته شد",noReportsSelected:"حداقل یک گزارش انتخاب کن"}
 };
 
 const DEPTS = ["General Maintenance","Gardening","Cleaning","Pools","Security","Equipment Repairs"];
+const REPORT_CATEGORIES = [
+  {key:"inventory",    icon:"📦"},
+  {key:"transactions", icon:"💳"},
+  {key:"analytics",    icon:"📊"},
+  {key:"audit",        icon:"🔒"},
+];
+
+const REPORT_TYPES = [
+  {key:"inventorySummary",      cat:"inventory"},
+  {key:"lowStockReport",        cat:"inventory"},
+  {key:"topItemsByValue",       cat:"inventory"},
+  {key:"allPurchasesReport",    cat:"transactions"},
+  {key:"approvedPurchases",     cat:"transactions"},
+  {key:"pendingPurchases",      cat:"transactions"},
+  {key:"consumptionDetail",     cat:"transactions"},
+  {key:"returnsReport",         cat:"transactions"},
+  {key:"ordersReport",          cat:"transactions"},
+  {key:"consumptionByDept",     cat:"analytics"},
+  {key:"consumptionByOperator", cat:"analytics"},
+  {key:"deliveryReport",        cat:"analytics"},
+  {key:"suppliersReport",       cat:"analytics"},
+  {key:"financialSummary",      cat:"analytics"},
+  {key:"anomaliesReport",       cat:"analytics"},
+  {key:"activityLogReport",     cat:"audit"},
+];
+
 const SUPPLIERS_LIST = ["Kalbo Materials","Garden Eden","Clean Supply","Pool Tech","Security Plus"];
 const CHART_COLORS = ["#6366f1","#22d3ee","#f59e0b","#f87171","#34d399","#a78bfa","#fb923c","#38bdf8"];
 const STATUS_META = {pending:{en:"Pending",fa:"در انتظار",color:"#f59e0b"},approved:{en:"Approved",fa:"تأیید شده",color:"#10b981"},rejected:{en:"Rejected",fa:"رد شده",color:"#ef4444"},delivered:{en:"Delivered",fa:"تحویل شده",color:"#3b82f6"},confirmed:{en:"Confirmed",fa:"تأیید",color:"#6366f1"},cancelled:{en:"Cancelled",fa:"لغو شده",color:"#8892b0"}};
@@ -49,7 +75,7 @@ const NAV_GROUPS = [
   {key:"transactions", items:["purchases","consumption","returns","orders"]},
   {key:"insights",     items:["suppliers","activityLog"]},
 ];
-const TAB_ICONS = {dashboard:"◈",itemsMgmt:"⊞",inventory:"▦",purchases:"↓",consumption:"↗",returns:"↩",orders:"◎",suppliers:"⊡",activityLog:"📋"};
+const TAB_ICONS = {reports:"📋",dashboard:"◈",itemsMgmt:"⊞",inventory:"▦",purchases:"↓",consumption:"↗",returns:"↩",orders:"◎",suppliers:"⊡",activityLog:"📋"};
 
 const fmt = n => Number(n||0).toLocaleString("en-US");
 const curr = n => `₺${fmt(n)}`;
@@ -117,6 +143,7 @@ export default function App() {
   const [imgPreview, setImgPreview] = useState(null);
   const [isMobile, setIsMobile] = useState(typeof window !== "undefined" && window.innerWidth < 900);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [reportSelections, setReportSelections] = useState({});
   const imgRef = useRef();
   const t = T[lang];
   const TH = THEMES[theme];
@@ -328,6 +355,216 @@ export default function App() {
   async function receiveOrder(o) { await supabase.from("orders").update({status:"delivered"}).eq("id",o.id); openM("purchase",{date:new Date().toISOString().slice(0,10),itemId:o.itemId,qty:o.qty,unitPrice:"",supplier:o.supplier||"",invoice:"",orderNo:"",receivedDate:"",department:"",note:o.note||""}); }
   async function deleteOrder(id) { if(!window.confirm("Delete?"))return; await supabase.from("orders").delete().eq("id",id); await loadAll(); }
 
+  // ─── REPORT GENERATION ───────────────────────────────────────
+  async function generateCustomReport() {
+    const selected = Object.keys(reportSelections).filter(k => reportSelections[k]);
+    if (selected.length === 0) return alert(t.noReportsSelected);
+
+    const wb = XLSX.utils.book_new();
+
+    for (const key of selected) {
+      let data = [];
+      let sheetName = key.slice(0,31);
+
+      if (key === "inventorySummary") {
+        data = inventory.map(i => ({
+          Code: i.code, Name: i.name, Unit: i.unit,
+          Purchased: i.purchased, Consumed: i.consumed, Returned: i.returned,
+          Stock: i.stock, MinStock: i.min_stock,
+          AvgPrice: Math.round(i.avgPrice||0), TotalValue: Math.round(i.totalValue||0),
+          Status: i.stock<=0 ? "OUT" : i.low ? "LOW" : "OK",
+          Supplier: i.supplier
+        }));
+        sheetName = "Inventory Summary";
+      }
+      else if (key === "lowStockReport") {
+        data = inventory.filter(i=>i.low||i.stock<=0).map(i => ({
+          Code: i.code, Name: i.name, Stock: i.stock, MinStock: i.min_stock,
+          ShortageQty: Math.max(0, i.min_stock - i.stock),
+          Status: i.stock<=0 ? "OUT OF STOCK" : "LOW",
+          Supplier: i.supplier
+        }));
+        sheetName = "Low Stock";
+      }
+      else if (key === "topItemsByValue") {
+        data = [...inventory].sort((a,b)=>b.totalValue-a.totalValue).slice(0,20).map((i,idx) => ({
+          Rank: idx+1, Code: i.code, Name: i.name,
+          Stock: i.stock, Unit: i.unit, AvgPrice: Math.round(i.avgPrice||0),
+          TotalValue: Math.round(i.totalValue||0)
+        }));
+        sheetName = "Top Items";
+      }
+      else if (key === "allPurchasesReport") {
+        data = purchases.map(p => {
+          const it = items.find(i=>i.id===p.itemId);
+          return {
+            Date: p.date, Code: it?.code||"", Product: it?.name||"",
+            Qty: p.qty, Unit: it?.unit||"", UnitPrice: p.unitPrice,
+            Total: Math.round(p.qty*p.unitPrice),
+            Supplier: p.supplier, Invoice: p.invoice, OrderNo: p.orderNo,
+            ReceivedDate: p.receivedDate, Department: p.department,
+            Status: p.status, Note: p.note, CreatedBy: p.created_by
+          };
+        });
+        sheetName = "All Purchases";
+      }
+      else if (key === "approvedPurchases") {
+        data = purchases.filter(p=>p.status==="approved").map(p => {
+          const it = items.find(i=>i.id===p.itemId);
+          return {
+            Date: p.date, Product: it?.name||"", Qty: p.qty,
+            UnitPrice: p.unitPrice, Total: Math.round(p.qty*p.unitPrice),
+            Supplier: p.supplier, Department: p.department,
+            ApprovedBy: p.created_by
+          };
+        });
+        sheetName = "Approved Purchases";
+      }
+      else if (key === "pendingPurchases") {
+        data = purchases.filter(p=>p.status==="pending").map(p => {
+          const it = items.find(i=>i.id===p.itemId);
+          return {
+            Date: p.date, Product: it?.name||"", Qty: p.qty,
+            UnitPrice: p.unitPrice, Total: Math.round(p.qty*p.unitPrice),
+            Supplier: p.supplier, RequestedBy: p.created_by, Note: p.note
+          };
+        });
+        sheetName = "Pending Approvals";
+      }
+      else if (key === "consumptionDetail") {
+        data = consumptions.map(c => {
+          const it = items.find(i=>i.id===c.itemId);
+          return {
+            Date: c.date, Code: it?.code||"", Product: it?.name||"",
+            Qty: c.qty, Unit: it?.unit||"",
+            Location: c.location, DeliveredTo: c.deliveredTo,
+            DeliveredBy: c.deliveryPerson, Operator: c.operator,
+            Note: c.note, LoggedBy: c.created_by
+          };
+        });
+        sheetName = "Consumption Detail";
+      }
+      else if (key === "returnsReport") {
+        data = returns.map(r => {
+          const it = items.find(i=>i.id===r.itemId);
+          return {
+            Date: r.date, Product: it?.name||"", Qty: r.qty,
+            Reason: r.reason, FromLocation: r.fromLocation,
+            ReceivedBy: r.receivedBy, Note: r.note, CreatedBy: r.created_by
+          };
+        });
+        sheetName = "Returns";
+      }
+      else if (key === "ordersReport") {
+        data = orders.map(o => {
+          const it = items.find(i=>i.id===o.itemId);
+          return {
+            Date: o.date, Product: it?.name||"", Qty: o.qty,
+            Supplier: o.supplier, Status: o.status,
+            Note: o.note, CreatedBy: o.created_by
+          };
+        });
+        sheetName = "Orders";
+      }
+      else if (key === "consumptionByDept") {
+        const agg = {};
+        consumptions.forEach(c => {
+          const inv = inventory.find(i=>i.id===c.itemId);
+          const dept = c.location || "—";
+          if (!agg[dept]) agg[dept] = {Department: dept, Records: 0, TotalQty: 0, EstimatedValue: 0};
+          agg[dept].Records++;
+          agg[dept].TotalQty += Number(c.qty);
+          agg[dept].EstimatedValue += Number(c.qty) * (inv?.avgPrice||0);
+        });
+        data = Object.values(agg).map(d => ({...d, EstimatedValue: Math.round(d.EstimatedValue)}));
+        sheetName = "By Department";
+      }
+      else if (key === "consumptionByOperator") {
+        const agg = {};
+        consumptions.forEach(c => {
+          const op = c.operator || "—";
+          if (!agg[op]) agg[op] = {Operator: op, Records: 0, TotalQty: 0};
+          agg[op].Records++;
+          agg[op].TotalQty += Number(c.qty);
+        });
+        data = Object.values(agg);
+        sheetName = "By Operator";
+      }
+      else if (key === "deliveryReport") {
+        data = consumptions.filter(c=>c.deliveredTo||c.deliveryPerson).map(c => {
+          const it = items.find(i=>i.id===c.itemId);
+          return {
+            Date: c.date, Product: it?.name||"", Qty: c.qty,
+            DeliveredTo: c.deliveredTo, DeliveredBy: c.deliveryPerson,
+            Location: c.location, Note: c.note
+          };
+        });
+        sheetName = "Deliveries";
+      }
+      else if (key === "suppliersReport") {
+        data = SUPPLIERS_LIST.map(s => {
+          const sp = purchases.filter(p=>p.supplier===s&&p.status==="approved");
+          return {
+            Supplier: s, Purchases: sp.length,
+            TotalQty: sp.reduce((sum,p)=>sum+Number(p.qty),0),
+            TotalSpend: Math.round(sp.reduce((sum,p)=>sum+p.qty*p.unitPrice,0))
+          };
+        });
+        sheetName = "Suppliers Summary";
+      }
+      else if (key === "financialSummary") {
+        const totalValue = inventory.reduce((s,i)=>s+(i.totalValue||0),0);
+        const totalApproved = purchases.filter(p=>p.status==="approved").reduce((s,p)=>s+p.qty*p.unitPrice,0);
+        const totalPending = purchases.filter(p=>p.status==="pending").reduce((s,p)=>s+p.qty*p.unitPrice,0);
+        data = [
+          {Metric: "Total Stock Value (₺)", Value: Math.round(totalValue)},
+          {Metric: "Total Approved Spend (₺)", Value: Math.round(totalApproved)},
+          {Metric: "Total Pending Spend (₺)", Value: Math.round(totalPending)},
+          {Metric: "Number of Items", Value: items.length},
+          {Metric: "Low Stock Items", Value: inventory.filter(i=>i.low).length},
+          {Metric: "Out of Stock", Value: inventory.filter(i=>i.stock<=0).length},
+          {Metric: "Total Purchases", Value: purchases.length},
+          {Metric: "Approved Purchases", Value: purchases.filter(p=>p.status==="approved").length},
+          {Metric: "Pending Approvals", Value: purchases.filter(p=>p.status==="pending").length},
+          {Metric: "Total Consumption Records", Value: consumptions.length},
+          {Metric: "Total Returns", Value: returns.length},
+          {Metric: "Number of Suppliers", Value: SUPPLIERS_LIST.length},
+        ];
+        sheetName = "Financial Summary";
+      }
+      else if (key === "anomaliesReport") {
+        data = discrepancies.map(d => ({
+          Code: d.code, Product: d.name,
+          AvgConsumption: d.avg.toFixed(2),
+          RecentConsumption: d.recent,
+          SpikeRatio: (d.recent/d.avg).toFixed(2) + "x"
+        }));
+        sheetName = "Anomalies";
+      }
+      else if (key === "activityLogReport") {
+        data = logs.map(l => ({
+          DateTime: new Date(l.created_at).toLocaleString(),
+          Action: l.action, Details: l.details,
+          User: l.user_email, UserAgent: l.user_agent||""
+        }));
+        sheetName = "Activity Log";
+      }
+
+      if (data.length > 0) {
+        const ws = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, sheetName.slice(0,31));
+      }
+    }
+
+    if (wb.SheetNames.length === 0) return alert("No data for selected reports");
+
+    const fname = `StockTrack_Report_${new Date().toISOString().slice(0,10)}_${new Date().toISOString().slice(11,16).replace(":","")}.xlsx`;
+    XLSX.writeFile(wb, fname);
+    await logAction("Generated Report", `Reports: ${selected.join(", ")} count:${wb.SheetNames.length} by:${user?.email}`);
+    alert(t.reportGenerated + " ✓");
+  }
+
+
   function exportExcel() {
     const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(inventory.map(i=>({Code:i.code,Product:i.name,Unit:i.unit,Purchased:i.bought,Consumed:i.used,Returned:i.returned,Stock:i.stock,"Min Stock":i.min_stock,"Avg Price":Math.round(i.avg),"Stock Value":Math.round(i.totalValue)}))),"Inventory");
@@ -342,7 +579,7 @@ export default function App() {
   const filtPur  = purchases.filter(p=>deptFilter==="All"||p.department===deptFilter);
   const filtCons = consumptions.filter(c=>search===""||items.find(i=>i.id===c.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
   const filtRet  = returns.filter(r=>search===""||items.find(i=>i.id===r.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
-  const allTabs = isAdmin ? ["dashboard","itemsMgmt","inventory","purchases","consumption","returns","orders","suppliers","activityLog"] : ["consumption"];
+  const allTabs = isAdmin ? ["dashboard","itemsMgmt","inventory","purchases","consumption","returns","orders","reports","suppliers","activityLog"] : ["consumption"];
 
   if(loading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:TH.bg}}><div style={{color:TH.accent,fontSize:16}}>{t.loading}</div></div>;
 
@@ -808,6 +1045,55 @@ export default function App() {
                   </tr>
                 );})}</tbody>
               </table>
+            </div>
+          </>}
+
+          {/* ═══ REPORTS ═══ */}
+          {tab==="reports"&&isAdmin&&<>
+            <div style={{marginBottom:20}}>
+              <h1 style={h1Style}>{t.reports}</h1>
+              <div style={subStyle}>{t.reportsDesc}</div>
+            </div>
+
+            <div style={card}>
+              <div style={{...cardTitle,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span>{t.selectReports} ({Object.values(reportSelections).filter(Boolean).length}/{REPORT_TYPES.length})</span>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>{const all={};REPORT_TYPES.forEach(r=>all[r.key]=true);setReportSelections(all);}} style={{background:TH.accentBg,border:`1px solid ${TH.accent}`,color:TH.accent,padding:"5px 12px",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"}}>{t.selectAll}</button>
+                  <button onClick={()=>setReportSelections({})} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,color:TH.textMuted,padding:"5px 12px",borderRadius:7,cursor:"pointer",fontSize:11,fontWeight:600,fontFamily:"inherit"}}>{t.clearAll}</button>
+                </div>
+              </div>
+
+              {REPORT_CATEGORIES.map(cat=>{
+                const catReports = REPORT_TYPES.filter(r=>r.cat===cat.key);
+                if(catReports.length===0) return null;
+                return (
+                  <div key={cat.key} style={{marginBottom:18}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 0 8px",borderBottom:`1px solid ${TH.divider}`,marginBottom:8}}>
+                      <span style={{fontSize:14}}>{cat.icon}</span>
+                      <span style={{color:TH.textHeading,fontSize:11,fontWeight:800,letterSpacing:"0.12em"}}>{t["report"+cat.key.charAt(0).toUpperCase()+cat.key.slice(1)]||cat.key.toUpperCase()}</span>
+                    </div>
+                    <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(280px,1fr))",gap:8}}>
+                      {catReports.map(rep=>{
+                        const checked = !!reportSelections[rep.key];
+                        return (
+                          <label key={rep.key} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"10px 12px",borderRadius:9,cursor:"pointer",background:checked?TH.accentBg:TH.bgInput,border:`1px solid ${checked?TH.accent:TH.border}`,transition:"all .15s"}}>
+                            <input type="checkbox" checked={checked} onChange={e=>setReportSelections({...reportSelections,[rep.key]:e.target.checked})} style={{marginTop:3,cursor:"pointer",accentColor:TH.accent}}/>
+                            <div style={{flex:1,minWidth:0}}>
+                              <div style={{color:TH.text,fontWeight:600,fontSize:13,marginBottom:2}}>{t[rep.key]||rep.key}</div>
+                              <div style={{color:TH.textMuted,fontSize:11,lineHeight:1.4}}>{t[rep.key+"Desc"]||""}</div>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              <button onClick={generateCustomReport} disabled={Object.values(reportSelections).filter(Boolean).length===0} style={{...saveBtn,marginTop:8,opacity:Object.values(reportSelections).filter(Boolean).length===0?0.5:1}}>
+                {t.generateReport}
+              </button>
             </div>
           </>}
 
