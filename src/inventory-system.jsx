@@ -51,6 +51,101 @@ const POOL_CHEMICALS = [
   {key:"qty_lac",   label:"Liquid Acid",         unit:"kg", price:0.85},
 ];
 
+
+const LEAFLET_MAP_HTML = (locations, addMode, darkMode) => `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body,#map{width:100%;height:100%;background:#0b1730}
+  .custom-pin{width:18px;height:18px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.7);cursor:pointer;transition:transform .15s}
+  .custom-pin:hover,.custom-pin.sel{transform:scale(1.35);box-shadow:0 0 0 4px rgba(255,255,255,.25)}
+  .leaflet-container{background:#0b1730!important}
+  .addmode-cursor{cursor:crosshair!important}
+  .leaflet-control-zoom{border:none!important}
+  .leaflet-control-zoom a{background:rgba(12,28,66,.92)!important;color:#fff!important;border-color:rgba(255,255,255,.15)!important}
+  .leaflet-control-attribution{background:rgba(0,0,0,.5)!important;color:#999!important;font-size:9px!important}
+  .leaflet-control-attribution a{color:#aaa!important}
+  .pin-label{background:rgba(0,0,0,.85);color:#fff;font-size:10px;padding:2px 7px;border-radius:4px;border:1px solid rgba(255,255,255,.25);white-space:nowrap;font-weight:600;font-family:ui-sans-serif,system-ui,sans-serif}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const CAT_COLORS = {pool:"#0891b2",building:"#3b82f6",restaurant:"#f59e0b",spa:"#8b5cf6",garden:"#10b981",sport:"#f97316",maintenance:"#64748b",other:"#94a3b8"};
+const CAT_ICONS  = {pool:"🏊",building:"🏢",restaurant:"🍽",spa:"💆",garden:"🌿",sport:"🏅",maintenance:"🔧",other:"📍"};
+
+const map = L.map('map',{zoomControl:true,attributionControl:true}).setView([35.3513,33.8567],17);
+
+// Satellite layer: Esri World Imagery (free, no API key)
+const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri, Maxar, Earthstar Geographics',maxZoom:20}).addTo(map);
+
+// Labels overlay
+const labels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{attribution:'',maxZoom:20,opacity:0.8}).addTo(map);
+
+let locs = ${JSON.stringify(locations)};
+let addMode = ${addMode};
+let markers = {};
+let selId = null;
+
+function makeIcon(loc){
+  const col = CAT_COLORS[loc.category]||'#94a3b8';
+  return L.divIcon({
+    className:'',
+    html:'<div class="custom-pin'+(selId===loc.id?' sel':'')+'" style="background:'+col+';border-color:'+(selId===loc.id?'#fff':'rgba(255,255,255,.75)')+'" data-id="'+loc.id+'"></div>',
+    iconSize:[18,18],iconAnchor:[9,9]
+  });
+}
+
+function renderMarkers(){
+  Object.values(markers).forEach(m=>map.removeLayer(m.marker));
+  if(markers._labels)map.removeLayer(markers._labels);
+  markers={};
+  locs.filter(l=>l.lat&&l.lng).forEach(loc=>{
+    const m = L.marker([loc.lat,loc.lng],{icon:makeIcon(loc)});
+    const col = CAT_COLORS[loc.category]||'#94a3b8';
+    const icon = CAT_ICONS[loc.category]||'📍';
+    m.bindTooltip('<div class="pin-label">'+icon+' '+loc.name+'</div>',{direction:'right',offset:[10,0],opacity:1,sticky:false,permanent:false});
+    m.on('click',e=>{
+      L.DomEvent.stopPropagation(e);
+      selId=loc.id;
+      renderMarkers();
+      window.parent.postMessage({type:'selectLoc',id:loc.id},'*');
+    });
+    m.addTo(map);
+    markers[loc.id]={marker:m,loc};
+  });
+}
+
+renderMarkers();
+
+map.on('click',e=>{
+  if(!addMode)return;
+  window.parent.postMessage({type:'mapClick',lat:e.latlng.lat.toFixed(6),lng:e.latlng.lng.toFixed(6)},'*');
+});
+
+map.getContainer().addEventListener('mousemove',()=>{
+  if(addMode)map.getContainer().classList.add('addmode-cursor');
+  else map.getContainer().classList.remove('addmode-cursor');
+});
+
+window.addEventListener('message',e=>{
+  if(e.data.type==='updateLocs'){locs=e.data.locs;renderMarkers();}
+  if(e.data.type==='setAddMode'){addMode=e.data.val;if(!addMode)map.getContainer().classList.remove('addmode-cursor');}
+  if(e.data.type==='selectId'){selId=e.data.id;renderMarkers();}
+  if(e.data.type==='flyTo'&&e.data.lat&&e.data.lng){map.flyTo([e.data.lat,e.data.lng],18);}
+  if(e.data.type==='resetView'){map.setView([35.3513,33.8567],17);}
+});
+
+// Tell parent that map is ready
+window.parent.postMessage({type:'mapReady'},'*');
+</script>
+</body>
+</html>`;
+
 const RESORT_CATEGORIES = [
   {key:"pool",       label:"Pool",         icon:"🏊", color:"#0891b2"},
   {key:"building",   label:"Building",     icon:"🏢", color:"#3b82f6"},
@@ -185,6 +280,8 @@ export default function App() {
   const [dbMapTx, setDbMapTx] = useState(0);
   const [dbMapTy, setDbMapTy] = useState(20);
   const dbMapRef = useRef(null);
+  const dbIframeRef = useRef(null);
+  const [dbMapReady, setDbMapReady] = useState(false);
   const dbPanRef = useRef({active:false,lx:0,ly:0});
 
   const [mapScale, setMapScale] = useState(1);
@@ -427,8 +524,9 @@ export default function App() {
     const rec={name:dbForm.name.trim(),category:dbForm.category,subcategory:dbForm.subcategory||null,
       description:dbForm.description||null,area_m2:dbForm.area_m2?Number(dbForm.area_m2):null,
       floor_level:dbForm.floor_level||null,capacity:dbForm.capacity?Number(dbForm.capacity):null,
-      notes:dbForm.notes||null,map_x:dbForm.map_x||null,map_y:dbForm.map_y||null,
-      on_map:!!(dbForm.map_x&&dbForm.map_y),created_by:user?.email||""};
+      notes:dbForm.notes||null,lat:dbForm.lat?Number(dbForm.lat):null,lng:dbForm.lng?Number(dbForm.lng):null,
+      map_x:dbForm.lat?dbForm.lng:null,map_y:dbForm.lat?dbForm.lat:null,
+      on_map:!!(dbForm.lat&&dbForm.lng),created_by:user?.email||""};
     if(dbEditId){
       delete rec.created_by;
       rec.updated_at=new Date().toISOString();
@@ -440,9 +538,47 @@ export default function App() {
     }
     await loadAll();
     setDbFormOpen(false);setDbEditId(null);setDbAddMode(false);
-    setDbForm({name:"",category:"pool",subcategory:"",description:"",area_m2:"",floor_level:"",capacity:"",notes:"",map_x:null,map_y:null});
+    setDbForm({name:"",category:"pool",subcategory:"",description:"",area_m2:"",floor_level:"",capacity:"",notes:"",lat:null,lng:null});
     setSaving(false);
   }
+  // ─── LEAFLET MAP COMMUNICATION ──────────────────────────────────
+  useEffect(()=>{
+    function handleMsg(e){
+      if(e.data.type==='mapReady'){
+        setDbMapReady(true);
+        if(dbIframeRef.current?.contentWindow)
+          dbIframeRef.current.contentWindow.postMessage({type:'updateLocs',locs:resortLocations.filter(l=>l.lat&&l.lng)},'*');
+      }
+      if(e.data.type==='mapClick'&&dbAddMode){
+        setDbForm(f=>({...f,lat:e.data.lat,lng:e.data.lng}));
+        setDbFormOpen(true);setDbEditId(null);
+      }
+      if(e.data.type==='selectLoc'){
+        const loc=resortLocations.find(l=>l.id===e.data.id);
+        if(loc)setSelLocation(loc);
+      }
+    }
+    window.addEventListener('message',handleMsg);
+    return()=>window.removeEventListener('message',handleMsg);
+  },[resortLocations,dbAddMode]);
+
+  useEffect(()=>{
+    if(!dbIframeRef.current?.contentWindow||!dbMapReady)return;
+    dbIframeRef.current.contentWindow.postMessage({type:'updateLocs',locs:resortLocations.filter(l=>l.lat&&l.lng)},'*');
+  },[resortLocations,dbMapReady]);
+
+  useEffect(()=>{
+    if(!dbIframeRef.current?.contentWindow||!dbMapReady)return;
+    dbIframeRef.current.contentWindow.postMessage({type:'setAddMode',val:dbAddMode},'*');
+  },[dbAddMode,dbMapReady]);
+
+  useEffect(()=>{
+    if(!dbIframeRef.current?.contentWindow||!dbMapReady||!selLocation)return;
+    dbIframeRef.current.contentWindow.postMessage({type:'selectId',id:selLocation.id},'*');
+    if(selLocation.lat&&selLocation.lng)
+      dbIframeRef.current.contentWindow.postMessage({type:'flyTo',lat:selLocation.lat,lng:selLocation.lng},'*');
+  },[selLocation,dbMapReady]);
+
   async function deleteResortLocation(id){
     if(!window.confirm("Delete this location?"))return;
     await supabase.from("resort_locations").update({is_active:false}).eq("id",id);
@@ -1371,74 +1507,27 @@ export default function App() {
               {/* ── MAP ── */}
               <div ref={dbMapRef}
                 style={{flex:1,position:"relative",overflow:"hidden",height:isMobile?"320px":"100%",background:"#0b1730",borderRadius:12,border:`1px solid ${TH.border}`,cursor:dbAddMode?"crosshair":dbPanRef.current?.active?"grabbing":"grab",userSelect:"none"}}
-                onWheel={e=>{
-                  e.preventDefault();
-                  const r=dbMapRef.current.getBoundingClientRect();
-                  const mx=e.clientX-r.left,my=e.clientY-r.top;
-                  const f=e.deltaY<0?1.15:1/1.15;
-                  const ns=Math.max(0.25,Math.min(5,dbMapScale*f));
-                  setDbMapTx(mx-(mx-dbMapTx)*ns/dbMapScale);
-                  setDbMapTy(my-(my-dbMapTy)*ns/dbMapScale);
-                  setDbMapScale(ns);
-                }}
-                onPointerDown={e=>{
-                  if(e.target.closest('.db-pin'))return;
-                  if(dbAddMode){
-                    const r=dbMapRef.current.getBoundingClientRect();
-                    const mx=(e.clientX-r.left-dbMapTx)/dbMapScale;
-                    const my=(e.clientY-r.top-dbMapTy)/dbMapScale;
-                    setDbForm(f=>({...f,map_x:Math.round(mx*10)/10,map_y:Math.round(my*10)/10}));
-                    setDbFormOpen(true);setDbEditId(null);
-                    return;
-                  }
-                  dbPanRef.current={active:true,lx:e.clientX,ly:e.clientY};
-                }}
-                onPointerMove={e=>{
-                  if(!dbPanRef.current?.active)return;
-                  setDbMapTx(x=>x+(e.clientX-dbPanRef.current.lx));
-                  setDbMapTy(y=>y+(e.clientY-dbPanRef.current.ly));
-                  dbPanRef.current={active:true,lx:e.clientX,ly:e.clientY};
-                }}
-                onPointerUp={()=>{if(dbPanRef.current)dbPanRef.current.active=false;}}
-                onPointerLeave={()=>{if(dbPanRef.current)dbPanRef.current.active=false;}}
-              >
-                {/* Map image + markers */}
-                <div style={{position:"absolute",transformOrigin:"0 0",transform:`translate(${dbMapTx}px,${dbMapTy}px) scale(${dbMapScale})`,width:MAP_W,height:MAP_H,pointerEvents:"none"}}>
-                  <img src={RESORT_MAP} style={{width:"100%",height:"100%",display:"block"}} draggable={false}/>
-                  {/* Markers */}
-                  {resortLocations
-                    .filter(l=>l.on_map&&l.map_x!=null&&l.map_y!=null)
-                    .filter(l=>dbCatFilter==="all"||l.category===dbCatFilter)
-                    .map(loc=>{
-                      const cat=RESORT_CATEGORIES.find(c=>c.key===loc.category)||RESORT_CATEGORIES[7];
-                      const isSel=selLocation?.id===loc.id;
-                      return(
-                        <div key={loc.id} className="db-pin"
-                          style={{position:"absolute",left:loc.map_x,top:loc.map_y,transform:"translate(-8px,-8px)",pointerEvents:"auto",cursor:"pointer",zIndex:isSel?20:10}}
-                          onClick={e=>{e.stopPropagation();setSelLocation(isSel?null:loc);setDbFormOpen(false);}}>
-                          <div style={{width:16,height:16,borderRadius:"50%",background:cat.color,border:`2.5px solid ${isSel?"#fff":"rgba(255,255,255,.7)"}`,boxShadow:`0 1px 6px rgba(0,0,0,.7)${isSel?`,0 0 0 4px ${cat.color}55`:""}`,transition:"all .15s",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8}}>
-                            {cat.icon}
-                          </div>
-                          {(dbMapScale>0.65||isSel)&&(
-                            <span style={{position:"absolute",left:14,top:-5,background:"rgba(0,0,0,.85)",color:"#fff",fontSize:9,padding:"2px 6px",borderRadius:4,whiteSpace:"nowrap",border:"1px solid rgba(255,255,255,.25)",pointerEvents:"none",fontWeight:600}}>
-                              {loc.name}
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                </div>
 
-                {/* Map controls */}
-                <div style={{position:"absolute",top:8,right:8,display:"flex",gap:5,zIndex:20}}>
-                  {[["＋",1.3],["－",1/1.3],["⊡",null]].map(([lb,f])=>(
-                    <button key={lb} onClick={()=>{
-                      if(!f){setDbMapScale(0.55);setDbMapTx(5);setDbMapTy(20);}
-                      else{const r=dbMapRef.current?.getBoundingClientRect()||{width:600,height:400};const ns=Math.max(0.25,Math.min(5,dbMapScale*f));setDbMapTx(r.width/2-(r.width/2-dbMapTx)*ns/dbMapScale);setDbMapTy(r.height/2-(r.height/2-dbMapTy)*ns/dbMapScale);setDbMapScale(ns);}
-                    }} style={{width:30,height:30,borderRadius:6,background:"rgba(0,0,0,.65)",border:"1px solid rgba(255,255,255,.2)",color:"#fff",cursor:"pointer",fontSize:lb==="⊡"?12:16,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"inherit"}}>
-                      {lb}
-                    </button>
-                  ))}
+              >
+                {/* Leaflet satellite map in iframe */}
+                <iframe
+                  ref={dbIframeRef}
+                  srcDoc={LEAFLET_MAP_HTML(resortLocations.filter(l=>l.lat&&l.lng&&(dbCatFilter==="all"||l.category===dbCatFilter)),dbAddMode,theme==="dark")}
+                  style={{position:"absolute",inset:0,width:"100%",height:"100%",border:"none",borderRadius:12}}
+                  sandbox="allow-scripts allow-same-origin"
+                />
+                {!dbMapReady&&(
+                  <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"#0b1730",borderRadius:12,zIndex:5}}>
+                    <div style={{color:"#9fb0cf",fontSize:13}}>Loading satellite map...</div>
+                  </div>
+                )}
+
+                {/* Map controls overlay */}
+                <div style={{position:"absolute",top:8,right:8,zIndex:20,pointerEvents:"none"}}>
+                  <button onClick={()=>dbIframeRef.current?.contentWindow?.postMessage({type:'resetView'},'*')}
+                    style={{pointerEvents:"auto",width:32,height:32,borderRadius:6,background:"rgba(0,0,0,.65)",border:"1px solid rgba(255,255,255,.2)",color:"#fff",cursor:"pointer",fontSize:12,fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    ⊡
+                  </button>
                 </div>
 
                 {/* Stats overlay */}
@@ -1454,8 +1543,8 @@ export default function App() {
                   })}
                 </div>
 
-                <div style={{position:"absolute",top:8,left:8,background:"rgba(0,0,0,.65)",color:"#9fb0cf",fontSize:10,padding:"4px 9px",borderRadius:6,zIndex:20}}>
-                  {Math.round(dbMapScale*100)}% · {resortLocations.filter(l=>l.on_map).length} placed · {resortLocations.filter(l=>!l.on_map).length} unplaced
+                <div style={{position:"absolute",top:8,left:8,background:"rgba(0,0,0,.65)",color:"#9fb0cf",fontSize:10,padding:"4px 9px",borderRadius:6,zIndex:20,pointerEvents:"none"}}>
+                  🛰 Satellite · {resortLocations.filter(l=>l.lat).length} placed · {resortLocations.filter(l=>!l.lat).length} unplaced
                 </div>
               </div>
 
@@ -1520,9 +1609,9 @@ export default function App() {
                         style={{width:"100%",padding:"8px 10px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:7,color:TH.text,fontSize:13,fontFamily:"inherit",resize:"none",boxSizing:"border-box"}}/>
                     </div>
 
-                    {dbForm.map_x!=null&&(
+                    {dbForm.lat&&(
                       <div style={{fontSize:10,color:TH.textMuted,marginBottom:10}}>
-                        📍 Position: ({Math.round(dbForm.map_x)}, {Math.round(dbForm.map_y)}) on map
+                        📍 {dbForm.lat}, {dbForm.lng} (GPS)
                       </div>
                     )}
 
@@ -1585,13 +1674,13 @@ export default function App() {
                         )}
 
                         <div style={{fontSize:10,color:TH.textDim,marginBottom:10}}>
-                          {selLocation.on_map?"📍 On map":"📋 Not on map yet"} · Added by {(selLocation.created_by||"").split("@")[0]}
+                          {selLocation.lat?"📍 On satellite map":"📋 Not placed on map yet"} · Added by {(selLocation.created_by||"").split("@")[0]}
                         </div>
 
                         {isAdmin&&(
                           <div style={{display:"flex",gap:7}}>
                             <button onClick={()=>{
-                              setDbForm({name:selLocation.name,category:selLocation.category,subcategory:selLocation.subcategory||"",description:selLocation.description||"",area_m2:selLocation.area_m2||"",floor_level:selLocation.floor_level||"",capacity:selLocation.capacity||"",notes:selLocation.notes||"",map_x:selLocation.map_x,map_y:selLocation.map_y});
+                              setDbForm({name:selLocation.name,category:selLocation.category,subcategory:selLocation.subcategory||"",description:selLocation.description||"",area_m2:selLocation.area_m2||"",floor_level:selLocation.floor_level||"",capacity:selLocation.capacity||"",notes:selLocation.notes||"",lat:selLocation.lat,lng:selLocation.lng});
                               setDbEditId(selLocation.id);setDbFormOpen(true);
                             }} style={{flex:1,padding:"8px",borderRadius:7,background:TH.accent,color:"#fff",border:"none",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>
                               ✏️ Edit
@@ -1622,7 +1711,7 @@ export default function App() {
                       </div>
                       <div style={{display:"flex",justifyContent:"space-between",fontSize:12,marginBottom:12}}>
                         <span style={{color:TH.textMuted}}>On map</span>
-                        <span style={{fontWeight:600,color:"#10b981"}}>{resortLocations.filter(l=>l.on_map).length}</span>
+                        <span style={{fontWeight:600,color:"#10b981"}}>{resortLocations.filter(l=>l.lat).length}</span>
                       </div>
                       {RESORT_CATEGORIES.filter(c=>resortLocations.some(l=>l.category===c.key)).map(cat=>(
                         <div key={cat.key} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 0",borderBottom:`0.5px solid ${TH.divider}`,cursor:"pointer"}} onClick={()=>setDbCatFilter(cat.key)}>
@@ -1669,7 +1758,7 @@ export default function App() {
                             </td>
                             <td style={{...tdStyle}}>
                               {isAdmin&&(
-                                <button onClick={e=>{e.stopPropagation();setDbForm({name:loc.name,category:loc.category,subcategory:loc.subcategory||"",description:loc.description||"",area_m2:loc.area_m2||"",floor_level:loc.floor_level||"",capacity:loc.capacity||"",notes:loc.notes||"",map_x:loc.map_x,map_y:loc.map_y});setDbEditId(loc.id);setDbFormOpen(true);setSelLocation(null);}}
+                                <button onClick={e=>{e.stopPropagation();setDbForm({name:loc.name,category:loc.category,subcategory:loc.subcategory||"",description:loc.description||"",area_m2:loc.area_m2||"",floor_level:loc.floor_level||"",capacity:loc.capacity||"",notes:loc.notes||"",lat:loc.lat,lng:loc.lng});setDbEditId(loc.id);setDbFormOpen(true);setSelLocation(null);}}
                                   style={{fontSize:11,padding:"3px 8px",borderRadius:5,cursor:"pointer",background:TH.bgInput,border:`1px solid ${TH.border}`,color:TH.text,fontFamily:"inherit"}}>
                                   Edit
                                 </button>
