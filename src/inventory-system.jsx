@@ -91,7 +91,7 @@ function Modal({ open, title, onClose, children, theme }) {
       <div style={{background:theme.bgElev,border:`1px solid ${theme.border}`,borderRadius:18,width:"100%",maxWidth:560,maxHeight:"90vh",overflow:"auto",padding:28}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
           <h3 style={{color:theme.textHeading,fontSize:17,fontWeight:700,margin:0}}>{title}</h3>
-          <button onClick={onClose} style={{background:"none",border:"none",color:theme.textMuted,cursor:"pointer",fontSize:22}}>{"\u2715"}</button>
+          <button onClick={onClose} style={{background:"none",border:"none",color:theme.textMuted,cursor:"pointer",fontSize:22}}>\u2715</button>
         </div>
         {children}
       </div>
@@ -149,18 +149,8 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reportSelections, setReportSelections] = useState({});
   const [resortLocations, setResortLocations] = useState([]);
-  const [originalLocations, setOriginalLocations] = useState([]);
   const [selectedPin, setSelectedPin] = useState(null);
   const [mapCategoryFilter, setMapCategoryFilter] = useState("All");
-  const [editMode, setEditMode] = useState(false);
-  const [draggingPin, setDraggingPin] = useState(null);
-  const [layerVisibility, setLayerVisibility] = useState({});
-  const [mapDrawer, setMapDrawer] = useState(null); // "layers" | "unplaced" | "add" | "options"
-  const [editingLocation, setEditingLocation] = useState(null); // location being edited
-  const [pendingDeletes, setPendingDeletes] = useState([]); // ids
-  const [savingMap, setSavingMap] = useState(false);
-  const [placingId, setPlacingId] = useState(null);
-  const mapAreaRef = useRef();
   const imgRef = useRef();
   const t = T[lang];
   const TH = THEMES[theme];
@@ -224,17 +214,7 @@ export default function App() {
       if(r.data) setReturns(r.data.map(x=>({...x,itemId:x.item_id,fromLocation:x.from_location,receivedBy:x.received_by})));
       if(o.data) setOrders(o.data.map(x=>({...x,itemId:x.item_id})));
       if(l.data) setLogs(l.data);
-      if(rl.data) {
-        setResortLocations(rl.data);
-        setOriginalLocations(JSON.parse(JSON.stringify(rl.data)));
-        // Initialize layer visibility (every category ON by default)
-        const cats = [...new Set(rl.data.map(x=>x.category).filter(Boolean))];
-        setLayerVisibility(prev => {
-          const v = {...prev};
-          cats.forEach(c => { if (v[c] === undefined) v[c] = true; });
-          return v;
-        });
-      }
+      if(rl.data) setResortLocations(rl.data);
     } catch(e) { console.error(e); }
     setLoading(false);
   }
@@ -284,30 +264,6 @@ export default function App() {
     if(last>avg*3&&last>10)return{item,last,avg:Math.round(avg)};
     return null;
   }).filter(Boolean),[items,consumptions]);
-
-  // ─── Map editor useMemos (must be before any early-return) ───
-  const mapIsDirty = useMemo(() => {
-    if (resortLocations.length !== originalLocations.length) return true;
-    if (pendingDeletes.length > 0) return true;
-    for (const cur of resortLocations) {
-      const orig = originalLocations.find(o => o.id === cur.id);
-      if (!orig) return true;
-      const fields = ["name","category","subcategory","description","area","map_x","map_y","lat","lng"];
-      for (const f of fields) {
-        if ((cur[f] ?? null) !== (orig[f] ?? null)) return true;
-      }
-    }
-    return false;
-  }, [resortLocations, originalLocations, pendingDeletes]);
-
-  const allCategories = useMemo(()=>[...new Set(resortLocations.map(l=>l.category).filter(Boolean))],[resortLocations]);
-  const visibleLocations = useMemo(()=>{
-    return resortLocations.filter(l => {
-      if (mapCategoryFilter !== "All" && l.category !== mapCategoryFilter) return false;
-      if (l.category && layerVisibility[l.category] === false) return false;
-      return true;
-    });
-  },[resortLocations, mapCategoryFilter, layerVisibility]);
 
   function openM(type,data={}) { setForm({...data}); setModal(type); setImgPreview(data.image_url||null); }
   function closeM() { setModal(null); setForm({}); setImgPreview(null); }
@@ -550,182 +506,6 @@ export default function App() {
   const saveBtn = {width:"100%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:14,fontWeight:700,fontFamily:"inherit",marginTop:8,boxShadow:"0 4px 12px rgba(99,102,241,.3)"};
   const srchInput = {background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:9,padding:"9px 14px",color:TH.text,fontSize:13,outline:"none",width:240,fontFamily:"inherit"};
 
-  // ============ MAP EDITOR HELPERS ============
-  // (mapIsDirty / allCategories / visibleLocations moved above before early return)
-
-  // Convert click coords to percentage
-  function getMapCoords(e) {
-    if (!mapAreaRef.current) return null;
-    const rect = mapAreaRef.current.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    const x = ((clientX - rect.left) / rect.width) * 100;
-    const y = ((clientY - rect.top) / rect.height) * 100;
-    return { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) };
-  }
-
-  // Update local pin position (no save yet)
-  function updateLocalLocation(id, patch) {
-    setResortLocations(prev => prev.map(l => l.id === id ? {...l, ...patch} : l));
-  }
-
-  // Drag handlers
-  function handleMapMouseMove(e) {
-    if (!editMode || !draggingPin) return;
-    e.preventDefault();
-    const coords = getMapCoords(e);
-    if (!coords) return;
-    updateLocalLocation(draggingPin, { map_x: Math.round(coords.x*10)/10, map_y: Math.round(coords.y*10)/10 });
-  }
-  function handleMapMouseUp() {
-    if (draggingPin) setDraggingPin(null);
-  }
-
-  // Click on map in "place mode" (when an unplaced item is selected to be placed)
-  function handleMapClick(e) {
-    if (!editMode) return;
-    if (!placingId) return;
-    const coords = getMapCoords(e);
-    if (!coords) return;
-    updateLocalLocation(placingId, { map_x: Math.round(coords.x*10)/10, map_y: Math.round(coords.y*10)/10 });
-    setPlacingId(null);
-  }
-
-  // Add a new location locally (negative id for unsaved new ones)
-  function addNewLocation(category) {
-    const tempId = -(Date.now()); // unique negative
-    const newLoc = {
-      id: tempId,
-      name: "New " + category,
-      category,
-      subcategory: "",
-      description: "",
-      area: "",
-      map_x: null, // unplaced
-      map_y: null,
-      lat: null,
-      lng: null,
-      _isNew: true,
-    };
-    setResortLocations(prev => [...prev, newLoc]);
-    setEditingLocation(newLoc);
-    setMapDrawer(null);
-  }
-
-  // Mark for delete (only persist on Save)
-  function markLocationForDelete(loc) {
-    if (!window.confirm(`Delete "${loc.name}"? Will be removed on Save.`)) return;
-    if (loc._isNew || loc.id < 0) {
-      // Brand new local one, just remove
-      setResortLocations(prev => prev.filter(l => l.id !== loc.id));
-    } else {
-      setResortLocations(prev => prev.filter(l => l.id !== loc.id));
-      setPendingDeletes(prev => [...prev, loc.id]);
-    }
-    setEditingLocation(null);
-    setSelectedPin(null);
-  }
-
-  // Reset all unsaved changes
-  function resetMapChanges() {
-    if (!window.confirm("Discard all unsaved changes?")) return;
-    setResortLocations(JSON.parse(JSON.stringify(originalLocations)));
-    setPendingDeletes([]);
-    setPlacingId(null);
-    setEditingLocation(null);
-  }
-
-  // SAVE all changes to Supabase
-  async function saveMapChanges() {
-    if (!mapIsDirty) return;
-    setSavingMap(true);
-    try {
-      // 1. Deletes
-      for (const id of pendingDeletes) {
-        const { error } = await supabase.from("resort_locations").delete().eq("id", id);
-        if (error) throw new Error("Delete failed: " + error.message);
-      }
-      // 2. Inserts and updates
-      const inserts = [];
-      const updates = [];
-      for (const cur of resortLocations) {
-        const payload = {
-          name: cur.name||"",
-          category: cur.category||"",
-          subcategory: cur.subcategory||"",
-          description: cur.description||"",
-          area: cur.area||"",
-          map_x: cur.map_x===null||cur.map_x===undefined?null:Number(cur.map_x),
-          map_y: cur.map_y===null||cur.map_y===undefined?null:Number(cur.map_y),
-          lat: cur.lat===null||cur.lat===undefined?null:Number(cur.lat),
-          lng: cur.lng===null||cur.lng===undefined?null:Number(cur.lng),
-        };
-        if (cur.id < 0 || cur._isNew) {
-          inserts.push(payload);
-        } else {
-          const orig = originalLocations.find(o => o.id === cur.id);
-          if (!orig) continue;
-          const changed = Object.keys(payload).some(k => (orig[k] ?? null) !== (payload[k] ?? null));
-          if (changed) updates.push({ id: cur.id, ...payload });
-        }
-      }
-      if (inserts.length > 0) {
-        const { error } = await supabase.from("resort_locations").insert(inserts);
-        if (error) throw new Error("Insert failed: " + error.message);
-      }
-      for (const u of updates) {
-        const { id, ...rest } = u;
-        const { error } = await supabase.from("resort_locations").update(rest).eq("id", id);
-        if (error) throw new Error("Update failed: " + error.message);
-      }
-      await logAction("Save Map", `del:${pendingDeletes.length} ins:${inserts.length} upd:${updates.length} by:${user?.email}`);
-      setPendingDeletes([]);
-      // Reload
-      const { data } = await supabase.from("resort_locations").select("*").order("id");
-      if (data) {
-        setResortLocations(data);
-        setOriginalLocations(JSON.parse(JSON.stringify(data)));
-      }
-      alert("\u2713 Map saved successfully");
-    } catch (e) {
-      alert("\u2717 " + (e.message || "Save failed"));
-    }
-    setSavingMap(false);
-  }
-
-  // Map JSON export / import
-  function exportMapJSON() {
-    const data = JSON.stringify(resortLocations, null, 2);
-    const blob = new Blob([data], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `caesar_map_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-  function importMapJSON(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if (!Array.isArray(data)) throw new Error("Invalid format");
-        if (!window.confirm(`Load ${data.length} locations? Current unsaved changes will be lost.`)) return;
-        // Mark all as new (will be inserted on Save) — but keep existing ids if matched
-        setResortLocations(data.map((d,i) => ({...d, id: d.id || -(Date.now()+i), _isNew: !d.id})));
-        alert("Loaded. Press Save to persist to database.");
-      } catch (err) {
-        alert("Invalid JSON: " + err.message);
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  const allCategories2NotUsed = null; // already defined above
-  const placedLocations = visibleLocations.filter(l => l.map_x !== null && l.map_x !== undefined);
-  const unplacedLocations = resortLocations.filter(l => l.map_x === null || l.map_x === undefined);
-
   const dateStr = now.toLocaleDateString("en-GB",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
   const timeStr = now.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
 
@@ -733,12 +513,12 @@ export default function App() {
     <div dir={lang==="fa"||lang==="he"?"rtl":"ltr"} style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:TH.bg,color:TH.text,fontFamily:lang==="fa"?"'Vazirmatn','Tahoma',sans-serif":lang==="he"?"'Heebo','Arial',sans-serif":"'Inter','Segoe UI',system-ui,sans-serif"}}>
 
       <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,borderBottom:`1px solid ${TH.headerBorder}`,height:isMobile?54:60,display:"flex",alignItems:"center",padding:isMobile?"0 12px":"0 24px",gap:isMobile?8:16,flexShrink:0}}>
-        {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>{"\u2630"}</button>}
+        {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>\u2630</button>}
         <div style={{display:"flex",alignItems:"center",gap:10,minWidth:isMobile?0:200}}>
-          <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#fff",fontWeight:800,flexShrink:0}}>{"\u25a6"}</div>
+          <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#fff",fontWeight:800,flexShrink:0}}>\u25a6</div>
           {!isMobile&&<div>
             <div style={{color:TH.textHeading,fontWeight:800,fontSize:15,letterSpacing:"-0.3px"}}>StockTrack</div>
-            <div style={{color:TH.accent,fontSize:10,fontWeight:600,letterSpacing:"0.06em"}}>{"\u25cf LIVE"}</div>
+            <div style={{color:TH.accent,fontSize:10,fontWeight:600,letterSpacing:"0.06em"}}>\u25cf LIVE</div>
           </div>}
         </div>
 
@@ -768,7 +548,7 @@ export default function App() {
           </div>}
         </div>
 
-        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>{"\u21aa"}{!isMobile&&" "+t.logout}</button>
+        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>\u21aa{!isMobile&&" "+t.logout}</button>
       </header>
 
       <div style={{display:"flex",flex:1,minHeight:0,position:"relative"}}>
@@ -866,16 +646,16 @@ export default function App() {
               <div style={{display:"grid",gridTemplateColumns:discrepancies.length>0&&pendingCount>0?"1fr 1fr":"1fr",gap:14,marginBottom:24}}>
                 {discrepancies.length>0&&(
                   <div style={{background:theme==="dark"?"rgba(239,68,68,.06)":"rgba(239,68,68,.05)",border:"1px solid rgba(239,68,68,.25)",borderRadius:14,padding:"16px 18px"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><span style={{fontSize:16}}>{"\ud83d\udd0d"}</span><span style={{color:"#ef4444",fontWeight:700,fontSize:13}}>{"\u26a0"} {t.discrepancy}</span></div>
-                    {discrepancies.map((d,i)=>(<div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:12,padding:"6px 0",borderBottom:"1px solid rgba(239,68,68,.1)"}}><span style={{fontWeight:600,color:TH.text}}>{d.item.name}</span><span style={{color:"#ef4444"}}>Last: <b>{d.last}</b> {"\u00b7"} avg: {d.avg}</span></div>))}
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><span style={{fontSize:16}}>\ud83d\udd0d</span><span style={{color:"#ef4444",fontWeight:700,fontSize:13}}>\u26a0 {t.discrepancy}</span></div>
+                    {discrepancies.map((d,i)=>(<div key={i} style={{display:"flex",justifyContent:"space-between",fontSize:12,padding:"6px 0",borderBottom:"1px solid rgba(239,68,68,.1)"}}><span style={{fontWeight:600,color:TH.text}}>{d.item.name}</span><span style={{color:"#ef4444"}}>Last: <b>{d.last}</b> \u00b7 avg: {d.avg}</span></div>))}
                   </div>
                 )}
                 {pendingCount>0&&(
                   <div style={{background:theme==="dark"?"rgba(245,158,11,.06)":"rgba(245,158,11,.05)",border:"1px solid rgba(245,158,11,.25)",borderRadius:14,padding:"16px 18px"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><span style={{fontSize:16}}>{"\u23f3"}</span><span style={{color:"#f59e0b",fontWeight:700,fontSize:13}}>{t.pendingApprovals}: {pendingCount}</span></div>
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><span style={{fontSize:16}}>\u23f3</span><span style={{color:"#f59e0b",fontWeight:700,fontSize:13}}>{t.pendingApprovals}: {pendingCount}</span></div>
                     {purchases.filter(p=>p.status==="pending").map(p=>{const it=items.find(i=>i.id===p.itemId);return(
                       <div key={p.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"7px 0",borderBottom:"1px solid rgba(245,158,11,.1)",fontSize:12,gap:8}}>
-                        <div style={{flex:1,minWidth:0}}><span style={{color:TH.text,fontWeight:600}}>{it?.name}</span><span style={{color:TH.textMuted,marginLeft:8}}>{p.qty} {"\u00b7"} {p.supplier}</span></div>
+                        <div style={{flex:1,minWidth:0}}><span style={{color:TH.text,fontWeight:600}}>{it?.name}</span><span style={{color:TH.textMuted,marginLeft:8}}>{p.qty} \u00b7 {p.supplier}</span></div>
                         <div style={{display:"flex",gap:6,flexShrink:0}}>
                           <button onClick={()=>approvePurchase(p)} style={{background:"rgba(16,185,129,.18)",border:"1px solid rgba(16,185,129,.5)",borderRadius:6,color:"#10b981",padding:"3px 10px",cursor:"pointer",fontSize:11,fontFamily:"inherit",fontWeight:600}}>{t.approve}</button>
                           <button onClick={()=>rejectPurchase(p)}  style={{background:"rgba(239,68,68,.12)",border:"1px solid rgba(239,68,68,.4)",borderRadius:6,color:"#ef4444",padding:"3px 10px",cursor:"pointer",fontSize:11,fontFamily:"inherit",fontWeight:600}}>{t.reject}</button>
@@ -917,9 +697,9 @@ export default function App() {
               <div style={cardTitle}>
                 <span>{t.stockHealth}</span>
                 <div style={{display:"flex",gap:14,fontSize:11,fontWeight:500}}>
-                  <span style={{color:"#10b981"}}>{"\u25cf OK"}</span>
-                  <span style={{color:"#f59e0b"}}>{"\u25cf Low"}</span>
-                  <span style={{color:"#ef4444"}}>{"\u25cf Critical"}</span>
+                  <span style={{color:"#10b981"}}>\u25cf OK</span>
+                  <span style={{color:"#f59e0b"}}>\u25cf Low</span>
+                  <span style={{color:"#ef4444"}}>\u25cf Critical</span>
                 </div>
               </div>
               <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(280px,1fr))",gap:"10px 24px"}}>
@@ -959,7 +739,7 @@ export default function App() {
                 <div style={cardTitle}>{t.recentPurchases}</div>
                 {purchases.slice(0,5).map(p=>{const it=items.find(i=>i.id===p.itemId);const sm=STATUS_META[p.status];return(
                   <div key={p.id} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",padding:"8px 0",borderBottom:`1px solid ${TH.divider}`,gap:8}}>
-                    <div style={{flex:1,minWidth:0}}><div style={{color:TH.text,fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{it?.name}</div><div style={{color:TH.textMuted,fontSize:10,marginTop:2}}>{p.date} {"\u00b7"} {p.supplier}</div></div>
+                    <div style={{flex:1,minWidth:0}}><div style={{color:TH.text,fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{it?.name}</div><div style={{color:TH.textMuted,fontSize:10,marginTop:2}}>{p.date} \u00b7 {p.supplier}</div></div>
                     <div style={{textAlign:"right",flexShrink:0}}><div style={{color:"#22d3ee",fontSize:11,marginBottom:3,fontWeight:600}}>{p.qty} {it?.unit}</div><Badge label={sm?.[lang==="fa"?"fa":"en"]||p.status} color={sm?.color||"#8892b0"}/></div>
                   </div>
                 );})}
@@ -968,8 +748,8 @@ export default function App() {
                 <div style={cardTitle}>{t.recentConsumption}</div>
                 {consumptions.slice(0,5).map(c=>{const it=items.find(i=>i.id===c.itemId);return(
                   <div key={c.id} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",padding:"8px 0",borderBottom:`1px solid ${TH.divider}`,gap:8}}>
-                    <div style={{flex:1,minWidth:0}}><div style={{color:TH.text,fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{it?.name}</div><div style={{color:TH.textMuted,fontSize:10,marginTop:2}}>{c.date} {"\u00b7"} {c.location}</div></div>
-                    <div style={{flexShrink:0}}><span style={{background:"rgba(245,158,11,.15)",color:"#f59e0b",borderRadius:6,padding:"3px 9px",fontSize:11,fontWeight:700}}>{"\u2197"} {c.qty} {it?.unit}</span></div>
+                    <div style={{flex:1,minWidth:0}}><div style={{color:TH.text,fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{it?.name}</div><div style={{color:TH.textMuted,fontSize:10,marginTop:2}}>{c.date} \u00b7 {c.location}</div></div>
+                    <div style={{flexShrink:0}}><span style={{background:"rgba(245,158,11,.15)",color:"#f59e0b",borderRadius:6,padding:"3px 9px",fontSize:11,fontWeight:700}}>\u2197 {c.qty} {it?.unit}</span></div>
                   </div>
                 );})}
               </div>
@@ -1001,7 +781,7 @@ export default function App() {
                     <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6,marginBottom:12,background:TH.bgInput,borderRadius:9,padding:"10px",border:`1px solid ${TH.border}`}}>
                       {[{l:t.purchased,v:fmt(inv?.bought||0),c:"#22d3ee"},{l:t.consumed,v:fmt(inv?.used||0),c:"#f59e0b"},{l:t.returned,v:fmt(inv?.returned||0),c:"#10b981"},{l:t.stock,v:fmt(inv?.stock||0),c:color},{l:"Min",v:item.min_stock,c:TH.textMuted},{l:"Value",v:curr(Math.round(inv?.totalValue||0)),c:"#a78bfa"}].map(x=>(<div key={x.l} style={{textAlign:"center"}}><div style={{color:x.c,fontWeight:700,fontSize:13}}>{x.v}</div><div style={{color:TH.textDim,fontSize:9,marginTop:2,textTransform:"uppercase",letterSpacing:"0.04em"}}>{x.l}</div></div>))}
                     </div>
-                    {item.supplier&&<div style={{color:TH.textMuted,fontSize:11,marginBottom:10}}>{"\ud83c\udfed"} {item.supplier}</div>}
+                    {item.supplier&&<div style={{color:TH.textMuted,fontSize:11,marginBottom:10}}>\ud83c\udfed {item.supplier}</div>}
                     <div style={{display:"flex",gap:6}}>
                       <button onClick={()=>openM("item",{...item})} style={{...eBtn,flex:1,textAlign:"center"}}>{t.edit}</button>
                       <button onClick={()=>deleteItem(item.id)} style={dBtn}>{t.del}</button>
@@ -1048,7 +828,7 @@ export default function App() {
                 <button onClick={()=>openM("purchase",{date:"",itemId:"",qty:"",unitPrice:"",supplier:"",invoice:"",orderNo:"",receivedDate:"",department:"",note:""})} style={addBtn}>{t.newPurchase}</button>
               </div>
             </div>
-            <div style={{background:TH.accentBg,border:`1px solid ${TH.accentBorder}`,borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:TH.accentText}}>{"\u2139"} {t.approvalNote}</div>
+            <div style={{background:TH.accentBg,border:`1px solid ${TH.accentBorder}`,borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:TH.accentText}}>\u2139 {t.approvalNote}</div>
             <div style={{overflowX:"auto"}}>
               <table style={tableStyle}>
                 <thead><tr>{[t.date,t.orderNo,t.invoice,t.supplier,t.product,t.qty,t.unitPrice,t.total,t.department,t.received,t.status,t.actions].map(h=><th key={h} style={thStyle}>{h}</th>)}</tr></thead>
@@ -1080,7 +860,7 @@ export default function App() {
                 <button onClick={()=>openM("consumption",{date:"",itemId:"",qty:"",location:"",operator:user?.email||"",deliveredTo:"",deliveryPerson:"",note:""})} style={addBtn}>{t.logConsumption}</button>
               </div>
             </div>
-            {!isAdmin&&<div style={{background:TH.accentBg,border:`1px solid ${TH.accentBorder}`,borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:TH.accentText}}>{"\u2139"} {t.staffWelcome} {"\u2014"} {user?.email}</div>}
+            {!isAdmin&&<div style={{background:TH.accentBg,border:`1px solid ${TH.accentBorder}`,borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:12,color:TH.accentText}}>\u2139 {t.staffWelcome} \u2014 {user?.email}</div>}
             {isAdmin&&<div style={{...card,marginBottom:14,padding:14}}><div style={{...cardTitle,marginBottom:10,paddingBottom:8}}><span>Consumption by Location</span></div><div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{DEPTS.map(d=>{const total=consumptions.filter(c=>c.location===d).reduce((s,c)=>s+Number(c.qty),0);if(!total)return null;return(<div key={d} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:9,padding:"7px 14px",fontSize:12}}><div style={{color:TH.textMuted}}>{d}</div><div style={{color:"#22d3ee",fontWeight:700}}>{fmt(total)}</div></div>);})}</div></div>}
             <div style={{overflowX:"auto"}}>
               <table style={tableStyle}>
@@ -1156,282 +936,13 @@ export default function App() {
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16,flexWrap:"wrap",gap:10}}>
               <div>
                 <h1 style={h1Style}>{"\ud83d\uddfa "}{t.caesarMap}</h1>
-                <div style={subStyle}>{editMode?(lang==="fa"?"\u062d\u0627\u0644\u062a \u0648\u06cc\u0631\u0627\u06cc\u0634: pin\u200c\u0647\u0627 \u0631\u0648 \u0628\u06a9\u0634 \u0648 \u062c\u0627\u0628\u062c\u0627 \u06a9\u0646. \u0628\u0631\u0627\u06cc \u062b\u0628\u062a Save \u0628\u0632\u0646.":"Edit mode: drag pins to reposition. Press Save to persist."):t.mapDesc}</div>
+                <div style={subStyle}>{t.mapDesc}</div>
               </div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
-                {mapIsDirty && (
-                  <div style={{background:"rgba(245,158,11,.12)",border:"1px solid rgba(245,158,11,.4)",borderRadius:8,padding:"5px 11px",color:"#f59e0b",fontSize:11,fontWeight:600}}>
-                    {"\u26a0 Unsaved changes"}
-                  </div>
-                )}
-                <button onClick={()=>setEditMode(!editMode)} style={{background:editMode?TH.accent:TH.bgInput,border:`1px solid ${editMode?TH.accent:TH.borderStrong}`,borderRadius:9,padding:"9px 14px",color:editMode?"#fff":TH.text,fontSize:12.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-                  {editMode?"\u2713 Edit Mode ON":"\u270e Edit Mode"}
-                </button>
-                {mapIsDirty && (
-                  <button onClick={saveMapChanges} disabled={savingMap} style={{background:"linear-gradient(135deg,#059669,#10b981)",border:"none",borderRadius:9,padding:"9px 16px",color:"#fff",fontSize:12.5,fontWeight:700,cursor:savingMap?"wait":"pointer",fontFamily:"inherit",boxShadow:"0 4px 12px rgba(16,185,129,.3)",opacity:savingMap?0.7:1}}>
-                    {savingMap?"...":"\u2193 Save"}
-                  </button>
-                )}
-                {!editMode && (
-                  <select value={mapCategoryFilter} onChange={e=>setMapCategoryFilter(e.target.value)} style={{background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:9,padding:"9px 14px",color:TH.text,fontSize:13,outline:"none",fontFamily:"inherit"}}>
-                    <option value="All">{t.mapShowAll} ({resortLocations.length})</option>
-                    {allCategories.map(c=><option key={c} value={c}>{c} ({resortLocations.filter(l=>l.category===c).length})</option>)}
-                  </select>
-                )}
-              </div>
+              <a href="/caesar-map-editor.html" target="_blank" rel="noopener" style={{background:TH.accent,border:"none",borderRadius:9,padding:"9px 14px",color:"#fff",fontSize:12.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",textDecoration:"none"}}>{"\u2197 Open in full screen"}</a>
             </div>
-
-            {/* Stats */}
-            <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(auto-fit,minmax(140px,1fr))",gap:10,marginBottom:16}}>
-              <div style={{...card,padding:12,textAlign:"center"}}>
-                <div style={{color:TH.accent,fontSize:22,fontWeight:800}}>{resortLocations.length}</div>
-                <div style={{color:TH.textMuted,fontSize:10,marginTop:3,textTransform:"uppercase",letterSpacing:"0.05em"}}>{t.mapTotalLocations}</div>
-              </div>
-              <div style={{...card,padding:12,textAlign:"center"}}>
-                <div style={{color:"#22d3ee",fontSize:22,fontWeight:800}}>{allCategories.length}</div>
-                <div style={{color:TH.textMuted,fontSize:10,marginTop:3,textTransform:"uppercase",letterSpacing:"0.05em"}}>{t.mapCategories}</div>
-              </div>
-              <div style={{...card,padding:12,textAlign:"center"}}>
-                <div style={{color:"#f59e0b",fontSize:22,fontWeight:800}}>{unplacedLocations.length}</div>
-                <div style={{color:TH.textMuted,fontSize:10,marginTop:3,textTransform:"uppercase",letterSpacing:"0.05em"}}>Unplaced</div>
-              </div>
-              <div style={{...card,padding:12,textAlign:"center"}}>
-                <div style={{color:"#10b981",fontSize:22,fontWeight:800}}>{placedLocations.length}</div>
-                <div style={{color:TH.textMuted,fontSize:10,marginTop:3,textTransform:"uppercase",letterSpacing:"0.05em"}}>Showing</div>
-              </div>
+            <div style={{...card,padding:0,overflow:"hidden",height:"calc(100vh - 200px)",minHeight:600}}>
+              <iframe src="/caesar-map-editor.html" title="Caesar Resort Map Editor" style={{width:"100%",height:"100%",border:"none",display:"block",background:"#fff"}}/>
             </div>
-
-            {/* Placing-in-progress banner */}
-            {placingId && (
-              <div style={{background:TH.accentBg,border:`1px solid ${TH.accent}`,borderRadius:10,padding:"10px 14px",marginBottom:12,fontSize:13,color:TH.accentText,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <span>{"\ud83d\udccd"} Click on the map to place "{resortLocations.find(l=>l.id===placingId)?.name}"</span>
-                <button onClick={()=>setPlacingId(null)} style={{background:"none",border:"none",color:TH.accentText,cursor:"pointer",fontSize:13,fontWeight:600,fontFamily:"inherit"}}>Cancel</button>
-              </div>
-            )}
-
-            {resortLocations.length === 0 ? (
-              <div style={{...card,padding:40,textAlign:"center"}}>
-                <div style={{fontSize:48,marginBottom:14}}>{"\ud83d\uddfa"}</div>
-                <div style={{color:TH.textMuted,fontSize:14,marginBottom:14}}>{t.mapNoLocations}</div>
-                {editMode && (
-                  <button onClick={()=>setMapDrawer("add")} style={{background:TH.accent,border:"none",borderRadius:9,padding:"10px 18px",color:"#fff",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>+ Add First Location</button>
-                )}
-              </div>
-            ) : (
-              <>
-                {/* MAP CANVAS */}
-                <div style={{...card,padding:0,overflow:"hidden",position:"relative",marginBottom:14}}>
-                  <div
-                    ref={mapAreaRef}
-                    onMouseMove={handleMapMouseMove}
-                    onMouseUp={handleMapMouseUp}
-                    onMouseLeave={handleMapMouseUp}
-                    onTouchMove={handleMapMouseMove}
-                    onTouchEnd={handleMapMouseUp}
-                    onClick={handleMapClick}
-                    style={{position:"relative",width:"100%",aspectRatio:"16/9",background:`url('/resort-aerial.jpg') center/cover, #1a2035`,backgroundSize:"cover",backgroundPosition:"center",cursor:placingId?"crosshair":"default",userSelect:"none"}}
-                  >
-                    <div style={{position:"absolute",inset:0,background:"rgba(0,0,0,.15)",pointerEvents:"none"}}/>
-                    {placedLocations.map(loc => {
-                      const x = loc.map_x ?? 50;
-                      const y = loc.map_y ?? 50;
-                      const color = getCategoryColor(loc.category);
-                      const isSelected = selectedPin?.id === loc.id;
-                      const isDragging = draggingPin === loc.id;
-                      return (
-                        <div
-                          key={loc.id}
-                          onMouseDown={e => {
-                            if (editMode) {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setDraggingPin(loc.id);
-                            }
-                          }}
-                          onTouchStart={e => {
-                            if (editMode) {
-                              e.stopPropagation();
-                              setDraggingPin(loc.id);
-                            }
-                          }}
-                          onClick={e => {
-                            e.stopPropagation();
-                            if (editMode && !isDragging) {
-                              setEditingLocation(loc);
-                            } else if (!editMode) {
-                              setSelectedPin(loc);
-                            }
-                          }}
-                          style={{position:"absolute",left:`${x}%`,top:`${y}%`,transform:"translate(-50%,-100%)",cursor:editMode?(isDragging?"grabbing":"grab"):"pointer",zIndex:isSelected||isDragging?20:10,padding:0}}
-                          title={loc.name}
-                        >
-                          <div style={{width:isSelected||isDragging?34:26,height:isSelected||isDragging?34:26,borderRadius:"50% 50% 50% 0",background:color,transform:"rotate(-45deg)",border:"2px solid #fff",boxShadow:`0 4px 12px ${color}80, 0 0 0 ${isSelected||isDragging?4:0}px ${color}40`,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:isSelected||isDragging?12:10,fontWeight:800,transition:isDragging?"none":"all .15s"}}>
-                            <span style={{transform:"rotate(45deg)",pointerEvents:"none"}}>{loc.id<0?"+":loc.id}</span>
-                          </div>
-                          {(editMode || isSelected) && (
-                            <div style={{position:"absolute",left:"50%",top:"100%",transform:"translateX(-50%)",marginTop:4,background:"rgba(0,0,0,.85)",color:"#fff",padding:"3px 8px",borderRadius:6,fontSize:10,fontWeight:600,whiteSpace:"nowrap",pointerEvents:"none"}}>{loc.name}</div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* BOTTOM TOOLBAR (only in edit mode) */}
-                {editMode && (
-                  <div style={{display:"flex",gap:8,marginBottom:14,flexWrap:"wrap"}}>
-                    <button onClick={()=>setMapDrawer(mapDrawer==="layers"?null:"layers")} style={{flex:1,minWidth:120,background:mapDrawer==="layers"?TH.accentBg:TH.bgInput,border:`1px solid ${mapDrawer==="layers"?TH.accent:TH.borderStrong}`,borderRadius:10,padding:"10px",color:mapDrawer==="layers"?TH.accentText:TH.text,fontSize:12.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
-                      {"\u25c9"} Layers
-                    </button>
-                    <button onClick={()=>setMapDrawer(mapDrawer==="unplaced"?null:"unplaced")} style={{flex:1,minWidth:140,background:mapDrawer==="unplaced"?TH.accentBg:TH.bgInput,border:`1px solid ${mapDrawer==="unplaced"?TH.accent:TH.borderStrong}`,borderRadius:10,padding:"10px",color:mapDrawer==="unplaced"?TH.accentText:TH.text,fontSize:12.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",justifyContent:"center",gap:6,position:"relative"}}>
-                      {"\u21aa"} Unplaced
-                      {unplacedLocations.length>0&&<span style={{background:"#f59e0b",color:"#fff",borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{unplacedLocations.length}</span>}
-                    </button>
-                    <button onClick={()=>setMapDrawer(mapDrawer==="add"?null:"add")} style={{flex:1,minWidth:120,background:mapDrawer==="add"?TH.accent:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,padding:"10px",color:"#fff",fontSize:12.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
-                      + Add new
-                    </button>
-                    <button onClick={()=>setMapDrawer(mapDrawer==="options"?null:"options")} style={{flex:1,minWidth:120,background:mapDrawer==="options"?TH.accentBg:TH.bgInput,border:`1px solid ${mapDrawer==="options"?TH.accent:TH.borderStrong}`,borderRadius:10,padding:"10px",color:mapDrawer==="options"?TH.accentText:TH.text,fontSize:12.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-                      {"\u22ef"} Options
-                    </button>
-                  </div>
-                )}
-
-                {/* DRAWER PANELS */}
-                {editMode && mapDrawer==="layers" && (
-                  <div style={{...card,marginBottom:14}}>
-                    <div style={{...cardTitle,marginBottom:10}}><span>{"\u25c9 Layers"}</span><span style={{color:TH.textMuted,fontSize:11,fontWeight:500}}>tap to show / hide</span></div>
-                    {allCategories.length===0?<div style={{color:TH.textMuted,fontSize:13,padding:"8px 0"}}>No categories yet.</div>:allCategories.map(cat => {
-                      const color = getCategoryColor(cat);
-                      const count = resortLocations.filter(l=>l.category===cat).length;
-                      const on = layerVisibility[cat] !== false;
-                      return (
-                        <div key={cat} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:`1px solid ${TH.divider}`}}>
-                          <div style={{width:12,height:12,borderRadius:"50%",background:color,flexShrink:0}}/>
-                          <div style={{flex:1,color:TH.text,fontSize:13,fontWeight:600}}>{cat}</div>
-                          <div style={{color:TH.textMuted,fontSize:11}}>{count}</div>
-                          <button onClick={()=>setLayerVisibility(prev=>({...prev,[cat]:!on}))} style={{background:on?"rgba(16,185,129,.18)":TH.bgInput,border:`1px solid ${on?"rgba(16,185,129,.5)":TH.borderStrong}`,borderRadius:8,padding:"4px 14px",color:on?"#10b981":TH.textMuted,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",minWidth:50}}>{on?"On":"Off"}</button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {editMode && mapDrawer==="unplaced" && (
-                  <div style={{...card,marginBottom:14}}>
-                    <div style={cardTitle}><span>{"\u21aa Unplaced items"}</span><span style={{color:TH.textMuted,fontSize:11,fontWeight:500}}>{unplacedLocations.length}</span></div>
-                    {unplacedLocations.length===0?<div style={{color:TH.textMuted,fontSize:13,padding:"8px 0",textAlign:"center"}}>All items are placed on the map.</div>:(
-                      <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(280px,1fr))",gap:8}}>
-                        {unplacedLocations.map(loc => {
-                          const color = getCategoryColor(loc.category);
-                          return (
-                            <div key={loc.id} style={{display:"flex",alignItems:"center",gap:10,background:TH.bgInput,border:`1px solid ${TH.border}`,borderLeft:`3px solid ${color}`,borderRadius:9,padding:"8px 12px"}}>
-                              <div style={{width:10,height:10,borderRadius:"50%",background:color,flexShrink:0}}/>
-                              <div style={{flex:1,minWidth:0}}>
-                                <div style={{color:TH.text,fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{loc.name}</div>
-                                <div style={{color:TH.textMuted,fontSize:10}}>{loc.category}</div>
-                              </div>
-                              <button onClick={()=>setPlacingId(loc.id)} style={{background:TH.accentBg,border:`1px solid ${TH.accent}`,borderRadius:7,padding:"4px 10px",color:TH.accent,fontSize:10.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>TAP TO PLACE {"\u25b8"}</button>
-                              <button onClick={()=>setEditingLocation(loc)} style={eBtn}>{t.edit}</button>
-                              <button onClick={()=>markLocationForDelete(loc)} style={dBtn}>{"\u2715"}</button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {editMode && mapDrawer==="add" && (
-                  <div style={{...card,marginBottom:14}}>
-                    <div style={cardTitle}><span>+ Add new</span></div>
-                    <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(200px,1fr))",gap:8}}>
-                      {[
-                        {key:"pool",label:"\ud83c\udfca New pool"},
-                        {key:"building",label:"\ud83c\udfe2 New building"},
-                        {key:"f&b",label:"\ud83c\udf7d New F&B (cafe / restaurant)"},
-                        {key:"office",label:"\ud83d\udcbc New office"},
-                        {key:"facility",label:"\ud83d\udee0 New facility"},
-                        {key:"garden",label:"\ud83c\udf33 New garden"},
-                        {key:"security",label:"\ud83d\udd12 New security"},
-                        {key:"spa",label:"\ud83d\udc86 New spa"},
-                      ].map(opt => {
-                        const color = getCategoryColor(opt.key);
-                        return (
-                          <button key={opt.key} onClick={()=>addNewLocation(opt.key)} style={{display:"flex",alignItems:"center",gap:10,background:TH.bgInput,border:`1px solid ${TH.border}`,borderLeft:`3px solid ${color}`,borderRadius:9,padding:"10px 14px",cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}>
-                            <div style={{width:10,height:10,borderRadius:"50%",background:color,flexShrink:0}}/>
-                            <span style={{color:TH.text,fontSize:13,fontWeight:600}}>{opt.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {editMode && mapDrawer==="options" && (
-                  <div style={{...card,marginBottom:14}}>
-                    <div style={cardTitle}><span>{"\u22ef"} Options</span></div>
-                    <div style={{display:"grid",gap:8}}>
-                      <button onClick={exportMapJSON} style={{display:"flex",alignItems:"center",gap:10,background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:9,padding:"11px 14px",cursor:"pointer",fontFamily:"inherit",textAlign:"left",color:TH.text,fontSize:13}}>
-                        {"\u2193"} Save data (JSON)
-                      </button>
-                      <label style={{display:"flex",alignItems:"center",gap:10,background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:9,padding:"11px 14px",cursor:"pointer",fontFamily:"inherit",textAlign:"left",color:TH.text,fontSize:13}}>
-                        {"\u2191"} Load data (JSON)
-                        <input type="file" accept="application/json" onChange={importMapJSON} style={{display:"none"}}/>
-                      </label>
-                      <button onClick={resetMapChanges} style={{display:"flex",alignItems:"center",gap:10,background:"rgba(239,68,68,.08)",border:"1px solid rgba(239,68,68,.4)",borderRadius:9,padding:"11px 14px",cursor:"pointer",fontFamily:"inherit",textAlign:"left",color:"#ef4444",fontSize:13,fontWeight:600}}>
-                        {"\u21bb"} Reset all unsaved changes
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Category legend (view mode only) */}
-                {!editMode && (
-                  <div style={{...card,marginBottom:14}}>
-                    <div style={cardTitle}><span>{t.mapCategories}</span></div>
-                    <div style={{display:"flex",flexWrap:"wrap",gap:10}}>
-                      {allCategories.map(cat=>{
-                        const color = getCategoryColor(cat);
-                        const count = resortLocations.filter(l=>l.category===cat).length;
-                        return (
-                          <button key={cat} onClick={()=>setMapCategoryFilter(cat===mapCategoryFilter?"All":cat)} style={{display:"flex",alignItems:"center",gap:8,background:mapCategoryFilter===cat?color+"22":TH.bgInput,border:`1px solid ${mapCategoryFilter===cat?color:TH.border}`,borderRadius:9,padding:"7px 12px",cursor:"pointer",fontFamily:"inherit",fontSize:12}}>
-                            <div style={{width:10,height:10,borderRadius:"50%",background:color}}/>
-                            <span style={{color:TH.text,fontWeight:600}}>{cat}</span>
-                            <span style={{color:TH.textMuted,fontSize:11}}>({count})</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Locations list */}
-                <div style={card}>
-                  <div style={cardTitle}><span>All Locations ({visibleLocations.length})</span></div>
-                  <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(280px,1fr))",gap:10}}>
-                    {visibleLocations.map(loc=>{
-                      const color = getCategoryColor(loc.category);
-                      const unplaced = loc.map_x===null||loc.map_x===undefined;
-                      return (
-                        <div key={loc.id} style={{display:"flex",alignItems:"flex-start",gap:10,background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:10,padding:"10px 12px",borderLeft:`3px solid ${color}`}}>
-                          <button onClick={()=>setSelectedPin(loc)} style={{width:28,height:28,borderRadius:7,background:color+"22",color,fontSize:11,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",border:`1px solid ${color}55`,flexShrink:0,cursor:"pointer",fontFamily:"inherit"}}>{loc.id<0?"+":loc.id}</button>
-                          <div style={{flex:1,minWidth:0}}>
-                            <div style={{color:TH.text,fontSize:13,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{loc.name}{unplaced&&<span style={{color:"#f59e0b",fontSize:10,marginLeft:6}}>{"\u2022"} unplaced</span>}</div>
-                            <div style={{color:TH.textMuted,fontSize:10,marginTop:2}}>{loc.category}{loc.subcategory?" \u00b7 "+loc.subcategory:""}</div>
-                          </div>
-                          {editMode && (
-                            <>
-                              <button onClick={()=>setEditingLocation(loc)} style={eBtn}>{t.edit}</button>
-                              <button onClick={()=>markLocationForDelete(loc)} style={dBtn}>{t.del}</button>
-                            </>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </>
-            )}
           </>}
 
           {tab==="reports"&&isAdmin&&<>
@@ -1516,64 +1027,9 @@ export default function App() {
             </div>
           </>}
 
-          {!isAdmin&&tab!=="consumption"&&<div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"50vh",flexDirection:"column",gap:12}}><div style={{fontSize:48,color:TH.textDim}}>{"\ud83d\udd12"}</div><div style={{color:TH.textMuted,fontSize:16}}>{t.noAccess}</div></div>}
+          {!isAdmin&&tab!=="consumption"&&<div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"50vh",flexDirection:"column",gap:12}}><div style={{fontSize:48,color:TH.textDim}}>\ud83d\udd12</div><div style={{color:TH.textMuted,fontSize:16}}>{t.noAccess}</div></div>}
         </main>
       </div>
-
-      <Modal open={!!editingLocation} title={editingLocation?(editingLocation._isNew||editingLocation.id<0?"Add Location":"Edit Location"):""} onClose={()=>setEditingLocation(null)} theme={TH} wide>
-        {editingLocation && (() => {
-          // Use a local edit-buffer that lives in editingLocation state directly
-          const e = editingLocation;
-          const set = (k, v) => setEditingLocation({...e, [k]: v});
-          const apply = () => {
-            if (!e.name || !e.name.trim()) return alert("Name is required");
-            if (!e.category) return alert("Category is required");
-            // Apply patch to resortLocations
-            setResortLocations(prev => {
-              const exists = prev.find(l => l.id === e.id);
-              if (exists) return prev.map(l => l.id === e.id ? {...e} : l);
-              return [...prev, {...e}];
-            });
-            setEditingLocation(null);
-          };
-          return (
-            <div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}>
-                <Inp label="Name *" value={e.name} onChange={v=>set("name",v)} required theme={TH}/>
-                <Sel label="Category *" value={e.category} onChange={v=>set("category",v)} options={[
-                  {value:"",label:"Select category..."},
-                  {value:"pool",label:"\ud83c\udfca Pool"},
-                  {value:"building",label:"\ud83c\udfe2 Building"},
-                  {value:"f&b",label:"\ud83c\udf7d F&B (cafe / restaurant)"},
-                  {value:"office",label:"\ud83d\udcbc Office"},
-                  {value:"facility",label:"\ud83d\udee0 Facility"},
-                  {value:"garden",label:"\ud83c\udf33 Garden"},
-                  {value:"security",label:"\ud83d\udd12 Security"},
-                  {value:"spa",label:"\ud83d\udc86 Spa"},
-                ]} theme={TH}/>
-                <Inp label="Subcategory" value={e.subcategory} onChange={v=>set("subcategory",v)} theme={TH}/>
-                <Inp label="Area" value={e.area} onChange={v=>set("area",v)} theme={TH}/>
-              </div>
-              <Inp label="Description" value={e.description} onChange={v=>set("description",v)} theme={TH}/>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}>
-                <Inp label="Map X (0-100)" value={e.map_x ?? ""} onChange={v=>set("map_x", v===""?null:Number(v))} type="number" theme={TH}/>
-                <Inp label="Map Y (0-100)" value={e.map_y ?? ""} onChange={v=>set("map_y", v===""?null:Number(v))} type="number" theme={TH}/>
-                <Inp label="Lat (optional)" value={e.lat ?? ""} onChange={v=>set("lat", v===""?null:Number(v))} type="number" theme={TH}/>
-                <Inp label="Lng (optional)" value={e.lng ?? ""} onChange={v=>set("lng", v===""?null:Number(v))} type="number" theme={TH}/>
-              </div>
-              <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:9,padding:"10px 12px",marginBottom:12,fontSize:11,color:TH.textMuted,lineHeight:1.5}}>
-                {"\u2139"} Changes are not saved to database until you press <b style={{color:TH.text}}>Save</b> at the top of the map.
-              </div>
-              <div style={{display:"flex",gap:8}}>
-                <button onClick={apply} style={{...saveBtn,marginTop:0}}>Apply</button>
-                {!(e._isNew || e.id < 0) && (
-                  <button onClick={()=>markLocationForDelete(e)} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.4)",borderRadius:10,padding:"12px 18px",color:"#ef4444",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Delete</button>
-                )}
-              </div>
-            </div>
-          );
-        })()}
-      </Modal>
 
       <Modal open={!!selectedPin} title={selectedPin?.name||""} onClose={()=>setSelectedPin(null)} theme={TH}>
         {selectedPin && (
@@ -1614,7 +1070,7 @@ export default function App() {
           <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
             <div style={{flex:1}}>
               <input type="file" accept="image/*" ref={imgRef} onChange={handleImageFile} style={{display:"none"}}/>
-              <button onClick={()=>imgRef.current?.click()} style={{width:"100%",background:TH.bgInput,border:`1px dashed ${TH.borderStrong}`,borderRadius:9,color:TH.textMuted,padding:"11px",cursor:"pointer",fontSize:12,fontFamily:"inherit"}}>{"\ud83d\udcf7"} {imgPreview?"Change Image":"Upload Image (max 2MB)"}</button>
+              <button onClick={()=>imgRef.current?.click()} style={{width:"100%",background:TH.bgInput,border:`1px dashed ${TH.borderStrong}`,borderRadius:9,color:TH.textMuted,padding:"11px",cursor:"pointer",fontSize:12,fontFamily:"inherit"}}>\ud83d\udcf7 {imgPreview?"Change Image":"Upload Image (max 2MB)"}</button>
             </div>
             {imgPreview&&<img src={imgPreview} alt="" style={{width:76,height:76,borderRadius:9,objectFit:"cover",border:`1px solid ${TH.borderStrong}`,flexShrink:0}}/>}
           </div>
@@ -1636,7 +1092,7 @@ export default function App() {
         <Sel label={t.department} value={form.department} onChange={sf("department")} options={[{value:"",label:t.selectDept},...DEPTS.map(d=>({value:d,label:d}))]} theme={TH}/>
         <Inp label={t.note} value={form.note} onChange={sf("note")} theme={TH}/>
         {form.qty&&form.unitPrice&&<div style={{background:TH.bgInput,borderRadius:9,padding:"10px 14px",marginBottom:12,fontSize:13,border:`1px solid ${TH.border}`}}><span style={{color:TH.textMuted}}>Total: </span><span style={{color:"#a78bfa",fontWeight:800,fontSize:16}}>{curr(Number(form.qty)*Number(form.unitPrice))}</span></div>}
-        {!isAdmin&&<div style={{color:"#f59e0b",fontSize:12,marginBottom:10,padding:"9px 12px",background:"rgba(245,158,11,.1)",borderRadius:8,border:"1px solid rgba(245,158,11,.3)"}}>{"\u23f3"} {t.approvalNote}</div>}
+        {!isAdmin&&<div style={{color:"#f59e0b",fontSize:12,marginBottom:10,padding:"9px 12px",background:"rgba(245,158,11,.1)",borderRadius:8,border:"1px solid rgba(245,158,11,.3)"}}>\u23f3 {t.approvalNote}</div>}
         <button onClick={savePurchase} disabled={saving} style={saveBtn}>{saving?"...":t.save}</button>
       </Modal>
 
@@ -1655,7 +1111,7 @@ export default function App() {
       </Modal>
 
       <Modal open={modal==="return"} title={t.addReturn} onClose={closeM} theme={TH}>
-        <div style={{background:"rgba(16,185,129,.08)",border:"1px solid rgba(16,185,129,.3)",borderRadius:9,padding:"9px 12px",marginBottom:14,fontSize:12,color:"#10b981"}}>{"\u21a9"} {lang==="fa"?"\u0627\u06cc\u0646 \u06a9\u0627\u0644\u0627 \u0628\u0647 \u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631 \u0627\u0636\u0627\u0641\u0647 \u0645\u06cc\u200c\u0634\u0648\u062f":"This will add back to warehouse stock"}</div>
+        <div style={{background:"rgba(16,185,129,.08)",border:"1px solid rgba(16,185,129,.3)",borderRadius:9,padding:"9px 12px",marginBottom:14,fontSize:12,color:"#10b981"}}>\u21a9 {lang==="fa"?"\u0627\u06cc\u0646 \u06a9\u0627\u0644\u0627 \u0628\u0647 \u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631 \u0627\u0636\u0627\u0641\u0647 \u0645\u06cc\u200c\u0634\u0648\u062f":"This will add back to warehouse stock"}</div>
         <Inp label={`${t.date} *`} value={form.date} onChange={sf("date")} type="date" required theme={TH}/>
         <Sel label={`${t.product} *`} value={form.itemId} onChange={v=>sf("itemId")(Number(v))} options={[{value:"",label:t.selectProduct},...items.map(i=>({value:i.id,label:i.name}))]} theme={TH}/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}>
