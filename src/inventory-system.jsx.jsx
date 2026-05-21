@@ -933,15 +933,33 @@ export default function App() {
           </>}
 
           {tab==="caesarMap"&&isAdmin&&<>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:16,flexWrap:"wrap",gap:10}}>
-              <div>
-                <h1 style={h1Style}>{"\ud83d\uddfa "}{t.caesarMap}</h1>
-                <div style={subStyle}>{t.mapDesc}</div>
-              </div>
-              <a href="/caesar-map-editor.html" target="_blank" rel="noopener" style={{background:TH.accent,border:"none",borderRadius:9,padding:"9px 14px",color:"#fff",fontSize:12.5,fontWeight:600,cursor:"pointer",fontFamily:"inherit",textDecoration:"none"}}>{"\u2197 Open in new tab"}</a>
+            <div style={{marginBottom:16}}>
+              <h1 style={h1Style}>{"\ud83d\uddfa "}{t.caesarMap}</h1>
+              <div style={subStyle}>{t.mapDesc}</div>
             </div>
-            <div style={{...card,padding:0,overflow:"hidden",height:"calc(100vh - 180px)",minHeight:600}}>
-              <iframe src="/caesar-map-editor.html" title="Caesar Resort Map Editor" style={{width:"100%",height:"100%",border:"none",display:"block",background:"#fff"}}/>
+            <div style={{...card,padding:40,textAlign:"center"}}>
+              <div style={{fontSize:64,marginBottom:16}}>{"\ud83d\uddfa\ufe0f"}</div>
+              <div style={{color:TH.textHeading,fontSize:18,fontWeight:700,marginBottom:8}}>Caesar Resort \u2014 Pool & Building Map</div>
+              <div style={{color:TH.textMuted,fontSize:13,marginBottom:24,maxWidth:480,margin:"0 auto 24px"}}>
+                Interactive map editor with drag-and-drop pins, layers, categories, Add/Edit/Delete, Save/Load JSON, and Export PNG.
+              </div>
+              <a href="/caesar-map-editor.html" style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,padding:"14px 36px",color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 6px 16px rgba(99,102,241,.35)",textDecoration:"none",display:"inline-block"}}>
+                {"\ud83d\ude80 Open Map Editor"}
+              </a>
+              <div style={{marginTop:28,display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(5,1fr)",gap:8,maxWidth:600,margin:"28px auto 0"}}>
+                {[
+                  {l:"Pools",c:"#3ad0e7"},
+                  {l:"Buildings",c:"#7c5cff"},
+                  {l:"F&B",c:"#f06363"},
+                  {l:"Offices",c:"#374151"},
+                  {l:"Facilities",c:"#26c281"},
+                ].map(x=>(
+                  <div key={x.l} style={{display:"flex",alignItems:"center",gap:6,background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,padding:"6px 10px",fontSize:11}}>
+                    <div style={{width:8,height:8,borderRadius:"50%",background:x.c}}/>
+                    <span style={{color:TH.text}}>{x.l}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </>}
 
