@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Caesar Bay Apartments — Satellite Map</title>
+<title>Caesar Breeze — Satellite Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@ html,body{margin:0;padding:0;height:100%;font-family:'Inter',-apple-system,Blink
 #loginBox{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:40px 36px;max-width:380px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,.4)}
 #loginBox h2{margin:0 0 8px;font-size:22px;font-weight:700;text-align:center;letter-spacing:-0.02em}
 #loginBox .sub{color:rgba(255,255,255,.6);font-size:13px;text-align:center;margin-bottom:28px}
-#loginBox .logo{width:64px;height:64px;background:linear-gradient(135deg,#ec4899,#db2777);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(124,92,255,.4)}
+#loginBox .logo{width:64px;height:64px;background:linear-gradient(135deg,#f59e0b,#d97706);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(124,92,255,.4)}
 #loginBox label{display:block;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;margin-top:14px}
 #loginBox input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border .15s}
 #loginBox input:focus{border-color:#7c5cff;background:rgba(0,0,0,.4)}
@@ -32,7 +32,7 @@ html,body{margin:0;padding:0;height:100%;font-family:'Inter',-apple-system,Blink
 /* ===== APP HEADER ===== */
 #header{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(15,23,42,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:1000;gap:12px}
 #header .brand{display:flex;align-items:center;gap:12px;min-width:0}
-#header .brandLogo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#ec4899,#db2777);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+#header .brandLogo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 #header .brandText{min-width:0}
 #header .brandText h1{margin:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #header .brandText .sub{margin:0;font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:4px}
@@ -150,8 +150,8 @@ input[type=file]{display:none}
 <!-- ===== LOGIN OVERLAY ===== -->
 <div id="loginOverlay">
   <form id="loginBox" onsubmit="return doLogin(event)">
-    <div class="logo">🏝️</div>
-    <h2>Caesar Bay Apartments</h2>
+    <div class="logo">🌅</div>
+    <h2>Caesar Breeze</h2>
     <div class="sub">Sign in to access the satellite map</div>
     <label for="loginUser">Username</label>
     <input id="loginUser" type="text" autocomplete="username" required autofocus>
@@ -166,9 +166,9 @@ input[type=file]{display:none}
 <!-- ===== APP ===== -->
 <div id="header">
   <div class="brand">
-    <div class="brandLogo">🏝️</div>
+    <div class="brandLogo">🌅</div>
     <div class="brandText">
-      <h1>Caesar Bay Apartments</h1>
+      <h1>Caesar Breeze</h1>
       <div class="sub">Satellite Map</div>
     </div>
   </div>
@@ -310,10 +310,10 @@ document.addEventListener('keydown',e=>{if(DEV_MODE)return;if(e.key==='F12'||(e.
 /* ============================================================
    CONFIG — replaced for each resort
    ============================================================ */
-const RESORT_CENTER = [35.3873825, 33.7147292];
+const RESORT_CENTER = [35.385702, 33.712130];
 const RESORT_ZOOM   = 18;
-const RESORT_BOUNDS = [[35.381, 33.708], [35.394, 33.722]];
-const LS_KEY = "caesar_bay_map";
+const RESORT_BOUNDS = [[35.379, 33.706], [35.392, 33.720]];
+const LS_KEY = "caesar_breeze_map";
 
 const CATDEF = [
   {k:'pool',     label:'Pool',     dot:'#0891b2', def:'New Pool'},
@@ -741,7 +741,7 @@ function exportXLSX(){
 
   // Summary
   const sum = [
-    ['Caesar Bay Apartments — Map Export'],
+    ['Caesar Breeze — Map Export'],
     ['Generated:',ts],
     [''],
     ['Category','Placed','Unplaced','Total','Color']

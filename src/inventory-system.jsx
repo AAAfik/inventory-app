@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 import * as XLSX from "xlsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
-const ADMIN_EMAILS = ["admin@inventory.com", "hezicaesar@gmail.com", "alireza.ariyannekoo@afikgroup.com"];
+const ADMIN_EMAILS = ["admin@inventory.com", "hezicaesar@gmail.com", "alireza.ariyannekoo@afikgroup.com", "anzhelaklavdieva2@gmail.com"];
 
 const THEMES = {
   dark: {
