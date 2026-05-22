@@ -52,6 +52,9 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
 .card .preview::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(15,23,42,.9))}
 .card.resort .preview{background:linear-gradient(135deg,#7c5cff,#3ad0e7),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97852/151254') center/cover;background-blend-mode:overlay}
 .card.blue .preview{background:linear-gradient(135deg,#06b6d4,#0284c7),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97839/151326') center/cover;background-blend-mode:overlay}
+.card.cliff .preview{background:linear-gradient(135deg,#16a34a,#15803d),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97667/151189') center/cover;background-blend-mode:overlay}
+.card.breeze .preview{background:linear-gradient(135deg,#f59e0b,#d97706),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97700/151200') center/cover;background-blend-mode:overlay}
+.card.bay .preview{background:linear-gradient(135deg,#ec4899,#db2777),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97701/151199') center/cover;background-blend-mode:overlay}
 .card .emoji{position:absolute;top:18px;right:18px;font-size:36px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));z-index:2}
 .card .body{padding:24px;flex:1;display:flex;flex-direction:column}
 .card .title{font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em}
@@ -62,6 +65,9 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
 .card .stat .lbl{font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
 .card .action{margin-top:auto;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#7c5cff,#5b3ee0);color:#fff;padding:11px 16px;border-radius:12px;font-size:13px;font-weight:700;transition:transform .15s}
 .card.blue .action{background:linear-gradient(135deg,#06b6d4,#0284c7)}
+.card.cliff .action{background:linear-gradient(135deg,#16a34a,#15803d)}
+.card.breeze .action{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.card.bay .action{background:linear-gradient(135deg,#ec4899,#db2777)}
 .card:hover .action{transform:scale(1.02)}
 .card .action svg{transition:transform .25s}
 .card:hover .action svg{transform:translateX(4px)}
@@ -147,6 +153,63 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
         </div>
       </div>
     </a>
+
+    <a href="caesar-cliff-map.html" class="card cliff">
+      <div class="preview">
+        <div class="emoji">⛰️</div>
+      </div>
+      <div class="body">
+        <h3 class="title">Caesar Cliff</h3>
+        <div class="location">📍 Esentepe, Northern Cyprus</div>
+        <div class="stats">
+          <div class="stat"><div class="num">0</div><div class="lbl">Items</div></div>
+          <div class="stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="num" id="cliffPlaced">0</div><div class="lbl">Placed</div></div>
+        </div>
+        <div class="action">
+          <span>Open Map</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="caesar-breeze-map.html" class="card breeze">
+      <div class="preview">
+        <div class="emoji">🌅</div>
+      </div>
+      <div class="body">
+        <h3 class="title">Caesar Breeze</h3>
+        <div class="location">📍 Northern Cyprus</div>
+        <div class="stats">
+          <div class="stat"><div class="num">0</div><div class="lbl">Items</div></div>
+          <div class="stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="num" id="breezePlaced">0</div><div class="lbl">Placed</div></div>
+        </div>
+        <div class="action">
+          <span>Open Map</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="caesar-bay-map.html" class="card bay">
+      <div class="preview">
+        <div class="emoji">🏝️</div>
+      </div>
+      <div class="body">
+        <h3 class="title">Caesar Bay Apartments</h3>
+        <div class="location">📍 Northern Cyprus</div>
+        <div class="stats">
+          <div class="stat"><div class="num">0</div><div class="lbl">Items</div></div>
+          <div class="stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="num" id="bayPlaced">0</div><div class="lbl">Placed</div></div>
+        </div>
+        <div class="action">
+          <span>Open Map</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </a>
   </div>
 
   <div class="footer">
@@ -215,6 +278,18 @@ function updateStats(){
   try{
     const b=JSON.parse(localStorage.getItem('caesar_blue_map')||'{}');
     if(b.items){document.getElementById('bluePlaced').textContent=b.items.filter(i=>i.placed).length;}
+  }catch(e){}
+  try{
+    const c=JSON.parse(localStorage.getItem('caesar_cliff_map')||'{}');
+    if(c.items){document.getElementById('cliffPlaced').textContent=c.items.filter(i=>i.placed).length;}
+  }catch(e){}
+  try{
+    const z=JSON.parse(localStorage.getItem('caesar_breeze_map')||'{}');
+    if(z.items){document.getElementById('breezePlaced').textContent=z.items.filter(i=>i.placed).length;}
+  }catch(e){}
+  try{
+    const y=JSON.parse(localStorage.getItem('caesar_bay_map')||'{}');
+    if(y.items){document.getElementById('bayPlaced').textContent=y.items.filter(i=>i.placed).length;}
   }catch(e){}
 }
 
