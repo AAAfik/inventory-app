@@ -218,9 +218,82 @@
     .dbtn{padding:9px 11px}
     #legend{font-size:10.5px;padding:6px 10px}
   }
-</style>
+/* ========= LOGIN OVERLAY ========= */
+#loginOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);display:flex;align-items:center;justify-content:center;z-index:99999;font-family:inherit;padding:20px}
+#loginOverlay.hidden{display:none}
+#loginBox{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:40px 36px;max-width:380px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,.4)}
+#loginBox h2{margin:0 0 8px;color:#fff;font-size:22px;font-weight:700;text-align:center;letter-spacing:-0.02em}
+#loginBox .sub{color:rgba(255,255,255,.6);font-size:13px;text-align:center;margin-bottom:28px}
+#loginBox .logo{width:64px;height:64px;background:linear-gradient(135deg,#7c5cff,#3ad0e7);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(124,92,255,.4)}
+#loginBox label{display:block;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;margin-top:14px}
+#loginBox input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;transition:border .15s}
+#loginBox input:focus{border-color:#7c5cff;background:rgba(0,0,0,.4)}
+#loginBox button{width:100%;background:linear-gradient(135deg,#7c5cff,#5b3ee0);border:none;border-radius:10px;padding:13px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:22px;letter-spacing:0.02em;box-shadow:0 4px 14px rgba(124,92,255,.4);transition:transform .1s}
+#loginBox button:active{transform:scale(.98)}
+#loginErr{color:#ff6b6b;font-size:12px;text-align:center;margin-top:14px;min-height:16px}
+#loginBox .hint{color:rgba(255,255,255,.4);font-size:11px;text-align:center;margin-top:18px}
 </head>
 <body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="loginOverlay">
+  <form id="loginBox" onsubmit="return doLogin(event)">
+    <div class="logo">🗺️</div>
+    <h2>Caesar Resort Map</h2>
+    <div class="sub">Sign in to access the map editor</div>
+    <label for="loginUser">Username</label>
+    <input id="loginUser" type="text" autocomplete="username" required autofocus>
+    <label for="loginPass">Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" required>
+    <button type="submit">Sign in →</button>
+    <div id="loginErr"></div>
+    <div class="hint">Authorized personnel only</div>
+  </form>
+</div>
+
+<script>
+/* ===== USER CREDENTIALS =====
+   Edit / add / remove users here.
+   To add a user: add a new line like  "username":"password",
+*/
+const USERS = {
+  "admin":      "caesar2026",
+  "alireza":    "afik2026",
+  "hezi":       "caesar123",
+  "manager":    "manager2026",
+  "maintenance":"fix2026"
+};
+
+function doLogin(ev){
+  ev.preventDefault();
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  if(USERS[u] && USERS[u] === p){
+    document.getElementById('loginOverlay').classList.add('hidden');
+    err.textContent = '';
+    // mark logged in for this tab session only — clears when tab closes
+    try{ sessionStorage.setItem('caesarMapLogin', u); }catch(e){}
+    return false;
+  }
+  err.textContent = 'Wrong username or password';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginPass').focus();
+  return false;
+}
+
+// Auto-restore login within the same tab session (so reloads don't force re-login,
+// but closing the tab/browser will)
+(function(){
+  try{
+    const u = sessionStorage.getItem('caesarMapLogin');
+    if(u && USERS[u]){
+      document.getElementById('loginOverlay').classList.add('hidden');
+    }
+  }catch(e){}
+})();
+</script>
+
   <div id="bar">
     <div class="logo">C</div>
     <div class="titleblock">
