@@ -935,28 +935,56 @@ export default function App() {
           {tab==="caesarMap"&&isAdmin&&<>
             <div style={{marginBottom:16}}>
               <h1 style={h1Style}>{"\ud83d\uddfa "}{t.caesarMap}</h1>
-              <div style={subStyle}>{t.mapDesc}</div>
+              <div style={subStyle}>Interactive satellite maps with GPS coordinates for Caesar Projects resorts</div>
             </div>
-            <div style={{...card,padding:40,textAlign:"center"}}>
-              <div style={{fontSize:64,marginBottom:16}}>{"\ud83d\uddfa\ufe0f"}</div>
-              <div style={{color:TH.textHeading,fontSize:18,fontWeight:700,marginBottom:8}}>Caesar Resort \u2014 Pool & Building Map</div>
-              <div style={{color:TH.textMuted,fontSize:13,marginBottom:24,maxWidth:480,margin:"0 auto 24px"}}>
-                Interactive map editor with drag-and-drop pins, layers, categories, Add/Edit/Delete, Save/Load JSON, and Export PNG.
-              </div>
-              <a href="/caesar-map-editor.html" style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,padding:"14px 36px",color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:"inherit",boxShadow:"0 6px 16px rgba(99,102,241,.35)",textDecoration:"none",display:"inline-block"}}>
-                {"\ud83d\ude80 Open Map Editor"}
+            <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(2,1fr)",gap:16,marginBottom:18}}>
+              <a href="/caesar-resort-map.html" style={{...card,padding:0,overflow:"hidden",textDecoration:"none",cursor:"pointer",border:`1px solid ${TH.border}`,display:"block",transition:"transform .2s, border-color .2s"}}>
+                <div style={{height:120,background:"linear-gradient(135deg,#7c5cff,#3ad0e7)",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <div style={{fontSize:54,filter:"drop-shadow(0 4px 12px rgba(0,0,0,.3))"}}>{"\ud83c\udfd6\ufe0f"}</div>
+                  <div style={{position:"absolute",top:10,right:12,background:"rgba(0,0,0,.4)",color:"#fff",padding:"3px 10px",borderRadius:99,fontSize:10,fontWeight:600,letterSpacing:0.05+"em"}}>SATELLITE</div>
+                </div>
+                <div style={{padding:18}}>
+                  <div style={{color:TH.textHeading,fontSize:17,fontWeight:700,marginBottom:4}}>Caesar Resort</div>
+                  <div style={{color:TH.textMuted,fontSize:12,marginBottom:14,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} \u0130skele, Northern Cyprus</div>
+                  <div style={{display:"flex",gap:6,marginBottom:14}}>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:7,padding:"5px 9px",fontSize:11}}><b style={{color:TH.text}}>101</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:7,padding:"5px 9px",fontSize:11}}><b style={{color:TH.text}}>5</b> <span style={{color:TH.textMuted}}>categories</span></div>
+                  </div>
+                  <div style={{background:"linear-gradient(135deg,#7c5cff,#5b3ee0)",borderRadius:9,padding:"9px 14px",color:"#fff",fontSize:12.5,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
+                </div>
               </a>
-              <div style={{marginTop:28,display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(5,1fr)",gap:8,maxWidth:600,margin:"28px auto 0"}}>
+              <a href="/caesar-blue-map.html" style={{...card,padding:0,overflow:"hidden",textDecoration:"none",cursor:"pointer",border:`1px solid ${TH.border}`,display:"block",transition:"transform .2s, border-color .2s"}}>
+                <div style={{height:120,background:"linear-gradient(135deg,#06b6d4,#0284c7)",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <div style={{fontSize:54,filter:"drop-shadow(0 4px 12px rgba(0,0,0,.3))"}}>{"\ud83c\udf0a"}</div>
+                  <div style={{position:"absolute",top:10,right:12,background:"rgba(0,0,0,.4)",color:"#fff",padding:"3px 10px",borderRadius:99,fontSize:10,fontWeight:600,letterSpacing:0.05+"em"}}>SATELLITE</div>
+                </div>
+                <div style={{padding:18}}>
+                  <div style={{color:TH.textHeading,fontSize:17,fontWeight:700,marginBottom:4}}>Caesar Blue</div>
+                  <div style={{color:TH.textMuted,fontSize:12,marginBottom:14,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Bo\u011fa\u017c, Northern Cyprus</div>
+                  <div style={{display:"flex",gap:6,marginBottom:14}}>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:7,padding:"5px 9px",fontSize:11}}><b style={{color:TH.text}}>64</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:7,padding:"5px 9px",fontSize:11}}><b style={{color:TH.text}}>8</b> <span style={{color:TH.textMuted}}>categories</span></div>
+                  </div>
+                  <div style={{background:"linear-gradient(135deg,#06b6d4,#0284c7)",borderRadius:9,padding:"9px 14px",color:"#fff",fontSize:12.5,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
+                </div>
+              </a>
+            </div>
+            <div style={{...card,padding:18}}>
+              <div style={{color:TH.textMuted,fontSize:12,marginBottom:12,fontWeight:600,textTransform:"uppercase",letterSpacing:0.06+"em"}}>Map categories</div>
+              <div style={{display:"grid",gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(4,1fr)",gap:8}}>
                 {[
-                  {l:"Pools",c:"#3ad0e7"},
-                  {l:"Buildings",c:"#7c5cff"},
-                  {l:"F&B",c:"#f06363"},
-                  {l:"Offices",c:"#374151"},
-                  {l:"Facilities",c:"#26c281"},
+                  {l:"Pool",c:"#0891b2"},
+                  {l:"Building",c:"#7c5cff"},
+                  {l:"F&B",c:"#dc2626"},
+                  {l:"Office",c:"#374151"},
+                  {l:"Facility",c:"#16a34a"},
+                  {l:"Gate",c:"#ea580c"},
+                  {l:"Bridge",c:"#92400e"},
+                  {l:"Parking",c:"#1e3a8a"},
                 ].map(x=>(
-                  <div key={x.l} style={{display:"flex",alignItems:"center",gap:6,background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,padding:"6px 10px",fontSize:11}}>
-                    <div style={{width:8,height:8,borderRadius:"50%",background:x.c}}/>
-                    <span style={{color:TH.text}}>{x.l}</span>
+                  <div key={x.l} style={{display:"flex",alignItems:"center",gap:7,background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,padding:"7px 11px",fontSize:11.5}}>
+                    <div style={{width:9,height:9,borderRadius:"50%",background:x.c}}/>
+                    <span style={{color:TH.text,fontWeight:600}}>{x.l}</span>
                   </div>
                 ))}
               </div>

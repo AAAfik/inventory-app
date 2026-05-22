@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Caesar Projects — Map Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100vh;font-family:'Inter',-apple-system,sans-serif;background:#0a0e1a;color:#fff;overflow-x:hidden}
+
+/* ANIMATED BACKGROUND */
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at top,rgba(124,92,255,.15),transparent 50%),radial-gradient(ellipse at bottom,rgba(6,182,212,.15),transparent 50%),#0a0e1a;z-index:-2}
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");z-index:-1;pointer-events:none}
+
+/* LOGIN OVERLAY */
+#loginOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px}
+#loginOverlay.hidden{display:none}
+#loginBox{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:40px 36px;max-width:380px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,.4)}
+#loginBox h2{margin:0 0 8px;font-size:22px;font-weight:700;text-align:center;letter-spacing:-0.02em}
+#loginBox .sub{color:rgba(255,255,255,.6);font-size:13px;text-align:center;margin-bottom:28px}
+#loginBox .logo{width:64px;height:64px;background:linear-gradient(135deg,#7c5cff,#06b6d4);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(124,92,255,.4)}
+#loginBox label{display:block;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;margin-top:14px}
+#loginBox input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border .15s}
+#loginBox input:focus{border-color:#7c5cff;background:rgba(0,0,0,.4)}
+#loginBox button{width:100%;background:linear-gradient(135deg,#7c5cff,#5b3ee0);border:none;border-radius:10px;padding:13px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:22px;box-shadow:0 4px 14px rgba(124,92,255,.4)}
+#loginBox button:active{transform:scale(.98)}
+#loginErr{color:#ff6b6b;font-size:12px;text-align:center;margin-top:14px;min-height:16px}
+#loginBox .hint{color:rgba(255,255,255,.4);font-size:11px;text-align:center;margin-top:18px}
+
+/* DASHBOARD */
+.wrap{max-width:1100px;margin:0 auto;padding:60px 24px 80px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.header{text-align:center;margin-bottom:50px}
+.brand{display:inline-flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:8px 16px 8px 8px;border-radius:99px;margin-bottom:22px}
+.brand .logo{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#06b6d4);display:flex;align-items:center;justify-content:center;font-size:18px}
+.brand .text{font-size:13px;font-weight:600;color:#cbd5e1;letter-spacing:0.05em}
+.header h1{margin:0 0 12px;font-size:clamp(28px,5vw,46px);font-weight:800;letter-spacing:-0.02em;background:linear-gradient(135deg,#fff 30%,#7c5cff 60%,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header .sub{color:#94a3b8;font-size:15px;max-width:560px;margin:0 auto;line-height:1.6}
+
+.userBar{display:flex;justify-content:center;align-items:center;gap:10px;margin-bottom:30px;font-size:12px;color:#94a3b8}
+.userBar .pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);padding:6px 14px;border-radius:99px;display:flex;align-items:center;gap:6px}
+.userBar .pill::before{content:'';width:6px;height:6px;border-radius:50%;background:#10b981}
+.userBar button{background:transparent;border:1px solid rgba(220,38,38,.4);color:#fca5a5;padding:6px 14px;border-radius:99px;font-size:12px;cursor:pointer;font-family:inherit;font-weight:600}
+.userBar button:hover{background:rgba(220,38,38,.1)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;max-width:900px;margin:0 auto;width:100%}
+.card{background:rgba(255,255,255,.04);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:24px;padding:0;overflow:hidden;cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative}
+.card:hover{transform:translateY(-6px);border-color:rgba(124,92,255,.5);box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 60px rgba(124,92,255,.15)}
+.card .preview{height:200px;position:relative;overflow:hidden}
+.card .preview::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(15,23,42,.9))}
+.card.resort .preview{background:linear-gradient(135deg,#7c5cff,#3ad0e7),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97852/151254') center/cover;background-blend-mode:overlay}
+.card.blue .preview{background:linear-gradient(135deg,#06b6d4,#0284c7),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97839/151326') center/cover;background-blend-mode:overlay}
+.card .emoji{position:absolute;top:18px;right:18px;font-size:36px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));z-index:2}
+.card .body{padding:24px;flex:1;display:flex;flex-direction:column}
+.card .title{font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em}
+.card .location{display:flex;align-items:center;gap:5px;color:#94a3b8;font-size:13px;margin-bottom:18px}
+.card .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.card .stat{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 6px;text-align:center}
+.card .stat .num{font-size:18px;font-weight:800;color:#fff}
+.card .stat .lbl{font-size:9px;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px}
+.card .action{margin-top:auto;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#7c5cff,#5b3ee0);color:#fff;padding:11px 16px;border-radius:12px;font-size:13px;font-weight:700;transition:transform .15s}
+.card.blue .action{background:linear-gradient(135deg,#06b6d4,#0284c7)}
+.card:hover .action{transform:scale(1.02)}
+.card .action svg{transition:transform .25s}
+.card:hover .action svg{transform:translateX(4px)}
+
+.footer{text-align:center;margin-top:60px;color:#475569;font-size:11px}
+
+@media (max-width:640px){
+  .wrap{padding:30px 16px 50px}
+  .header{margin-bottom:30px}
+  .cards{grid-template-columns:1fr;gap:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay">
+  <form id="loginBox" onsubmit="return doLogin(event)">
+    <div class="logo">🗺️</div>
+    <h2>Caesar Projects</h2>
+    <div class="sub">Sign in to access map dashboards</div>
+    <label for="loginUser">Username</label>
+    <input id="loginUser" type="text" autocomplete="username" required autofocus>
+    <label for="loginPass">Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" required>
+    <button type="submit">Sign in →</button>
+    <div id="loginErr"></div>
+    <div class="hint">Authorized personnel only</div>
+  </form>
+</div>
+
+<!-- DASHBOARD -->
+<div class="wrap" id="dashboard" style="display:none">
+  <div class="header">
+    <div class="brand">
+      <div class="logo">🗺️</div>
+      <div class="text">CAESAR PROJECTS · AFIK GROUP</div>
+    </div>
+    <h1>Resort Map Dashboard</h1>
+    <div class="sub">Interactive satellite maps with real GPS coordinates, drag-and-drop pins, and full export options.</div>
+  </div>
+
+  <div class="userBar">
+    <div class="pill" id="userPill">Signed in</div>
+    <button onclick="doLogout()">Sign out</button>
+  </div>
+
+  <div class="cards">
+    <a href="caesar-resort-map.html" class="card resort">
+      <div class="preview">
+        <div class="emoji">🏖️</div>
+      </div>
+      <div class="body">
+        <h3 class="title">Caesar Resort</h3>
+        <div class="location">📍 İskele, Northern Cyprus</div>
+        <div class="stats">
+          <div class="stat"><div class="num">101</div><div class="lbl">Items</div></div>
+          <div class="stat"><div class="num">5</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="num" id="resortPlaced">0</div><div class="lbl">Placed</div></div>
+        </div>
+        <div class="action">
+          <span>Open Map</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <a href="caesar-blue-map.html" class="card blue">
+      <div class="preview">
+        <div class="emoji">🌊</div>
+      </div>
+      <div class="body">
+        <h3 class="title">Caesar Blue</h3>
+        <div class="location">📍 Boğaz, Northern Cyprus</div>
+        <div class="stats">
+          <div class="stat"><div class="num">64</div><div class="lbl">Items</div></div>
+          <div class="stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="num" id="bluePlaced">0</div><div class="lbl">Placed</div></div>
+        </div>
+        <div class="action">
+          <span>Open Map</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="footer">
+    © Caesar Projects — Afik Group · Powered by Esri World Imagery
+  </div>
+</div>
+
+<script>
+/* HARDENED LOGIN — same as map editors */
+const SALT = "caesar_resort_2026_salt_x9k2";
+const USER_HASHES = {
+  "admin":       "4d39d85083c3722d4cb93e9f0d4aafaa76623bacbc9f6ccd4e8b7bf71d025d29",
+  "alireza":     "543180214574d5ea5bfa8ced0cd0f3252a360b5bf4ce45d3f10f5abd31f92efa",
+  "hezi":        "d51b20343a45d7d6dd7a64e459cb5a9bebc09a14ddbdea1cb5102da30d6c155f",
+  "manager":     "b9e900b21fedf4b3f6b55ba1c4c4f2e0e6b797a20f01f0dbcbe3251d95b3a2bf",
+  "maintenance": "c39e656d12f00b6755c8cd1fc5d6e6fcf840dbf196959a3f894dd35bc44aaa1f"
+};
+const MAX_ATTEMPTS=5,LOCKOUT_MS=300000,SESSION_MS=900000;
+async function sha256(t){const b=new TextEncoder().encode(t);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function getRL(){try{const r=localStorage.getItem('crmLock');return r?JSON.parse(r):{attempts:0,lockedUntil:0};}catch(e){return{attempts:0,lockedUntil:0};}}
+function setRL(rl){try{localStorage.setItem('crmLock',JSON.stringify(rl));}catch(e){}}
+function isLocked(){return getRL().lockedUntil>Date.now();}
+
+async function doLogin(ev){
+  ev.preventDefault();
+  const err=document.getElementById('loginErr');
+  if(isLocked()){const m=Math.ceil((getRL().lockedUntil-Date.now())/60000);err.textContent=`Locked. Try again in ${m} minute(s).`;return false;}
+  const u=document.getElementById('loginUser').value.trim().toLowerCase();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p){err.textContent='Enter both fields';return false;}
+  const h=await sha256(SALT+p);
+  if(USER_HASHES[u]&&USER_HASHES[u]===h){
+    setRL({attempts:0,lockedUntil:0});
+    const tok={user:u,issued:Date.now(),lastActivity:Date.now(),nonce:Math.random().toString(36).slice(2)};
+    try{sessionStorage.setItem('crmAuth',JSON.stringify(tok));}catch(e){}
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('dashboard').style.display='flex';
+    document.getElementById('userPill').textContent='Signed in as '+u;
+    err.textContent='';document.getElementById('loginPass').value='';
+    startActivityMonitor();updateStats();
+    return false;
+  }
+  const rl=getRL();rl.attempts=(rl.attempts||0)+1;
+  if(rl.attempts>=MAX_ATTEMPTS){rl.lockedUntil=Date.now()+LOCKOUT_MS;rl.attempts=0;setRL(rl);err.textContent='Too many failed attempts. Locked for 5 minutes.';}
+  else{setRL(rl);err.textContent=`Wrong credentials. ${MAX_ATTEMPTS-rl.attempts} attempt(s) left.`;}
+  document.getElementById('loginPass').value='';document.getElementById('loginPass').focus();
+  return false;
+}
+
+function getAuth(){try{const r=sessionStorage.getItem('crmAuth');if(!r)return null;const t=JSON.parse(r);if(!t.user||!USER_HASHES[t.user])return null;if(Date.now()-t.lastActivity>SESSION_MS)return null;return t;}catch(e){return null;}}
+function doLogout(){try{sessionStorage.removeItem('crmAuth');}catch(e){}document.getElementById('loginOverlay').classList.remove('hidden');document.getElementById('dashboard').style.display='none';document.getElementById('loginUser').focus();}
+function updateActivity(){const t=getAuth();if(t){t.lastActivity=Date.now();try{sessionStorage.setItem('crmAuth',JSON.stringify(t));}catch(e){}}}
+function startActivityMonitor(){['mousemove','keydown','click','touchstart'].forEach(ev=>document.addEventListener(ev,updateActivity,{passive:true}));setInterval(()=>{if(!getAuth())doLogout();},30000);}
+
+const DEV_MODE=new URLSearchParams(location.search).has('dev');
+let dtOpen=false;
+setInterval(()=>{if(DEV_MODE)return;const wd=window.outerWidth-window.innerWidth,hd=window.outerHeight-window.innerHeight;if(wd>160||hd>160){if(!dtOpen){dtOpen=true;if(getAuth())doLogout();}}else dtOpen=false;},1000);
+document.addEventListener('contextmenu',e=>{if(!DEV_MODE)e.preventDefault();});
+document.addEventListener('keydown',e=>{if(DEV_MODE)return;if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&'IiJjCc'.includes(e.key))||(e.ctrlKey&&'uUsS'.includes(e.key))){e.preventDefault();return false;}});
+
+function updateStats(){
+  try{
+    const r=JSON.parse(localStorage.getItem('caesar_resort_map')||'{}');
+    if(r.items){document.getElementById('resortPlaced').textContent=r.items.filter(i=>i.placed).length;}
+  }catch(e){}
+  try{
+    const b=JSON.parse(localStorage.getItem('caesar_blue_map')||'{}');
+    if(b.items){document.getElementById('bluePlaced').textContent=b.items.filter(i=>i.placed).length;}
+  }catch(e){}
+}
+
+(function(){
+  const t=getAuth();
+  if(t){
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('dashboard').style.display='flex';
+    document.getElementById('userPill').textContent='Signed in as '+t.user;
+    startActivityMonitor();updateStats();
+  }
+  if(isLocked()){const m=Math.ceil((getRL().lockedUntil-Date.now())/60000);document.getElementById('loginErr').textContent=`Locked. Try again in ${m} minute(s).`;}
+})();
+</script>
+</body>
+</html>

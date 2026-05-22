@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Caesar Blue — Satellite Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#0a0e1a;color:#fff;overflow:hidden}
+
+/* ===== LOGIN OVERLAY ===== */
+#loginOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);display:flex;align-items:center;justify-content:center;z-index:99999;padding:20px}
+#loginOverlay.hidden{display:none}
+#loginBox{background:rgba(255,255,255,.06);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:40px 36px;max-width:380px;width:100%;box-shadow:0 25px 60px rgba(0,0,0,.4)}
+#loginBox h2{margin:0 0 8px;font-size:22px;font-weight:700;text-align:center;letter-spacing:-0.02em}
+#loginBox .sub{color:rgba(255,255,255,.6);font-size:13px;text-align:center;margin-bottom:28px}
+#loginBox .logo{width:64px;height:64px;background:linear-gradient(135deg,#06b6d4,#0284c7);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;box-shadow:0 8px 24px rgba(124,92,255,.4)}
+#loginBox label{display:block;color:rgba(255,255,255,.7);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;margin-top:14px}
+#loginBox input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px 14px;color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border .15s}
+#loginBox input:focus{border-color:#7c5cff;background:rgba(0,0,0,.4)}
+#loginBox button{width:100%;background:linear-gradient(135deg,#7c5cff,#5b3ee0);border:none;border-radius:10px;padding:13px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-top:22px;box-shadow:0 4px 14px rgba(124,92,255,.4)}
+#loginBox button:active{transform:scale(.98)}
+#loginErr{color:#ff6b6b;font-size:12px;text-align:center;margin-top:14px;min-height:16px}
+#loginBox .hint{color:rgba(255,255,255,.4);font-size:11px;text-align:center;margin-top:18px}
+
+/* ===== APP HEADER ===== */
+#header{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(15,23,42,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:1000;gap:12px}
+#header .brand{display:flex;align-items:center;gap:12px;min-width:0}
+#header .brandLogo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#0284c7);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+#header .brandText{min-width:0}
+#header .brandText h1{margin:0;font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#header .brandText .sub{margin:0;font-size:11px;color:#94a3b8;display:flex;align-items:center;gap:4px}
+#header .brandText .sub::before{content:'';width:6px;height:6px;border-radius:50%;background:#10b981;flex-shrink:0}
+#header .actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+#header button{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;color:#fff;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s}
+#header button:hover{background:rgba(255,255,255,.1)}
+#header button.primary{background:linear-gradient(135deg,#7c5cff,#5b3ee0);border-color:transparent}
+#header .dirty{display:none;align-items:center;gap:6px;background:rgba(245,158,11,.18);border:1px solid rgba(245,158,11,.4);color:#fbbf24;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600}
+#header .dirty.show{display:flex}
+#header .dirty::before{content:'';width:6px;height:6px;border-radius:50%;background:#fbbf24;animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ===== LEGEND ===== */
+#legend{position:fixed;top:74px;left:14px;background:rgba(15,23,42,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px;z-index:600;font-size:11px;display:flex;flex-wrap:wrap;gap:8px;max-width:calc(100vw - 28px)}
+#legend .item{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 6px;border-radius:6px;transition:background .15s}
+#legend .item:hover{background:rgba(255,255,255,.05)}
+#legend .item.off{opacity:.35}
+#legend .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+#legend .label{font-weight:600}
+
+/* ===== MAP ===== */
+#map{position:fixed;top:60px;left:0;right:0;bottom:0;background:#0a0e1a}
+.leaflet-container{font-family:'Inter',sans-serif !important;background:#0a0e1a}
+
+/* Custom pin marker */
+.pinMarker{width:0;height:0;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.pinMarker .body{position:relative;display:flex;align-items:center;background:#7c5cff;color:#fff;padding:5px 10px 5px 8px;border-radius:14px;font-size:11px;font-weight:600;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.5),0 0 0 2px rgba(255,255,255,.15);transform:translate(0,-4px);transition:transform .12s}
+.pinMarker .body:hover{transform:translate(0,-4px) scale(1.05)}
+.pinMarker .body::before{content:'';position:absolute;left:-1px;top:50%;transform:translateY(-50%);width:8px;height:8px;background:rgba(255,255,255,.85);border-radius:50%}
+.pinMarker .body.locked::after{content:'🔒';font-size:9px;margin-left:5px;opacity:.8}
+.pinMarker.cat-pool .body{background:#0891b2}
+.pinMarker.cat-bld .body{background:#7c5cff}
+.pinMarker.cat-fnb .body{background:#dc2626}
+.pinMarker.cat-office .body{background:#374151}
+.pinMarker.cat-facility .body{background:#16a34a}
+.pinMarker.cat-gate .body{background:#ea580c}
+.pinMarker.cat-bridge .body{background:#92400e}
+.pinMarker.cat-parking .body{background:#1e3a8a}
+
+/* ===== FAB ===== */
+#fab{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;background:rgba(15,23,42,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:7px;box-shadow:0 12px 32px rgba(0,0,0,.5);z-index:700}
+#fab button{background:transparent;border:none;color:#fff;padding:10px 16px;border-radius:50px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .15s}
+#fab button:hover{background:rgba(255,255,255,.08)}
+#fab button.primary{background:linear-gradient(135deg,#7c5cff,#5b3ee0);box-shadow:0 4px 12px rgba(124,92,255,.4)}
+#fab .badge{background:rgba(255,255,255,.15);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:2px}
+
+/* ===== SHEETS (bottom drawers) ===== */
+#backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1500;display:none}
+#backdrop.show{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#0f172a;border-top:1px solid rgba(255,255,255,.08);border-radius:20px 20px 0 0;padding:20px 18px 26px;z-index:1600;max-height:75vh;overflow:auto;transform:translateY(100%);transition:transform .25s ease;color:#fff}
+.sheet.open{transform:translateY(0)}
+.sheet .grab{width:38px;height:4px;border-radius:99px;background:rgba(255,255,255,.2);margin:-6px auto 14px;display:block}
+.sheet h3{margin:0 0 14px;font-size:15px;font-weight:700}
+.mItem{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:10px;cursor:pointer;font-size:13px;color:#fff;border:1px solid rgba(255,255,255,.06);margin-bottom:6px;transition:background .15s}
+.mItem:hover{background:rgba(255,255,255,.05)}
+.mItem .ic{font-size:14px;width:18px;text-align:center;display:inline-block}
+.mItem.danger{color:#ff6b6b}
+.mItem .badge{margin-left:auto;background:rgba(255,255,255,.1);border-radius:8px;padding:2px 8px;font-size:11px;font-weight:600}
+
+/* List items */
+.listItem{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:9px;cursor:pointer;margin-bottom:5px;border:1px solid rgba(255,255,255,.06)}
+.listItem:hover{background:rgba(255,255,255,.04)}
+.listItem .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.listItem .name{flex:1;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.listItem .badge{font-size:10px;padding:2px 7px;border-radius:6px;background:rgba(124,92,255,.18);color:#a78bfa;font-weight:600}
+.listItem .badge.unplaced{background:rgba(245,158,11,.18);color:#fbbf24}
+.listItem .actions{display:flex;gap:4px}
+.listItem .btn{background:rgba(255,255,255,.05);border:none;color:#fff;padding:5px 8px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+.listItem .btn:hover{background:rgba(255,255,255,.1)}
+.listItem .btn.danger{color:#ff6b6b}
+
+/* Search / inputs */
+.inp{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:11px 12px;color:#fff;font-size:13px;outline:none;font-family:inherit;margin-bottom:10px}
+.inp:focus{border-color:#7c5cff}
+
+/* Toast */
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);color:#fff;padding:10px 18px;border-radius:99px;font-size:12px;font-weight:600;z-index:2000;opacity:0;pointer-events:none;transition:opacity .25s}
+#toast.show{opacity:1}
+
+/* Edit form */
+.edRow{margin-bottom:12px}
+.edRow label{display:block;color:rgba(255,255,255,.65);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5px}
+.catSelect{display:flex;flex-wrap:wrap;gap:6px}
+.catSelect .opt{padding:7px 11px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);cursor:pointer;font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px}
+.catSelect .opt.active{background:rgba(124,92,255,.2);border-color:#7c5cff}
+.catSelect .opt .dot{width:8px;height:8px;border-radius:50%}
+.formBtns{display:flex;gap:8px;margin-top:18px}
+.formBtns button{flex:1;padding:11px;border-radius:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;border:none}
+.formBtns .save{background:linear-gradient(135deg,#7c5cff,#5b3ee0);color:#fff}
+.formBtns .del{background:rgba(220,38,38,.18);color:#fca5a5;border:1px solid rgba(220,38,38,.3)}
+.formBtns .cancel{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.1)}
+
+/* Hide input[type=file] */
+input[type=file]{display:none}
+
+/* Placing banner */
+#placingBanner{position:fixed;top:74px;left:50%;transform:translateX(-50%);background:rgba(245,158,11,.95);color:#fff;padding:10px 18px;border-radius:99px;font-size:12px;font-weight:700;z-index:800;display:none;align-items:center;gap:8px;box-shadow:0 6px 18px rgba(245,158,11,.4)}
+#placingBanner.show{display:flex}
+#placingBanner button{background:rgba(0,0,0,.2);border:none;color:#fff;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+
+@media (max-width:600px){
+  #header{padding:0 12px}
+  #header .brandText h1{font-size:13px}
+  #header button{padding:7px 10px;font-size:11px}
+  #header button span:not(.ic){display:none}
+  #legend{font-size:10px;padding:8px 10px}
+  #fab button{padding:9px 12px;font-size:11px}
+  #fab button span:not(.badge):not(.ic){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="loginOverlay">
+  <form id="loginBox" onsubmit="return doLogin(event)">
+    <div class="logo">🌊</div>
+    <h2>Caesar Blue</h2>
+    <div class="sub">Sign in to access the satellite map</div>
+    <label for="loginUser">Username</label>
+    <input id="loginUser" type="text" autocomplete="username" required autofocus>
+    <label for="loginPass">Password</label>
+    <input id="loginPass" type="password" autocomplete="current-password" required>
+    <button type="submit">Sign in →</button>
+    <div id="loginErr"></div>
+    <div class="hint">Authorized personnel only</div>
+  </form>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="header">
+  <div class="brand">
+    <div class="brandLogo">🌊</div>
+    <div class="brandText">
+      <h1>Caesar Blue</h1>
+      <div class="sub">Satellite Map</div>
+    </div>
+  </div>
+  <div class="actions">
+    <div class="dirty" id="dirtyBadge">Unsaved</div>
+    <button id="btnSave" class="primary">💾 <span>Save</span></button>
+    <button id="btnBack">← <span>Back</span></button>
+  </div>
+</div>
+
+<div id="legend"></div>
+
+<div id="placingBanner">
+  <span id="placingText">Tap on map to place</span>
+  <button id="cancelPlacing">Cancel</button>
+</div>
+
+<div id="map"></div>
+
+<!-- ===== FAB ===== -->
+<div id="fab">
+  <button id="fabList">📋 <span>List</span><span class="badge" id="listCount">0</span></button>
+  <button id="fabAdd" class="primary">+ <span>Add</span></button>
+  <button id="fabOptions">⋯</button>
+</div>
+
+<!-- ===== SHEETS ===== -->
+<div id="backdrop"></div>
+
+<div class="sheet" id="sheetAdd">
+  <div class="grab"></div>
+  <h3>Add new location</h3>
+  <div id="addCatList"></div>
+</div>
+
+<div class="sheet" id="sheetList">
+  <div class="grab"></div>
+  <h3>All locations <span class="badge" id="totalCount" style="background:rgba(255,255,255,.1);padding:2px 8px;border-radius:8px;font-size:11px">0</span></h3>
+  <input id="searchInput" class="inp" placeholder="🔍 Search..." />
+  <div id="filterTabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px"></div>
+  <div id="listContent"></div>
+</div>
+
+<div class="sheet" id="sheetOptions">
+  <div class="grab"></div>
+  <h3>Options</h3>
+  <div class="mItem" id="optImport"><span class="ic">⬆</span> Load data (JSON)<input type="file" id="importFile" accept="application/json"/></div>
+  <div class="mItem" id="optJson"><span class="ic">⬇</span> Save data (JSON)</div>
+  <div class="mItem" id="optXlsx"><span class="ic">⬇</span> Export Excel (XLSX)</div>
+  <div class="mItem" id="optCsv"><span class="ic">⬇</span> Export CSV</div>
+  <div class="mItem" id="optHtml"><span class="ic">⬇</span> Download HTML (standalone)</div>
+  <div class="mItem" id="optReset"><span class="ic">↺</span> Reset view</div>
+  <div class="mItem danger" id="optLogout"><span class="ic">→</span> Sign out</div>
+</div>
+
+<div class="sheet" id="sheetEdit">
+  <div class="grab"></div>
+  <h3 id="editTitle">Edit location</h3>
+  <div class="edRow">
+    <label>Name</label>
+    <input id="edName" class="inp" type="text" autocomplete="off"/>
+  </div>
+  <div class="edRow">
+    <label>Category</label>
+    <div class="catSelect" id="edCat"></div>
+  </div>
+  <div class="edRow" id="edCoordsRow" style="display:none">
+    <label>Coordinates (Lat, Lng)</label>
+    <input id="edCoords" class="inp" type="text" readonly style="font-family:monospace;font-size:11px"/>
+  </div>
+  <div class="edRow">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input id="edLocked" type="checkbox" style="width:auto"/>
+      <span>Lock position (cannot be dragged)</span>
+    </label>
+  </div>
+  <div class="formBtns">
+    <button class="cancel" id="edCancel">Cancel</button>
+    <button class="del" id="edDelete">Delete</button>
+    <button class="save" id="edSave">Save</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ============================================================
+   HARDENED LOGIN — same as before
+   ============================================================ */
+const SALT = "caesar_resort_2026_salt_x9k2";
+const USER_HASHES = {
+  "admin":       "4d39d85083c3722d4cb93e9f0d4aafaa76623bacbc9f6ccd4e8b7bf71d025d29",
+  "alireza":     "543180214574d5ea5bfa8ced0cd0f3252a360b5bf4ce45d3f10f5abd31f92efa",
+  "hezi":        "d51b20343a45d7d6dd7a64e459cb5a9bebc09a14ddbdea1cb5102da30d6c155f",
+  "manager":     "b9e900b21fedf4b3f6b55ba1c4c4f2e0e6b797a20f01f0dbcbe3251d95b3a2bf",
+  "maintenance": "c39e656d12f00b6755c8cd1fc5d6e6fcf840dbf196959a3f894dd35bc44aaa1f"
+};
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 5*60*1000;
+const SESSION_MS = 15*60*1000;
+async function sha256(t){const b=new TextEncoder().encode(t);const h=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function getRL(){try{const r=localStorage.getItem('crmLock');return r?JSON.parse(r):{attempts:0,lockedUntil:0};}catch(e){return{attempts:0,lockedUntil:0};}}
+function setRL(rl){try{localStorage.setItem('crmLock',JSON.stringify(rl));}catch(e){}}
+function isLocked(){return getRL().lockedUntil>Date.now();}
+async function doLogin(ev){
+  ev.preventDefault();
+  const err=document.getElementById('loginErr');
+  if(isLocked()){const m=Math.ceil((getRL().lockedUntil-Date.now())/60000);err.textContent=`Locked. Try again in ${m} minute(s).`;return false;}
+  const u=document.getElementById('loginUser').value.trim().toLowerCase();
+  const p=document.getElementById('loginPass').value;
+  if(!u||!p){err.textContent='Enter both fields';return false;}
+  const h=await sha256(SALT+p);
+  if(USER_HASHES[u]&&USER_HASHES[u]===h){
+    setRL({attempts:0,lockedUntil:0});
+    const tok={user:u,issued:Date.now(),lastActivity:Date.now(),nonce:Math.random().toString(36).slice(2)};
+    try{sessionStorage.setItem('crmAuth',JSON.stringify(tok));}catch(e){}
+    document.getElementById('loginOverlay').classList.add('hidden');
+    err.textContent='';document.getElementById('loginPass').value='';
+    startActivityMonitor();initApp();
+    return false;
+  }
+  const rl=getRL();rl.attempts=(rl.attempts||0)+1;
+  if(rl.attempts>=MAX_ATTEMPTS){rl.lockedUntil=Date.now()+LOCKOUT_MS;rl.attempts=0;setRL(rl);err.textContent='Too many failed attempts. Locked for 5 minutes.';}
+  else{setRL(rl);err.textContent=`Wrong username or password. ${MAX_ATTEMPTS-rl.attempts} attempt(s) left.`;}
+  document.getElementById('loginPass').value='';document.getElementById('loginPass').focus();
+  return false;
+}
+function getAuth(){try{const r=sessionStorage.getItem('crmAuth');if(!r)return null;const t=JSON.parse(r);if(!t.user||!USER_HASHES[t.user])return null;if(Date.now()-t.lastActivity>SESSION_MS)return null;return t;}catch(e){return null;}}
+function logout(reason){try{sessionStorage.removeItem('crmAuth');}catch(e){}document.getElementById('loginOverlay').classList.remove('hidden');const e=document.getElementById('loginErr');if(e&&reason)e.textContent=reason;document.getElementById('loginUser').focus();}
+function updateActivity(){const t=getAuth();if(t){t.lastActivity=Date.now();try{sessionStorage.setItem('crmAuth',JSON.stringify(t));}catch(e){}}}
+function startActivityMonitor(){['mousemove','keydown','click','touchstart'].forEach(ev=>document.addEventListener(ev,updateActivity,{passive:true}));setInterval(()=>{if(!getAuth())logout('Session expired. Please sign in again.');},30000);}
+const DEV_MODE=new URLSearchParams(location.search).has('dev');
+let dtOpen=false;
+setInterval(()=>{if(DEV_MODE)return;const wd=window.outerWidth-window.innerWidth,hd=window.outerHeight-window.innerHeight;if(wd>160||hd>160){if(!dtOpen){dtOpen=true;if(getAuth())logout('DevTools detected — signed out for security.');}}else dtOpen=false;},1000);
+document.addEventListener('contextmenu',e=>{if(!DEV_MODE)e.preventDefault();});
+document.addEventListener('keydown',e=>{if(DEV_MODE)return;if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&'IiJjCc'.includes(e.key))||(e.ctrlKey&&'uUsS'.includes(e.key))){e.preventDefault();return false;}});
+
+/* ============================================================
+   CONFIG — replaced for each resort
+   ============================================================ */
+const RESORT_CENTER = [35.326584, 33.969869];
+const RESORT_ZOOM   = 18;
+const RESORT_BOUNDS = [[35.320, 33.962], [35.333, 33.978]];
+const LS_KEY = "caesar_blue_map";
+
+const CATDEF = [
+  {k:'pool',     label:'Pool',     dot:'#0891b2', def:'New Pool'},
+  {k:'bld',      label:'Building', dot:'#7c5cff', def:'New Building'},
+  {k:'fnb',      label:'F&B',      dot:'#dc2626', def:'New F&B'},
+  {k:'office',   label:'Office',   dot:'#374151', def:'New Office'},
+  {k:'facility', label:'Facility', dot:'#16a34a', def:'New Facility'},
+  {k:'gate',     label:'Gate',     dot:'#ea580c', def:'New Gate'},
+  {k:'bridge',   label:'Bridge',   dot:'#92400e', def:'New Bridge'},
+  {k:'parking',  label:'Parking',  dot:'#1e3a8a', def:'New Parking'},
+];
+const CATBY = Object.fromEntries(CATDEF.map(c=>[c.k,c]));
+
+const DEFAULT_DATA = {"items":[{"name":"Aurora","category":"bld","placed":false,"locked":false,"id":"blue_000"},{"name":"Donna","category":"bld","placed":false,"locked":false,"id":"blue_001"},{"name":"Luna","category":"bld","placed":false,"locked":false,"id":"blue_002"},{"name":"Violetta","category":"bld","placed":false,"locked":false,"id":"blue_003"},{"name":"Cecilia","category":"bld","placed":false,"locked":false,"id":"blue_004"},{"name":"Priscilla","category":"bld","placed":false,"locked":false,"id":"blue_005"},{"name":"Helena","category":"bld","placed":false,"locked":false,"id":"blue_006"},{"name":"Iona","category":"bld","placed":false,"locked":false,"id":"blue_007"},{"name":"Esther","category":"bld","placed":false,"locked":false,"id":"blue_008"},{"name":"Livia","category":"bld","placed":false,"locked":false,"id":"blue_009"},{"name":"Alegria","category":"bld","placed":false,"locked":false,"id":"blue_010"},{"name":"Sazbona","category":"bld","placed":false,"locked":false,"id":"blue_011"},{"name":"Flora","category":"bld","placed":false,"locked":false,"id":"blue_012"},{"name":"Gloria","category":"bld","placed":false,"locked":false,"id":"blue_013"},{"name":"Terra","category":"bld","placed":false,"locked":false,"id":"blue_014"},{"name":"Sophia","category":"bld","placed":false,"locked":false,"id":"blue_015"},{"name":"Isabella","category":"bld","placed":false,"locked":false,"id":"blue_016"},{"name":"North Villas","category":"bld","placed":false,"locked":false,"id":"blue_017"},{"name":"Quatro Villas","category":"bld","placed":false,"locked":false,"id":"blue_018"},{"name":"Townhouse Block 1","category":"bld","placed":false,"locked":false,"id":"blue_019"},{"name":"Townhouse Block 2","category":"bld","placed":false,"locked":false,"id":"blue_020"},{"name":"Townhouse Block 3","category":"bld","placed":false,"locked":false,"id":"blue_021"},{"name":"Townhouse Block 4","category":"bld","placed":false,"locked":false,"id":"blue_022"},{"name":"Townhouse Block 5","category":"bld","placed":false,"locked":false,"id":"blue_023"},{"name":"Townhouse Block 6","category":"bld","placed":false,"locked":false,"id":"blue_024"},{"name":"Townhouse Block 7","category":"bld","placed":false,"locked":false,"id":"blue_025"},{"name":"Townhouse Block 8","category":"bld","placed":false,"locked":false,"id":"blue_026"},{"name":"Townhouse Block 9","category":"bld","placed":false,"locked":false,"id":"blue_027"},{"name":"Townhouse Block 10","category":"bld","placed":false,"locked":false,"id":"blue_028"},{"name":"Townhouse Block 11","category":"bld","placed":false,"locked":false,"id":"blue_029"},{"name":"Townhouse Block 12","category":"bld","placed":false,"locked":false,"id":"blue_030"},{"name":"Townhouse Block 13","category":"bld","placed":false,"locked":false,"id":"blue_031"},{"name":"Townhouse Block 14","category":"bld","placed":false,"locked":false,"id":"blue_032"},{"name":"Townhouse Block 15","category":"bld","placed":false,"locked":false,"id":"blue_033"},{"name":"Townhouse Block 16","category":"bld","placed":false,"locked":false,"id":"blue_034"},{"name":"Townhouse Block 17","category":"bld","placed":false,"locked":false,"id":"blue_035"},{"name":"Townhouse Block 18","category":"bld","placed":false,"locked":false,"id":"blue_036"},{"name":"Main Lagoon Pool","category":"pool","placed":false,"locked":false,"id":"blue_037"},{"name":"Aurora Pool","category":"pool","placed":false,"locked":false,"id":"blue_038"},{"name":"Central Pool","category":"pool","placed":false,"locked":false,"id":"blue_039"},{"name":"Children Pool","category":"pool","placed":false,"locked":false,"id":"blue_040"},{"name":"Sophia Pool","category":"pool","placed":false,"locked":false,"id":"blue_041"},{"name":"North Pool","category":"pool","placed":false,"locked":false,"id":"blue_042"},{"name":"Playground (Quatro)","category":"facility","placed":false,"locked":false,"id":"blue_043"},{"name":"Sport area","category":"facility","placed":false,"locked":false,"id":"blue_044"},{"name":"Beach access","category":"facility","placed":false,"locked":false,"id":"blue_045"},{"name":"Garden \u2014 North","category":"facility","placed":false,"locked":false,"id":"blue_046"},{"name":"Garden \u2014 Central","category":"facility","placed":false,"locked":false,"id":"blue_047"},{"name":"Reception","category":"facility","placed":false,"locked":false,"id":"blue_048"},{"name":"Beach Cafe","category":"fnb","placed":false,"locked":false,"id":"blue_049"},{"name":"Pool Bar","category":"fnb","placed":false,"locked":false,"id":"blue_050"},{"name":"Main Restaurant","category":"fnb","placed":false,"locked":false,"id":"blue_051"},{"name":"Reception Office","category":"office","placed":false,"locked":false,"id":"blue_052"},{"name":"Management Office","category":"office","placed":false,"locked":false,"id":"blue_053"},{"name":"Maintenance Office","category":"office","placed":false,"locked":false,"id":"blue_054"},{"name":"Main Gate (South)","category":"gate","placed":false,"locked":false,"id":"blue_055"},{"name":"Beach Gate","category":"gate","placed":false,"locked":false,"id":"blue_056"},{"name":"Service Gate","category":"gate","placed":false,"locked":false,"id":"blue_057"},{"name":"Pool Bridge 1","category":"bridge","placed":false,"locked":false,"id":"blue_058"},{"name":"Pool Bridge 2","category":"bridge","placed":false,"locked":false,"id":"blue_059"},{"name":"Main Parking","category":"parking","placed":false,"locked":false,"id":"blue_060"},{"name":"North Parking","category":"parking","placed":false,"locked":false,"id":"blue_061"},{"name":"South Parking","category":"parking","placed":false,"locked":false,"id":"blue_062"},{"name":"Beach Parking","category":"parking","placed":false,"locked":false,"id":"blue_063"}]};
+
+/* ============================================================
+   MAIN APP
+   ============================================================ */
+let map = null;
+let state = null;
+let layerGroup = null;
+let markers = new Map(); // id -> {marker, item}
+let visibility = Object.fromEntries(CATDEF.map(c=>[c.k,true]));
+let placingCat = null;  // category being placed
+let placingItem = null; // existing item being placed from list
+let dirty = false;
+let editingId = null;
+let originalSnapshot = null; // for dirty check
+
+function initApp(){
+  // Load state from localStorage or use default
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      if(parsed && parsed.items) state = parsed;
+    }
+  }catch(e){}
+  if(!state){
+    state = JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+  // Ensure items have ids
+  state.items.forEach((it,i)=>{if(!it.id)it.id='it_'+Date.now()+'_'+i;});
+  originalSnapshot = JSON.stringify(state);
+
+  buildLegend();
+  buildMap();
+  renderAll();
+  bindUI();
+}
+
+function buildMap(){
+  if(map){map.remove();}
+  map = L.map('map', {
+    zoomControl: true,
+    attributionControl: false,
+    maxZoom: 22,
+    minZoom: 10,
+    worldCopyJump: false,
+  }).setView(RESORT_CENTER, RESORT_ZOOM);
+
+  // Esri World Imagery (satellite, free, no API key)
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 22,
+    maxNativeZoom: 19,
+    attribution: 'Tiles © Esri'
+  }).addTo(map);
+
+  // Restrict view to resort area
+  if(RESORT_BOUNDS){
+    map.setMaxBounds(RESORT_BOUNDS);
+  }
+
+  layerGroup = L.layerGroup().addTo(map);
+
+  map.on('click', onMapClick);
+}
+
+function onMapClick(e){
+  if(placingCat || placingItem){
+    placeAt(e.latlng);
+  }
+}
+
+function placeAt(latlng){
+  if(placingItem){
+    // existing item being placed
+    placingItem.lat = latlng.lat;
+    placingItem.lng = latlng.lng;
+    placingItem.placed = true;
+    placingItem = null;
+  } else if(placingCat){
+    const cd = CATBY[placingCat];
+    const newItem = {
+      id: 'it_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+      name: cd.def,
+      category: placingCat,
+      lat: latlng.lat,
+      lng: latlng.lng,
+      placed: true,
+      locked: false
+    };
+    state.items.push(newItem);
+    placingCat = null;
+    openEdit(newItem.id);
+  }
+  hidePlacingBanner();
+  markDirty();
+  renderAll();
+}
+
+function showPlacingBanner(text){
+  const b = document.getElementById('placingBanner');
+  document.getElementById('placingText').textContent = text;
+  b.classList.add('show');
+}
+function hidePlacingBanner(){
+  document.getElementById('placingBanner').classList.remove('show');
+  placingCat = null;
+  placingItem = null;
+}
+
+function buildLegend(){
+  const lg = document.getElementById('legend');
+  lg.innerHTML = '';
+  CATDEF.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'item' + (visibility[c.k]?'':' off');
+    el.innerHTML = `<div class="dot" style="background:${c.dot}"></div><div class="label">${c.label}</div>`;
+    el.onclick = ()=>{visibility[c.k] = !visibility[c.k]; buildLegend(); renderMarkers();};
+    lg.appendChild(el);
+  });
+}
+
+function renderMarkers(){
+  layerGroup.clearLayers();
+  markers.clear();
+  state.items.forEach(it=>{
+    if(!it.placed) return;
+    if(!visibility[it.category]) return;
+    const cd = CATBY[it.category] || CATBY.bld;
+    const icon = L.divIcon({
+      className: 'pinMarker cat-'+it.category,
+      html: `<div class="body${it.locked?' locked':''}">${escapeHtml(it.name)}</div>`,
+      iconSize: [0,0],
+      iconAnchor: [0,0],
+    });
+    const marker = L.marker([it.lat, it.lng], {
+      icon: icon,
+      draggable: !it.locked,
+      riseOnHover: true
+    });
+    marker.on('click', ()=>openEdit(it.id));
+    marker.on('dragend', e=>{
+      const ll = e.target.getLatLng();
+      it.lat = ll.lat; it.lng = ll.lng;
+      markDirty();
+    });
+    marker.addTo(layerGroup);
+    markers.set(it.id, {marker, item:it});
+  });
+  updateCounts();
+}
+
+function updateCounts(){
+  const placed = state.items.filter(i=>i.placed).length;
+  document.getElementById('listCount').textContent = state.items.length;
+  document.getElementById('totalCount').textContent = state.items.length;
+}
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function renderAll(){
+  renderMarkers();
+}
+
+function markDirty(){
+  dirty = true;
+  document.getElementById('dirtyBadge').classList.add('show');
+}
+function clearDirty(){
+  dirty = false;
+  document.getElementById('dirtyBadge').classList.remove('show');
+  originalSnapshot = JSON.stringify(state);
+}
+
+/* ===== UI BINDINGS ===== */
+function bindUI(){
+  document.getElementById('btnSave').onclick = saveData;
+  document.getElementById('btnBack').onclick = ()=>{
+    if(dirty && !confirm('You have unsaved changes. Leave anyway?')) return;
+    location.href = 'caesar-maps-dashboard.html';
+  };
+
+  // FAB
+  document.getElementById('fabAdd').onclick = ()=>{
+    buildAddSheet(); openSheet('sheetAdd');
+  };
+  document.getElementById('fabList').onclick = ()=>{
+    buildListSheet(); openSheet('sheetList');
+  };
+  document.getElementById('fabOptions').onclick = ()=>openSheet('sheetOptions');
+
+  // Backdrop / close
+  document.getElementById('backdrop').onclick = closeAllSheets;
+
+  // Placing
+  document.getElementById('cancelPlacing').onclick = hidePlacingBanner;
+
+  // Options
+  document.getElementById('optJson').onclick = exportJSON;
+  document.getElementById('optXlsx').onclick = exportXLSX;
+  document.getElementById('optCsv').onclick = exportCSV;
+  document.getElementById('optHtml').onclick = exportHTML;
+  document.getElementById('optReset').onclick = ()=>{map.setView(RESORT_CENTER, RESORT_ZOOM);closeAllSheets();};
+  document.getElementById('optLogout').onclick = ()=>{if(confirm('Sign out?')){closeAllSheets();logout('Signed out.');}};
+  document.getElementById('optImport').onclick = ()=>document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange = importJSON;
+
+  // Edit form
+  document.getElementById('edSave').onclick = saveEdit;
+  document.getElementById('edCancel').onclick = ()=>closeSheet('sheetEdit');
+  document.getElementById('edDelete').onclick = deleteEdit;
+
+  // Search
+  document.getElementById('searchInput').oninput = ()=>buildListSheet();
+
+  // Warn on unload if dirty
+  window.addEventListener('beforeunload', e=>{
+    if(dirty){ e.preventDefault(); e.returnValue=''; }
+  });
+}
+
+function openSheet(id){
+  document.getElementById('backdrop').classList.add('show');
+  document.getElementById(id).classList.add('open');
+}
+function closeSheet(id){
+  document.getElementById(id).classList.remove('open');
+  // close backdrop if no sheets open
+  const anyOpen = Array.from(document.querySelectorAll('.sheet.open')).length>0;
+  if(!anyOpen) document.getElementById('backdrop').classList.remove('show');
+}
+function closeAllSheets(){
+  document.querySelectorAll('.sheet.open').forEach(s=>s.classList.remove('open'));
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+/* ===== ADD SHEET ===== */
+function buildAddSheet(){
+  const c = document.getElementById('addCatList');
+  c.innerHTML = '';
+  CATDEF.forEach(cd=>{
+    const el = document.createElement('div');
+    el.className = 'mItem';
+    el.innerHTML = `<div class="dot" style="width:11px;height:11px;border-radius:50%;background:${cd.dot}"></div><div>New ${cd.label.toLowerCase()}</div>`;
+    el.onclick = ()=>{
+      placingCat = cd.k;
+      closeAllSheets();
+      showPlacingBanner(`Click on map to place new ${cd.label}`);
+    };
+    c.appendChild(el);
+  });
+}
+
+/* ===== LIST SHEET ===== */
+let listFilter = 'all'; // 'all' | category key | 'unplaced'
+function buildListSheet(){
+  const tabs = document.getElementById('filterTabs');
+  tabs.innerHTML = '';
+  const counts = {all:state.items.length, unplaced:state.items.filter(i=>!i.placed).length};
+  CATDEF.forEach(c=>counts[c.k]=state.items.filter(i=>i.category===c.k).length);
+
+  const mkTab = (k, label, color)=>{
+    const t = document.createElement('div');
+    t.style.cssText=`padding:6px 11px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.08);background:${listFilter===k?'rgba(124,92,255,.2)':'rgba(255,255,255,.04)'};${listFilter===k?'border-color:#7c5cff':''};display:flex;align-items:center;gap:5px`;
+    t.innerHTML=`${color?`<div style="width:7px;height:7px;border-radius:50%;background:${color}"></div>`:''}<span>${label} ${counts[k]||0}</span>`;
+    t.onclick=()=>{listFilter=k;buildListSheet();};
+    tabs.appendChild(t);
+  };
+  mkTab('all','All','');
+  CATDEF.forEach(c=>mkTab(c.k, c.label, c.dot));
+  mkTab('unplaced','Unplaced','#fbbf24');
+
+  const search = document.getElementById('searchInput').value.trim().toLowerCase();
+  let items = state.items.slice();
+  if(listFilter==='unplaced') items = items.filter(i=>!i.placed);
+  else if(listFilter!=='all') items = items.filter(i=>i.category===listFilter);
+  if(search) items = items.filter(i=>(i.name||'').toLowerCase().includes(search));
+
+  const c = document.getElementById('listContent');
+  c.innerHTML = '';
+  if(items.length===0){c.innerHTML='<div style="text-align:center;color:#94a3b8;padding:20px;font-size:13px">No items</div>';return;}
+  items.forEach(it=>{
+    const cd = CATBY[it.category] || CATBY.bld;
+    const el = document.createElement('div');
+    el.className = 'listItem';
+    el.innerHTML = `
+      <div class="dot" style="background:${cd.dot}"></div>
+      <div class="name">${escapeHtml(it.name)}</div>
+      <div class="badge ${it.placed?'':'unplaced'}">${it.placed?cd.label:'Unplaced'}</div>
+      <div class="actions">
+        ${it.placed?`<button class="btn" data-act="zoom" data-id="${it.id}">📍</button>`:`<button class="btn" data-act="place" data-id="${it.id}">PLACE</button>`}
+        <button class="btn" data-act="edit" data-id="${it.id}">✎</button>
+      </div>`;
+    el.querySelectorAll('button').forEach(b=>{
+      b.onclick = (ev)=>{ev.stopPropagation();handleListAction(b.dataset.act, b.dataset.id);};
+    });
+    el.onclick = ()=>{handleListAction(it.placed?'zoom':'edit', it.id);};
+    c.appendChild(el);
+  });
+}
+
+function handleListAction(act, id){
+  const it = state.items.find(x=>x.id===id);
+  if(!it) return;
+  if(act==='zoom' && it.placed){
+    map.flyTo([it.lat, it.lng], 19, {duration:0.6});
+    closeAllSheets();
+  } else if(act==='place'){
+    placingItem = it;
+    closeAllSheets();
+    showPlacingBanner(`Click on map to place: ${it.name}`);
+  } else if(act==='edit'){
+    openEdit(id);
+  }
+}
+
+/* ===== EDIT SHEET ===== */
+function openEdit(id){
+  editingId = id;
+  const it = state.items.find(x=>x.id===id);
+  if(!it) return;
+  document.getElementById('editTitle').textContent = it.placed ? 'Edit location' : 'Edit (unplaced)';
+  document.getElementById('edName').value = it.name || '';
+  document.getElementById('edLocked').checked = !!it.locked;
+  if(it.placed){
+    document.getElementById('edCoordsRow').style.display = '';
+    document.getElementById('edCoords').value = it.lat.toFixed(6)+', '+it.lng.toFixed(6);
+  } else {
+    document.getElementById('edCoordsRow').style.display = 'none';
+  }
+  // category select
+  const cs = document.getElementById('edCat');
+  cs.innerHTML = '';
+  CATDEF.forEach(cd=>{
+    const o = document.createElement('div');
+    o.className = 'opt' + (it.category===cd.k?' active':'');
+    o.innerHTML = `<div class="dot" style="background:${cd.dot}"></div><span>${cd.label}</span>`;
+    o.onclick = ()=>{
+      cs.querySelectorAll('.opt').forEach(x=>x.classList.remove('active'));
+      o.classList.add('active');
+      o.dataset.selected = 'true';
+      cs._selected = cd.k;
+    };
+    cs.appendChild(o);
+  });
+  cs._selected = it.category;
+  closeAllSheets();
+  openSheet('sheetEdit');
+}
+
+function saveEdit(){
+  const it = state.items.find(x=>x.id===editingId);
+  if(!it) return;
+  it.name = document.getElementById('edName').value.trim() || it.name;
+  it.locked = document.getElementById('edLocked').checked;
+  const newCat = document.getElementById('edCat')._selected;
+  if(newCat) it.category = newCat;
+  markDirty();
+  renderAll();
+  buildListSheet();
+  closeSheet('sheetEdit');
+  toast('Saved');
+}
+
+function deleteEdit(){
+  if(!confirm('Delete this location?')) return;
+  state.items = state.items.filter(x=>x.id!==editingId);
+  markDirty();
+  renderAll();
+  buildListSheet();
+  closeSheet('sheetEdit');
+  toast('Deleted');
+}
+
+/* ===== SAVE / DATA ===== */
+function saveData(){
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+    clearDirty();
+    toast('Saved locally');
+  }catch(e){toast('Save failed');}
+}
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  download(blob, LS_KEY+'.json');
+  closeAllSheets();
+  toast('JSON saved');
+}
+
+function importJSON(ev){
+  const f = ev.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const d = JSON.parse(r.result);
+      if(d && Array.isArray(d.items)){
+        state = d;
+        state.items.forEach((it,i)=>{if(!it.id)it.id='it_'+Date.now()+'_'+i;});
+        markDirty();renderAll();closeAllSheets();toast('Imported');
+      } else toast('Invalid JSON format');
+    }catch(e){toast('Failed to parse JSON');}
+  };
+  r.readAsText(f);
+  ev.target.value = '';
+}
+
+function exportXLSX(){
+  if(typeof XLSX==='undefined'){toast('Excel library loading...');return;}
+  const wb = XLSX.utils.book_new();
+  const ts = new Date().toISOString().slice(0,19).replace('T',' ');
+
+  // Summary
+  const sum = [
+    ['Caesar Blue — Map Export'],
+    ['Generated:',ts],
+    [''],
+    ['Category','Placed','Unplaced','Total','Color']
+  ];
+  let tP=0,tU=0,tT=0;
+  CATDEF.forEach(c=>{
+    const arr = state.items.filter(i=>i.category===c.k);
+    const p = arr.filter(i=>i.placed).length;
+    const u = arr.length-p;
+    tP+=p;tU+=u;tT+=arr.length;
+    sum.push([c.label,p,u,arr.length,c.dot]);
+  });
+  sum.push(['']);
+  sum.push(['TOTAL',tP,tU,tT,'']);
+  const wsSum = XLSX.utils.aoa_to_sheet(sum);
+  wsSum['!cols']=[{wch:20},{wch:10},{wch:10},{wch:10},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,wsSum,'Summary');
+
+  // Per-category sheets
+  CATDEF.forEach(c=>{
+    const arr = state.items.filter(i=>i.category===c.k);
+    if(arr.length===0) return;
+    const rows = [['#','Name','Status','Latitude','Longitude','Locked']];
+    arr.forEach((it,i)=>{
+      rows.push([
+        i+1,
+        it.name,
+        it.placed?'Placed':'Unplaced',
+        it.placed?it.lat.toFixed(6):'',
+        it.placed?it.lng.toFixed(6):'',
+        it.locked?'Yes':'No'
+      ]);
+    });
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols']=[{wch:5},{wch:30},{wch:11},{wch:14},{wch:14},{wch:8}];
+    XLSX.utils.book_append_sheet(wb,ws,c.label.slice(0,30));
+  });
+
+  // All
+  const all = [['#','Category','Name','Status','Latitude','Longitude','Locked']];
+  let n=1;
+  CATDEF.forEach(c=>{
+    state.items.filter(i=>i.category===c.k).forEach(it=>{
+      all.push([n++,c.label,it.name,it.placed?'Placed':'Unplaced',
+        it.placed?it.lat.toFixed(6):'',
+        it.placed?it.lng.toFixed(6):'',
+        it.locked?'Yes':'No']);
+    });
+  });
+  const wsAll = XLSX.utils.aoa_to_sheet(all);
+  wsAll['!cols']=[{wch:5},{wch:14},{wch:30},{wch:11},{wch:14},{wch:14},{wch:8}];
+  XLSX.utils.book_append_sheet(wb,wsAll,'All Items');
+
+  XLSX.writeFile(wb,LS_KEY+'_'+ts.replace(/[: ]/g,'-')+'.xlsx');
+  closeAllSheets();
+  toast('Excel exported');
+}
+
+function exportCSV(){
+  const rows = [['Category','Name','Status','Latitude','Longitude','Locked']];
+  CATDEF.forEach(c=>{
+    state.items.filter(i=>i.category===c.k).forEach(it=>{
+      rows.push([c.label,it.name,it.placed?'Placed':'Unplaced',
+        it.placed?it.lat.toFixed(6):'',
+        it.placed?it.lng.toFixed(6):'',
+        it.locked?'Yes':'No']);
+    });
+  });
+  const csv = rows.map(r=>r.map(v=>{
+    const s=String(v??'');
+    return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+  }).join(',')).join('\r\n');
+  download(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}),LS_KEY+'.csv');
+  closeAllSheets();
+  toast('CSV exported');
+}
+
+async function exportHTML(){
+  try{
+    closeAllSheets();
+    toast('Building HTML...');
+    const resp = await fetch(location.href,{cache:'no-store'});
+    if(!resp.ok){toast('Fetch failed');return;}
+    let html = await resp.text();
+    const newDataStr = 'const DEFAULT_DATA = '+JSON.stringify(state)+';';
+    const re = /const DEFAULT_DATA\s*=\s*\{[\s\S]*?\};/;
+    if(re.test(html)) html = html.replace(re,newDataStr);
+    else {toast('Marker not found');return;}
+    const ts = new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+    download(new Blob([html],{type:'text/html;charset=utf-8'}),LS_KEY+'_'+ts+'.html');
+    toast('HTML downloaded');
+  }catch(e){toast('Download failed');}
+}
+
+function download(blob,name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},100);
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ===== AUTO-RESTORE LOGIN ===== */
+(function(){
+  const t = getAuth();
+  if(t){
+    document.getElementById('loginOverlay').classList.add('hidden');
+    startActivityMonitor();
+    initApp();
+  }
+  if(isLocked()){
+    const m = Math.ceil((getRL().lockedUntil-Date.now())/60000);
+    document.getElementById('loginErr').textContent = `Locked. Try again in ${m} minute(s).`;
+  }
+})();
+</script>
+</body>
+</html>
