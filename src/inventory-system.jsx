@@ -1008,6 +1008,20 @@ export default function App() {
                   <div style={{background:"linear-gradient(135deg,#ec4899,#db2777)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
               </a>
+              <a href="/caesar-beach-map.html" style={{...card,padding:0,overflow:"hidden",textDecoration:"none",cursor:"pointer",border:`1px solid ${TH.border}`,display:"block",transition:"transform .2s, border-color .2s"}}>
+                <div style={{height:110,background:"linear-gradient(135deg,#fbbf24,#f59e0b)",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <div style={{fontSize:48,filter:"drop-shadow(0 4px 12px rgba(0,0,0,.3))"}}>{"\ud83c\udfd6\ufe0f"}</div>
+                  <div style={{position:"absolute",top:9,right:11,background:"rgba(0,0,0,.4)",color:"#fff",padding:"2px 9px",borderRadius:99,fontSize:9.5,fontWeight:600,letterSpacing:0.05+"em"}}>SATELLITE</div>
+                </div>
+                <div style={{padding:15}}>
+                  <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Beach</div>
+                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Bo\u011fa\u017c</div>
+                  <div style={{display:"flex",gap:5,marginBottom:11}}>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>0</b> <span style={{color:TH.textMuted}}>items</span></div>
+                  </div>
+                  <div style={{background:"linear-gradient(135deg,#fbbf24,#f59e0b)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
+                </div>
+              </a>
             </div>
             <div style={{...card,padding:18}}>
               <div style={{color:TH.textMuted,fontSize:12,marginBottom:12,fontWeight:600,textTransform:"uppercase",letterSpacing:0.06+"em"}}>Map categories</div>

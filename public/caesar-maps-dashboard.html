@@ -55,6 +55,7 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
 .card.cliff .preview{background:linear-gradient(135deg,#16a34a,#15803d),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97667/151189') center/cover;background-blend-mode:overlay}
 .card.breeze .preview{background:linear-gradient(135deg,#f59e0b,#d97706),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97700/151200') center/cover;background-blend-mode:overlay}
 .card.bay .preview{background:linear-gradient(135deg,#ec4899,#db2777),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97701/151199') center/cover;background-blend-mode:overlay}
+.card.beach .preview{background:linear-gradient(135deg,#fbbf24,#f59e0b),url('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/18/97840/151327') center/cover;background-blend-mode:overlay}
 .card .emoji{position:absolute;top:18px;right:18px;font-size:36px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));z-index:2}
 .card .body{padding:24px;flex:1;display:flex;flex-direction:column}
 .card .title{font-size:22px;font-weight:800;margin:0 0 6px;letter-spacing:-0.01em}
@@ -68,6 +69,7 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
 .card.cliff .action{background:linear-gradient(135deg,#16a34a,#15803d)}
 .card.breeze .action{background:linear-gradient(135deg,#f59e0b,#d97706)}
 .card.bay .action{background:linear-gradient(135deg,#ec4899,#db2777)}
+.card.beach .action{background:linear-gradient(135deg,#fbbf24,#f59e0b)}
 .card:hover .action{transform:scale(1.02)}
 .card .action svg{transition:transform .25s}
 .card:hover .action svg{transform:translateX(4px)}
@@ -210,6 +212,25 @@ body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml
         </div>
       </div>
     </a>
+
+    <a href="caesar-beach-map.html" class="card beach">
+      <div class="preview">
+        <div class="emoji">🏖️</div>
+      </div>
+      <div class="body">
+        <h3 class="title">Caesar Beach</h3>
+        <div class="location">📍 Boğaz, Northern Cyprus</div>
+        <div class="stats">
+          <div class="stat"><div class="num">0</div><div class="lbl">Items</div></div>
+          <div class="stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+          <div class="stat"><div class="num" id="beachPlaced">0</div><div class="lbl">Placed</div></div>
+        </div>
+        <div class="action">
+          <span>Open Map</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </a>
   </div>
 
   <div class="footer">
@@ -291,6 +312,10 @@ function updateStats(){
   try{
     const y=JSON.parse(localStorage.getItem('caesar_bay_map')||'{}');
     if(y.items){document.getElementById('bayPlaced').textContent=y.items.filter(i=>i.placed).length;}
+  }catch(e){}
+  try{
+    const h=JSON.parse(localStorage.getItem('caesar_beach_map')||'{}');
+    if(h.items){document.getElementById('beachPlaced').textContent=h.items.filter(i=>i.placed).length;}
   }catch(e){}
 }
 
