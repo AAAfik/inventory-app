@@ -259,6 +259,40 @@ input[type=file]{display:none}
    HARDENED LOGIN — same as before
    ============================================================ */
 const SALT = "caesar_resort_2026_salt_x9k2";
+
+/* ── Supabase auto-sync ── */
+const SB_URL = "https://ljwtmzrcwakzdhnhizjj.supabase.co";
+const SB_KEY = "sb_publishable_jjfa3jZTCyD21Hfk-Plv-A_A90VsF9b";
+
+async function sbUpsert(items) {
+  const slug = PROPERTY_SLUG;
+  const rows = items.map(it => ({
+    name:          it.name || "Unnamed",
+    category:      it.category || "facility",
+    property_slug: slug,
+    on_map:        it.placed === true,
+    lat:           it.lat  ?? null,
+    lng:           it.lng  ?? null,
+    map_x:         it.x   ?? null,
+    map_y:         it.y   ?? null,
+    notes:         it.id  ?? null,
+    is_active:     true,
+    updated_at:    new Date().toISOString(),
+  }));
+
+  const res = await fetch(SB_URL + "/rest/v1/resort_locations?on_conflict=name,property_slug", {
+    method:  "POST",
+    headers: {
+      "apikey":        SB_KEY,
+      "Authorization": "Bearer " + SB_KEY,
+      "Content-Type":  "application/json",
+      "Prefer":        "resolution=merge-duplicates,return=minimal",
+    },
+    body: JSON.stringify(rows),
+  });
+
+  return res.ok;
+}
 const USER_HASHES = {
   "admin":       "4d39d85083c3722d4cb93e9f0d4aafaa76623bacbc9f6ccd4e8b7bf71d025d29",
   "alireza":     "543180214574d5ea5bfa8ced0cd0f3252a360b5bf4ce45d3f10f5abd31f92efa",
@@ -314,6 +348,7 @@ const RESORT_CENTER = [35.329974, 33.975668];
 const RESORT_ZOOM   = 18;
 const RESORT_BOUNDS = [[35.324, 33.969], [35.336, 33.982]];
 const LS_KEY = "caesar_blue_map";
+const PROPERTY_SLUG = "blue";
 
 const CATDEF = [
   {k:'pool',     label:'Pool',     dot:'#0891b2', def:'New Pool'},
@@ -701,12 +736,14 @@ function deleteEdit(){
 }
 
 /* ===== SAVE / DATA ===== */
-function saveData(){
+async function saveData(){
   try{
     localStorage.setItem(LS_KEY, JSON.stringify(state));
     clearDirty();
-    toast('Saved locally');
-  }catch(e){toast('Save failed');}
+    toast('Saving…');
+    const ok = await sbUpsert(state.items);
+    toast(ok ? '✓ Saved & synced' : '✓ Saved locally (sync failed)');
+  }catch(e){toast('Save failed: '+e.message);}
 }
 
 function exportJSON(){
