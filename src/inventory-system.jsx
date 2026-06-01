@@ -485,6 +485,23 @@ export default function App() {
   }
 
   const filtInv  = inventory.filter(i=>{const s=search.toLowerCase();return i.name.toLowerCase().includes(s)||i.code.toLowerCase().includes(s);});
+  // ── live map counts from Supabase ──
+  const [mapCounts, setMapCounts] = useState({iskele:0, blue:0, cliff:0, beach:0, breeze:0, bay:0});
+  useEffect(() => {
+    if(!isAdmin) return;
+    (async () => {
+      const {data, error} = await supabase
+        .from("resort_locations")
+        .select("property_slug")
+        .eq("is_active", true);
+      if(!error && data) {
+        const counts = {};
+        data.forEach(r => { counts[r.property_slug] = (counts[r.property_slug]||0) + 1; });
+        setMapCounts(c => ({...c, ...counts}));
+      }
+    })();
+  }, [isAdmin, tab]);
+
   const filtPur  = purchases.filter(p=>deptFilter==="All"||p.department===deptFilter);
   const filtCons = consumptions.filter(c=>search===""||items.find(i=>i.id===c.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
   const filtRet  = returns.filter(r=>search===""||items.find(i=>i.id===r.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
@@ -945,9 +962,9 @@ export default function App() {
                 </div>
                 <div style={{padding:15}}>
                   <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Resort</div>
-                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} \u0130skele</div>
+                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} İskele</div>
                   <div style={{display:"flex",gap:5,marginBottom:11}}>
-                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>101</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>{mapCounts.iskele}</b> <span style={{color:TH.textMuted}}>items</span></div>
                   </div>
                   <div style={{background:"linear-gradient(135deg,#7c5cff,#5b3ee0)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
@@ -959,9 +976,9 @@ export default function App() {
                 </div>
                 <div style={{padding:15}}>
                   <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Blue</div>
-                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Bo\u011fa\u017c</div>
+                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Boğaz</div>
                   <div style={{display:"flex",gap:5,marginBottom:11}}>
-                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>64</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>{mapCounts.blue}</b> <span style={{color:TH.textMuted}}>items</span></div>
                   </div>
                   <div style={{background:"linear-gradient(135deg,#06b6d4,#0284c7)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
@@ -975,7 +992,7 @@ export default function App() {
                   <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Cliff</div>
                   <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Esentepe</div>
                   <div style={{display:"flex",gap:5,marginBottom:11}}>
-                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>0</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>{mapCounts.cliff}</b> <span style={{color:TH.textMuted}}>items</span></div>
                   </div>
                   <div style={{background:"linear-gradient(135deg,#16a34a,#15803d)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
@@ -989,7 +1006,7 @@ export default function App() {
                   <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Breeze</div>
                   <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Northern Cyprus</div>
                   <div style={{display:"flex",gap:5,marginBottom:11}}>
-                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>0</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>{mapCounts.breeze}</b> <span style={{color:TH.textMuted}}>items</span></div>
                   </div>
                   <div style={{background:"linear-gradient(135deg,#f59e0b,#d97706)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
@@ -1003,7 +1020,7 @@ export default function App() {
                   <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Bay Apartments</div>
                   <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Northern Cyprus</div>
                   <div style={{display:"flex",gap:5,marginBottom:11}}>
-                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>0</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>{mapCounts.bay}</b> <span style={{color:TH.textMuted}}>items</span></div>
                   </div>
                   <div style={{background:"linear-gradient(135deg,#ec4899,#db2777)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
@@ -1015,9 +1032,9 @@ export default function App() {
                 </div>
                 <div style={{padding:15}}>
                   <div style={{color:TH.textHeading,fontSize:15.5,fontWeight:700,marginBottom:3}}>Caesar Beach</div>
-                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Bo\u011fa\u017c</div>
+                  <div style={{color:TH.textMuted,fontSize:11.5,marginBottom:11,display:"flex",alignItems:"center",gap:4}}>{"\ud83d\udccd"} Boğaz</div>
                   <div style={{display:"flex",gap:5,marginBottom:11}}>
-                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>0</b> <span style={{color:TH.textMuted}}>items</span></div>
+                    <div style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:6,padding:"4px 8px",fontSize:10.5}}><b style={{color:TH.text}}>{mapCounts.beach}</b> <span style={{color:TH.textMuted}}>items</span></div>
                   </div>
                   <div style={{background:"linear-gradient(135deg,#fbbf24,#f59e0b)",borderRadius:8,padding:"8px 12px",color:"#fff",fontSize:12,fontWeight:700,textAlign:"center"}}>{"Open Map \u2192"}</div>
                 </div>
