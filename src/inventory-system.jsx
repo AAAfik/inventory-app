@@ -35,8 +35,8 @@ const KPI_COLORS = {
 
 const T = {
   en:{dashboard:"Dashboard",itemsMgmt:"Items",inventory:"Inventory",purchases:"Purchases",consumption:"Consumption",returns:"Returns",orders:"Orders",suppliers:"Suppliers",activityLog:"Activity Log",database:"DATABASE",caesarMap:"Caesar Resort Map",syncMaps:"Sync Maps",mapDesc:"Interactive map of Caesar Resort \u2014 click on any pin to see details",mapNoLocations:"No locations found. Add some to the resort_locations table in Supabase.",mapTotalLocations:"Total Locations",mapCategories:"Categories",mapShowAll:"Show All",totalValue:"Total Stock Value",totalPurchases:"Total Spend",lowAlerts:"Low Stock Alerts",pendingApprovals:"Pending Approvals",spendDept:"Spend by Department",spendSupplier:"Spend by Supplier",recentPurchases:"Recent Purchases",recentConsumption:"Recent Consumption",newPurchase:"+ New Purchase",logConsumption:"+ Log Consumption",newOrder:"+ New Order",addItem:"+ Add Item",addReturn:"+ Add Return",exportExcel:"\u2191 Export Excel",approve:"Approve",reject:"Reject",receive:"Receive",edit:"Edit",del:"Delete",save:"Save",search:"Search...",allDepts:"All Departments",date:"Date",product:"Product",qty:"Qty",unitPrice:"Unit Price",total:"Total",supplier:"Supplier",department:"Department",invoice:"Invoice",orderNo:"Order No",received:"Received",note:"Note",location:"Location",operator:"Operator",status:"Status",actions:"Actions",code:"Code",unit:"Unit",purchased:"Purchased",consumed:"Consumed",returned:"Returned",stock:"Stock",avgPrice:"Avg Price",stockValue:"Value",lowStock:"Low Stock",ok:"OK",noAccess:"No access to this section.",approvalNote:"New purchases require admin approval before stock updates.",loading:"Loading...",logout:"Logout",discrepancy:"Unusual Consumption Detected",staffWelcome:"Log your consumption here",selectProduct:"Select product...",selectDept:"Select department...",selectLocation:"Select location...",minStock:"Min Stock",itemCode:"Item Code",itemName:"Item Name",itemNameFa:"Name (Persian)",itemNameHe:"Name (Hebrew)",reason:"Reason",fromLocation:"From Location",receivedBy:"Received By",deliveredTo:"Delivered To",deliveryPerson:"Delivered By",image:"Image",returnQty:"Return Qty",editItem:"Edit Item",newItem:"New Item",overview:"OVERVIEW",catalog:"CATALOG",transactions:"TRANSACTIONS",insights:"INSIGHTS",products:"products",approved:"approved",needsAttention:"Needs attention",allItemsOk:"All items OK",awaitingApproval:"Awaiting approval",queueClear:"Queue clear",stockHealth:"Stock Health",topItems:"Top Items by Value",inStock:"in stock",reports:"Reports",reportsDesc:"Generate custom reports \u2014 select sections, then download as Excel",selectReports:"Select reports to include",selectAll:"Select All",clearAll:"Clear",generateReport:"\u2193 Generate Report (Excel)",reportInventory:"INVENTORY",reportTransactions:"TRANSACTIONS",reportAnalytics:"ANALYTICS",reportAudit:"AUDIT",inventorySummary:"Inventory Summary",inventorySummaryDesc:"All items with stock, value, and status",lowStockReport:"Low Stock Items",lowStockDesc:"Items below minimum threshold",topItemsByValue:"Top Items by Value",topItemsByValueDesc:"Most valuable inventory items",allPurchasesReport:"All Purchases",allPurchasesDesc:"Complete list with full details",approvedPurchases:"Approved Purchases",approvedPurchasesDesc:"Confirmed spending, financial focus",pendingPurchases:"Pending Approvals",pendingPurchasesDesc:"Awaiting admin decision",consumptionDetail:"Consumption Detail",consumptionDetailDesc:"Who took what, where, when",returnsReport:"Returns",returnsDesc:"Stock returned to warehouse",ordersReport:"Orders",ordersReportDesc:"Pending and confirmed orders",consumptionByDept:"Consumption by Department",consumptionByDeptDesc:"Aggregated usage per location",consumptionByOperator:"Consumption by Operator",consumptionByOperatorDesc:"Who used how much",deliveryReport:"Delivery Report",deliveryReportDesc:"Who delivered what to whom",suppliersReport:"Suppliers Summary",suppliersReportDesc:"Vendor spending analytics",financialSummary:"Financial Summary",financialSummaryDesc:"Totals, KPIs, key metrics",anomaliesReport:"Anomaly Detection",anomaliesDesc:"Unusual consumption patterns",activityLogReport:"Activity Log",activityLogDesc:"Complete audit trail with users and timestamps",reportGenerated:"Report generated successfully",noReportsSelected:"Please select at least one report"},
-  he:{dashboard:"\u05dc\u05d5\u05d7 \u05d1\u05e7\u05e8\u05d4",itemsMgmt:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd",inventory:"\u05de\u05dc\u05d0\u05d9",purchases:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea",consumption:"\u05e6\u05e8\u05d9\u05db\u05d4",returns:"\u05d4\u05d7\u05d6\u05e8\u05d5\u05ea",orders:"\u05d4\u05d6\u05de\u05e0\u05d5\u05ea",suppliers:"\u05e1\u05e4\u05e7\u05d9\u05dd",activityLog:"\u05d9\u05d5\u05de\u05df \u05e4\u05e2\u05d9\u05dc\u05d5\u05ea",database:"\u05de\u05d0\u05d2\u05e8 \u05de\u05d9\u05d3\u05e2",caesarMap:"\u05de\u05e4\u05ea \u05e7\u05d9\u05e1\u05e8 \u05e8\u05d9\u05d6\u05d5\u05e8\u05d8",syncMaps:"\u05e1\u05e0\u05db\u05e8\u05d5\u05df \u05e0\u05e7\u05d5\u05d3\u05d5\u05ea",mapDesc:"\u05de\u05e4\u05d4 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u05e9\u05dc \u05e7\u05d9\u05e1\u05e8 \u05e8\u05d9\u05d6\u05d5\u05e8\u05d8",mapNoLocations:"\u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d5 \u05de\u05d9\u05e7\u05d5\u05de\u05d9\u05dd",mapTotalLocations:"\u05e1\u05da \u05d4\u05db\u05dc \u05de\u05d9\u05e7\u05d5\u05de\u05d9\u05dd",mapCategories:"\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d5\u05ea",mapShowAll:"\u05d4\u05e6\u05d2 \u05d4\u05db\u05dc",totalValue:"\u05e2\u05e8\u05da \u05de\u05dc\u05d0\u05d9 \u05db\u05d5\u05dc\u05dc",totalPurchases:"\u05e1\u05da \u05d4\u05d5\u05e6\u05d0\u05d5\u05ea",lowAlerts:"\u05d4\u05ea\u05e8\u05d0\u05d5\u05ea \u05de\u05dc\u05d0\u05d9 \u05e0\u05de\u05d5\u05da",pendingApprovals:"\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8",spendDept:"\u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05dc\u05e4\u05d9 \u05de\u05d7\u05dc\u05e7\u05d4",spendSupplier:"\u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05dc\u05e4\u05d9 \u05e1\u05e4\u05e7",recentPurchases:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d5\u05ea",recentConsumption:"\u05e6\u05e8\u05d9\u05db\u05d4 \u05d0\u05d7\u05e8\u05d5\u05e0\u05d4",newPurchase:"+ \u05e8\u05db\u05d9\u05e9\u05d4 \u05d7\u05d3\u05e9\u05d4",logConsumption:"+ \u05e8\u05d9\u05e9\u05d5\u05dd \u05e6\u05e8\u05d9\u05db\u05d4",newOrder:"+ \u05d4\u05d6\u05de\u05e0\u05d4 \u05d7\u05d3\u05e9\u05d4",addItem:"+ \u05d4\u05d5\u05e1\u05e3 \u05e4\u05e8\u05d9\u05d8",addReturn:"+ \u05d4\u05d5\u05e1\u05e3 \u05d4\u05d7\u05d6\u05e8\u05d4",exportExcel:"\u2191 \u05d9\u05d9\u05e6\u05d5\u05d0 Excel",approve:"\u05d0\u05e9\u05e8",reject:"\u05d3\u05d7\u05d4",receive:"\u05e7\u05d1\u05dc",edit:"\u05e2\u05e8\u05d5\u05da",del:"\u05de\u05d7\u05e7",save:"\u05e9\u05de\u05d5\u05e8",search:"\u05d7\u05e4\u05e9...",allDepts:"\u05db\u05dc \u05d4\u05de\u05d7\u05dc\u05e7\u05d5\u05ea",date:"\u05ea\u05d0\u05e8\u05d9\u05da",product:"\u05de\u05d5\u05e6\u05e8",qty:"\u05db\u05de\u05d5\u05ea",unitPrice:"\u05de\u05d7\u05d9\u05e8 \u05d9\u05d7\u05d9\u05d3\u05d4",total:"\u05e1\u05da \u05d4\u05db\u05dc",supplier:"\u05e1\u05e4\u05e7",department:"\u05de\u05d7\u05dc\u05e7\u05d4",invoice:"\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea",orderNo:"\u05de\u05e1\u05e4\u05e8 \u05d4\u05d6\u05de\u05e0\u05d4",received:"\u05d4\u05ea\u05e7\u05d1\u05dc",note:"\u05d4\u05e2\u05e8\u05d4",location:"\u05de\u05d9\u05e7\u05d5\u05dd",operator:"\u05de\u05e4\u05e2\u05d9\u05dc",status:"\u05e1\u05d8\u05d8\u05d5\u05e1",actions:"\u05e4\u05e2\u05d5\u05dc\u05d5\u05ea",code:"\u05e7\u05d5\u05d3",unit:"\u05d9\u05d7\u05d9\u05d3\u05d4",purchased:"\u05e0\u05e8\u05db\u05e9",consumed:"\u05e0\u05e6\u05e8\u05da",returned:"\u05d4\u05d5\u05d7\u05d6\u05e8",stock:"\u05de\u05dc\u05d0\u05d9",avgPrice:"\u05de\u05d7\u05d9\u05e8 \u05de\u05de\u05d5\u05e6\u05e2",stockValue:"\u05e2\u05e8\u05da",lowStock:"\u05de\u05dc\u05d0\u05d9 \u05e0\u05de\u05d5\u05da",ok:"\u05ea\u05e7\u05d9\u05df",noAccess:"\u05d0\u05d9\u05df \u05d2\u05d9\u05e9\u05d4 \u05dc\u05d7\u05dc\u05e7 \u05d6\u05d4.",approvalNote:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea \u05d7\u05d3\u05e9\u05d5\u05ea \u05d3\u05d5\u05e8\u05e9\u05d5\u05ea \u05d0\u05d9\u05e9\u05d5\u05e8 \u05de\u05e0\u05d4\u05dc \u05dc\u05e4\u05e0\u05d9 \u05e2\u05d3\u05db\u05d5\u05df \u05d4\u05de\u05dc\u05d0\u05d9.",loading:"\u05d8\u05d5\u05e2\u05df...",logout:"\u05d4\u05ea\u05e0\u05ea\u05e7",discrepancy:"\u05d6\u05d5\u05d4\u05ea\u05d4 \u05e6\u05e8\u05d9\u05db\u05d4 \u05d7\u05e8\u05d9\u05d2\u05d4",staffWelcome:"\u05e8\u05e9\u05d5\u05dd \u05d0\u05ea \u05d4\u05e6\u05e8\u05d9\u05db\u05d4 \u05e9\u05dc\u05da \u05db\u05d0\u05df",selectProduct:"\u05d1\u05d7\u05e8 \u05de\u05d5\u05e6\u05e8...",selectDept:"\u05d1\u05d7\u05e8 \u05de\u05d7\u05dc\u05e7\u05d4...",selectLocation:"\u05d1\u05d7\u05e8 \u05de\u05d9\u05e7\u05d5\u05dd...",minStock:"\u05de\u05dc\u05d0\u05d9 \u05de\u05d9\u05e0\u05d9\u05de\u05dc\u05d9",itemCode:"\u05e7\u05d5\u05d3 \u05e4\u05e8\u05d9\u05d8",itemName:"\u05e9\u05dd \u05e4\u05e8\u05d9\u05d8",itemNameFa:"\u05e9\u05dd (\u05e4\u05e8\u05e1\u05d9\u05ea)",itemNameHe:"\u05e9\u05dd (\u05e2\u05d1\u05e8\u05d9\u05ea)",reason:"\u05e1\u05d9\u05d1\u05d4",fromLocation:"\u05de\u05de\u05d9\u05e7\u05d5\u05dd",receivedBy:"\u05d4\u05ea\u05e7\u05d1\u05dc \u05e2\u05dc \u05d9\u05d3\u05d9",deliveredTo:"\u05e0\u05de\u05e1\u05e8 \u05dc",deliveryPerson:"\u05e0\u05de\u05e1\u05e8 \u05e2\u05dc \u05d9\u05d3\u05d9",image:"\u05ea\u05de\u05d5\u05e0\u05d4",returnQty:"\u05db\u05de\u05d5\u05ea \u05d4\u05d7\u05d6\u05e8\u05d4",editItem:"\u05e2\u05e8\u05d5\u05da \u05e4\u05e8\u05d9\u05d8",newItem:"\u05e4\u05e8\u05d9\u05d8 \u05d7\u05d3\u05e9",overview:"\u05e1\u05e7\u05d9\u05e8\u05d4",catalog:"\u05e7\u05d8\u05dc\u05d5\u05d2",transactions:"\u05ea\u05e0\u05d5\u05e2\u05d5\u05ea",insights:"\u05ea\u05d5\u05d1\u05e0\u05d5\u05ea",products:"\u05de\u05d5\u05e6\u05e8\u05d9\u05dd",approved:"\u05d0\u05d5\u05e9\u05e8\u05d5",needsAttention:"\u05d3\u05d5\u05e8\u05e9 \u05ea\u05e9\u05d5\u05de\u05ea \u05dc\u05d1",allItemsOk:"\u05d4\u05db\u05dc \u05ea\u05e7\u05d9\u05df",awaitingApproval:"\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8",queueClear:"\u05d4\u05ea\u05d5\u05e8 \u05e8\u05d9\u05e7",stockHealth:"\u05de\u05e6\u05d1 \u05d4\u05de\u05dc\u05d0\u05d9",topItems:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05de\u05d5\u05d1\u05d9\u05dc\u05d9\u05dd",inStock:"\u05d1\u05de\u05dc\u05d0\u05d9",reports:"\u05d3\u05d5\u05d7\u05d5\u05ea",reportsDesc:"\u05e6\u05d5\u05e8 \u05d3\u05d5\u05d7\u05d5\u05ea \u05de\u05d5\u05ea\u05d0\u05de\u05d9\u05dd \u2014 \u05d1\u05d7\u05e8 \u05d7\u05dc\u05e7\u05d9\u05dd \u05d5\u05d4\u05d5\u05e8\u05d3 \u05db-Excel",selectReports:"\u05d1\u05d7\u05e8 \u05d3\u05d5\u05d7\u05d5\u05ea \u05dc\u05db\u05dc\u05d5\u05dc",selectAll:"\u05d1\u05d7\u05e8 \u05d4\u05db\u05dc",clearAll:"\u05e0\u05e7\u05d4",generateReport:"\u2193 \u05e6\u05d5\u05e8 \u05d3\u05d5\u05d7 (Excel)",reportInventory:"\u05de\u05dc\u05d0\u05d9",reportTransactions:"\u05ea\u05e0\u05d5\u05e2\u05d5\u05ea",reportAnalytics:"\u05e0\u05d9\u05ea\u05d5\u05d7",reportAudit:"\u05d1\u05d9\u05e7\u05d5\u05e8\u05ea",inventorySummary:"\u05e1\u05d9\u05db\u05d5\u05dd \u05de\u05dc\u05d0\u05d9",inventorySummaryDesc:"\u05db\u05dc \u05d4\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05e2\u05dd \u05de\u05dc\u05d0\u05d9 \u05d5\u05e2\u05e8\u05da",lowStockReport:"\u05de\u05dc\u05d0\u05d9 \u05e0\u05de\u05d5\u05da",lowStockDesc:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05de\u05ea\u05d7\u05ea \u05dc\u05e1\u05e3",topItemsByValue:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05de\u05d5\u05d1\u05d9\u05dc\u05d9\u05dd",topItemsByValueDesc:"\u05d4\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05d4\u05d9\u05e7\u05e8\u05d9\u05dd \u05d1\u05d9\u05d5\u05ea\u05e8",allPurchasesReport:"\u05db\u05dc \u05d4\u05e8\u05db\u05d9\u05e9\u05d5\u05ea",allPurchasesDesc:"\u05e8\u05e9\u05d9\u05de\u05d4 \u05de\u05dc\u05d0\u05d4 \u05e2\u05dd \u05e4\u05e8\u05d8\u05d9\u05dd",approvedPurchases:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea \u05de\u05d0\u05d5\u05e9\u05e8\u05d5\u05ea",approvedPurchasesDesc:"\u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05e9\u05d0\u05d5\u05e9\u05e8\u05d5",pendingPurchases:"\u05de\u05de\u05ea\u05d9\u05e0\u05d5\u05ea \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8",pendingPurchasesDesc:"\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d4\u05d7\u05dc\u05d8\u05ea \u05de\u05e0\u05d4\u05dc",consumptionDetail:"\u05e4\u05d9\u05e8\u05d5\u05d8 \u05e6\u05e8\u05d9\u05db\u05d4",consumptionDetailDesc:"\u05de\u05d9 \u05dc\u05e7\u05d7, \u05de\u05d4, \u05de\u05d0\u05d9\u05e4\u05d4, \u05de\u05ea\u05d9",returnsReport:"\u05d4\u05d7\u05d6\u05e8\u05d5\u05ea",returnsDesc:"\u05de\u05dc\u05d0\u05d9 \u05e9\u05d4\u05d5\u05d7\u05d6\u05e8 \u05dc\u05de\u05d7\u05e1\u05df",ordersReport:"\u05d4\u05d6\u05de\u05e0\u05d5\u05ea",ordersReportDesc:"\u05d4\u05d6\u05de\u05e0\u05d5\u05ea \u05de\u05de\u05ea\u05d9\u05e0\u05d5\u05ea \u05d5\u05de\u05d0\u05d5\u05e9\u05e8\u05d5\u05ea",consumptionByDept:"\u05e6\u05e8\u05d9\u05db\u05d4 \u05dc\u05e4\u05d9 \u05de\u05d7\u05dc\u05e7\u05d4",consumptionByDeptDesc:"\u05e9\u05d9\u05de\u05d5\u05e9 \u05de\u05e6\u05d8\u05d1\u05e8 \u05dc\u05e4\u05d9 \u05de\u05d9\u05e7\u05d5\u05dd",consumptionByOperator:"\u05e6\u05e8\u05d9\u05db\u05d4 \u05dc\u05e4\u05d9 \u05de\u05e4\u05e2\u05d9\u05dc",consumptionByOperatorDesc:"\u05de\u05d9 \u05d4\u05e9\u05ea\u05de\u05e9 \u05d1\u05db\u05de\u05d4",deliveryReport:"\u05d3\u05d5\u05d7 \u05d0\u05e1\u05e4\u05e7\u05d4",deliveryReportDesc:"\u05de\u05d9 \u05de\u05e1\u05e8 \u05de\u05d4 \u05dc\u05de\u05d9",suppliersReport:"\u05e1\u05d9\u05db\u05d5\u05dd \u05e1\u05e4\u05e7\u05d9\u05dd",suppliersReportDesc:"\u05e0\u05d9\u05ea\u05d5\u05d7 \u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05dc\u05e4\u05d9 \u05e1\u05e4\u05e7",financialSummary:"\u05e1\u05d9\u05db\u05d5\u05dd \u05e4\u05d9\u05e0\u05e0\u05e1\u05d9",financialSummaryDesc:"\u05e1\u05da \u05d4\u05db\u05dc, \u05de\u05d3\u05d3\u05d9\u05dd \u05e8\u05d0\u05e9\u05d9\u05d9\u05dd",anomaliesReport:"\u05d6\u05d9\u05d4\u05d5\u05d9 \u05d7\u05e8\u05d9\u05d2\u05d5\u05ea",anomaliesDesc:"\u05d3\u05e4\u05d5\u05e1\u05d9 \u05e6\u05e8\u05d9\u05db\u05d4 \u05d7\u05e8\u05d9\u05d2\u05d9\u05dd",activityLogReport:"\u05d9\u05d5\u05de\u05df \u05e4\u05e2\u05d9\u05dc\u05d5\u05ea",activityLogDesc:"\u05d3\u05e8\u05da \u05d1\u05d9\u05e7\u05d5\u05e8\u05ea \u05de\u05dc\u05d0\u05d4",reportGenerated:"\u05d4\u05d3\u05d5\u05d7 \u05e0\u05d5\u05e6\u05e8 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4",noReportsSelected:"\u05d1\u05d7\u05e8 \u05dc\u05e4\u05d7\u05d5\u05ea \u05d3\u05d5\u05d7 \u05d0\u05d7\u05d3"},
-  fa:{dashboard:"\u062f\u0627\u0634\u0628\u0648\u0631\u062f",itemsMgmt:"\u06a9\u0627\u0644\u0627\u0647\u0627",inventory:"\u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631",purchases:"\u062e\u0631\u06cc\u062f\u0647\u0627",consumption:"\u0645\u0635\u0631\u0641",returns:"\u0628\u0631\u06af\u0634\u062a \u0628\u0647 \u0627\u0646\u0628\u0627\u0631",orders:"\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627",suppliers:"\u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u06af\u0627\u0646",activityLog:"\u06af\u0632\u0627\u0631\u0634 \u0641\u0639\u0627\u0644\u06cc\u062a",database:"\u062f\u06cc\u062a\u0627\u0628\u06cc\u0633",caesarMap:"\u0646\u0642\u0634\u0647 \u0631\u0632\u0648\u0631\u062a \u0633\u0632\u0627\u0631",syncMaps:"\u0633\u06cc\u0646\u06a9 \u0646\u0642\u0634\u0647\u200c\u0647\u0627",mapDesc:"\u0646\u0642\u0634\u0647 \u062a\u0639\u0627\u0645\u0644\u06cc \u0631\u0632\u0648\u0631\u062a \u0633\u0632\u0627\u0631 \u2014 \u0628\u0631\u0627\u06cc \u062f\u06cc\u062f\u0646 \u062c\u0632\u0626\u06cc\u0627\u062a \u0631\u0648\u06cc \u067e\u06cc\u0646 \u06a9\u0644\u06cc\u06a9 \u06a9\u0646",mapNoLocations:"\u0645\u06a9\u0627\u0646\u06cc \u067e\u06cc\u062f\u0627 \u0646\u0634\u062f. \u062f\u0631 Supabase \u0627\u0636\u0627\u0641\u0647 \u06a9\u0646.",mapTotalLocations:"\u062a\u0639\u062f\u0627\u062f \u06a9\u0644 \u0645\u06a9\u0627\u0646\u200c\u0647\u0627",mapCategories:"\u062f\u0633\u062a\u0647\u200c\u0628\u0646\u062f\u06cc",mapShowAll:"\u0646\u0645\u0627\u06cc\u0634 \u0647\u0645\u0647",totalValue:"\u0627\u0631\u0632\u0634 \u06a9\u0644 \u0627\u0646\u0628\u0627\u0631",totalPurchases:"\u062c\u0645\u0639 \u062e\u0631\u06cc\u062f\u0647\u0627",lowAlerts:"\u0647\u0634\u062f\u0627\u0631 \u06a9\u0645\u200c\u0645\u0648\u062c\u0648\u062f\u06cc",pendingApprovals:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0623\u06cc\u06cc\u062f",spendDept:"\u0647\u0632\u06cc\u0646\u0647 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646",spendSupplier:"\u0647\u0632\u06cc\u0646\u0647 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u0647",recentPurchases:"\u0622\u062e\u0631\u06cc\u0646 \u062e\u0631\u06cc\u062f\u0647\u0627",recentConsumption:"\u0622\u062e\u0631\u06cc\u0646 \u0645\u0635\u0631\u0641\u200c\u0647\u0627",newPurchase:"+ \u062b\u0628\u062a \u062e\u0631\u06cc\u062f",logConsumption:"+ \u062b\u0628\u062a \u0645\u0635\u0631\u0641",newOrder:"+ \u0633\u0641\u0627\u0631\u0634 \u062c\u062f\u06cc\u062f",addItem:"+ \u0627\u0641\u0632\u0648\u062f\u0646 \u06a9\u0627\u0644\u0627",addReturn:"+ \u062b\u0628\u062a \u0628\u0631\u06af\u0634\u062a\u06cc",exportExcel:"\u2191 \u062e\u0631\u0648\u062c\u06cc \u0627\u06a9\u0633\u0644",approve:"\u062a\u0623\u06cc\u06cc\u062f",reject:"\u0631\u062f",receive:"\u062a\u062d\u0648\u06cc\u0644",edit:"\u0648\u06cc\u0631\u0627\u06cc\u0634",del:"\u062d\u0630\u0641",save:"\u0630\u062e\u06cc\u0631\u0647",search:"\u062c\u0633\u062a\u062c\u0648...",allDepts:"\u0647\u0645\u0647 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646\u200c\u0647\u0627",date:"\u062a\u0627\u0631\u06cc\u062e",product:"\u06a9\u0627\u0644\u0627",qty:"\u062a\u0639\u062f\u0627\u062f",unitPrice:"\u0642\u06cc\u0645\u062a \u0648\u0627\u062d\u062f",total:"\u062c\u0645\u0639 \u06a9\u0644",supplier:"\u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u0647",department:"\u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646",invoice:"\u0641\u0627\u06a9\u062a\u0648\u0631",orderNo:"\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634",received:"\u062a\u0627\u0631\u06cc\u062e \u062f\u0631\u06cc\u0627\u0641\u062a",note:"\u062a\u0648\u0636\u06cc\u062d\u0627\u062a",location:"\u0645\u062d\u0644 \u0645\u0635\u0631\u0641",operator:"\u0627\u067e\u0631\u0627\u062a\u0648\u0631",status:"\u0648\u0636\u0639\u06cc\u062a",actions:"\u0639\u0645\u0644\u06cc\u0627\u062a",code:"\u06a9\u062f",unit:"\u0648\u0627\u062d\u062f",purchased:"\u062e\u0631\u06cc\u062f\u0627\u0631\u06cc \u0634\u062f\u0647",consumed:"\u0645\u0635\u0631\u0641 \u0634\u062f\u0647",returned:"\u0628\u0631\u06af\u0634\u062a\u06cc",stock:"\u0645\u0648\u062c\u0648\u062f\u06cc",avgPrice:"\u0645\u06cc\u0627\u0646\u06af\u06cc\u0646 \u0642\u06cc\u0645\u062a",stockValue:"\u0627\u0631\u0632\u0634",lowStock:"\u06a9\u0645\u200c\u0645\u0648\u062c\u0648\u062f\u06cc",ok:"\u0645\u0637\u0644\u0648\u0628",noAccess:"\u0634\u0645\u0627 \u062f\u0633\u062a\u0631\u0633\u06cc \u0628\u0647 \u0627\u06cc\u0646 \u0628\u062e\u0634 \u0631\u0627 \u0646\u062f\u0627\u0631\u06cc\u062f.",approvalNote:"\u062e\u0631\u06cc\u062f\u0647\u0627\u06cc \u062c\u062f\u06cc\u062f \u0646\u06cc\u0627\u0632 \u0628\u0647 \u062a\u0623\u06cc\u06cc\u062f \u0645\u062f\u06cc\u0631 \u062f\u0627\u0631\u0646\u062f.",loading:"\u062f\u0631 \u062d\u0627\u0644 \u0628\u0627\u0631\u06af\u0630\u0627\u0631\u06cc...",logout:"\u062e\u0631\u0648\u062c",discrepancy:"\u0645\u0635\u0631\u0641 \u063a\u06cc\u0631\u0639\u0627\u062f\u06cc \u0634\u0646\u0627\u0633\u0627\u06cc\u06cc \u0634\u062f",staffWelcome:"\u0645\u0635\u0631\u0641 \u062e\u0648\u062f \u0631\u0627 \u0627\u06cc\u0646\u062c\u0627 \u062b\u0628\u062a \u06a9\u0646\u06cc\u062f",selectProduct:"\u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0627\u0644\u0627...",selectDept:"\u0627\u0646\u062a\u062e\u0627\u0628 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646...",selectLocation:"\u0627\u0646\u062a\u062e\u0627\u0628 \u0645\u062d\u0644...",minStock:"\u062d\u062f\u0627\u0642\u0644 \u0645\u0648\u062c\u0648\u062f\u06cc",itemCode:"\u06a9\u062f \u06a9\u0627\u0644\u0627",itemName:"\u0646\u0627\u0645 \u06a9\u0627\u0644\u0627",itemNameFa:"\u0646\u0627\u0645 (\u0641\u0627\u0631\u0633\u06cc)",itemNameHe:"\u0646\u0627\u0645 (\u0639\u0628\u0631\u06cc)",reason:"\u062f\u0644\u06cc\u0644",fromLocation:"\u0627\u0632 \u0645\u062d\u0644",receivedBy:"\u062f\u0631\u06cc\u0627\u0641\u062a\u200c\u06a9\u0646\u0646\u062f\u0647",deliveredTo:"\u062a\u062d\u0648\u06cc\u0644 \u0628\u0647",deliveryPerson:"\u062a\u062d\u0648\u06cc\u0644\u200c\u062f\u0647\u0646\u062f\u0647",image:"\u062a\u0635\u0648\u06cc\u0631",returnQty:"\u0645\u0642\u062f\u0627\u0631 \u0628\u0631\u06af\u0634\u062a\u06cc",editItem:"\u0648\u06cc\u0631\u0627\u06cc\u0634 \u06a9\u0627\u0644\u0627",newItem:"\u06a9\u0627\u0644\u0627\u06cc \u062c\u062f\u06cc\u062f",overview:"\u0646\u0645\u0627\u06cc \u06a9\u0644\u06cc",catalog:"\u06a9\u0627\u062a\u0627\u0644\u0648\u06af",transactions:"\u062a\u0631\u0627\u06a9\u0646\u0634\u200c\u0647\u0627",insights:"\u062a\u062d\u0644\u06cc\u0644",products:"\u06a9\u0627\u0644\u0627",approved:"\u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",needsAttention:"\u0646\u06cc\u0627\u0632 \u0628\u0647 \u062a\u0648\u062c\u0647",allItemsOk:"\u0647\u0645\u0647\u200c\u0686\u06cc\u0632 \u062e\u0648\u0628\u0647",awaitingApproval:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0623\u06cc\u06cc\u062f",queueClear:"\u0635\u0641 \u062e\u0627\u0644\u06cc\u0647",stockHealth:"\u0648\u0636\u0639\u06cc\u062a \u0645\u0648\u062c\u0648\u062f\u06cc",topItems:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u067e\u0631\u0627\u0631\u0632\u0634",inStock:"\u062f\u0631 \u0627\u0646\u0628\u0627\u0631",reports:"\u06af\u0632\u0627\u0631\u0634\u200c\u0647\u0627",reportsDesc:"\u06af\u0632\u0627\u0631\u0634\u200c\u0647\u0627\u06cc \u062f\u0644\u062e\u0648\u0627\u0647 \u0628\u0633\u0627\u0632 \u2014 \u0628\u062e\u0634\u200c\u0647\u0627 \u0631\u0648 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u060c Excel \u062f\u0627\u0646\u0644\u0648\u062f \u06a9\u0646",selectReports:"\u06af\u0632\u0627\u0631\u0634\u200c\u0647\u0627\u06cc \u0645\u0648\u0631\u062f \u0646\u0638\u0631 \u0631\u0648 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646",selectAll:"\u0627\u0646\u062a\u062e\u0627\u0628 \u0647\u0645\u0647",clearAll:"\u062d\u0630\u0641 \u0627\u0646\u062a\u062e\u0627\u0628",generateReport:"\u2193 \u0633\u0627\u062e\u062a \u06af\u0632\u0627\u0631\u0634 (Excel)",reportInventory:"\u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631",reportTransactions:"\u062a\u0631\u0627\u06a9\u0646\u0634\u200c\u0647\u0627",reportAnalytics:"\u062a\u062d\u0644\u06cc\u0644",reportAudit:"\u062d\u0633\u0627\u0628\u0631\u0633\u06cc",inventorySummary:"\u062e\u0644\u0627\u0635\u0647 \u0645\u0648\u062c\u0648\u062f\u06cc",inventorySummaryDesc:"\u0647\u0645\u0647 \u06a9\u0627\u0644\u0627\u0647\u0627 \u0628\u0627 \u0645\u0648\u062c\u0648\u062f\u06cc\u060c \u0627\u0631\u0632\u0634 \u0648 \u0648\u0636\u0639\u06cc\u062a",lowStockReport:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u06a9\u0645\u200c\u0645\u0648\u062c\u0648\u062f",lowStockDesc:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u0632\u06cc\u0631 \u062d\u062f\u0627\u0642\u0644 \u062a\u0639\u0631\u06cc\u0641 \u0634\u062f\u0647",topItemsByValue:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u067e\u0631\u0627\u0631\u0632\u0634",topItemsByValueDesc:"\u0628\u0627\u0627\u0631\u0632\u0634\u200c\u062a\u0631\u06cc\u0646 \u0627\u0642\u0644\u0627\u0645 \u0627\u0646\u0628\u0627\u0631",allPurchasesReport:"\u06a9\u0644 \u062e\u0631\u06cc\u062f\u0647\u0627",allPurchasesDesc:"\u0644\u06cc\u0633\u062a \u06a9\u0627\u0645\u0644 \u0628\u0627 \u0647\u0645\u0647 \u062c\u0632\u0626\u06cc\u0627\u062a",approvedPurchases:"\u062e\u0631\u06cc\u062f\u0647\u0627\u06cc \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",approvedPurchasesDesc:"\u0647\u0632\u06cc\u0646\u0647\u200c\u0647\u0627\u06cc \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647\u060c \u062a\u0645\u0631\u06a9\u0632 \u0645\u0627\u0644\u06cc",pendingPurchases:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0623\u06cc\u06cc\u062f",pendingPurchasesDesc:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0635\u0645\u06cc\u0645 \u0645\u062f\u06cc\u0631",consumptionDetail:"\u062c\u0632\u0626\u06cc\u0627\u062a \u0645\u0635\u0631\u0641",consumptionDetailDesc:"\u06a9\u06cc \u0686\u06cc \u0628\u0631\u062f\u0627\u0634\u062a\u060c \u0627\u0632 \u06a9\u062c\u0627\u060c \u06a9\u06cc",returnsReport:"\u0628\u0631\u06af\u0634\u062a\u06cc\u200c\u0647\u0627",returnsDesc:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u0628\u0631\u06af\u0634\u062a\u06cc \u0628\u0647 \u0627\u0646\u0628\u0627\u0631",ordersReport:"\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627",ordersReportDesc:"\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627\u06cc \u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u0648 \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",consumptionByDept:"\u0645\u0635\u0631\u0641 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646",consumptionByDeptDesc:"\u0645\u0635\u0631\u0641 \u062a\u062c\u0645\u06cc\u0639\u06cc \u0628\u0631 \u0627\u0633\u0627\u0633 \u0645\u062d\u0644",consumptionByOperator:"\u0645\u0635\u0631\u0641 \u0628\u0631 \u0627\u0633\u0627\u0633 \u0627\u067e\u0631\u0627\u062a\u0648\u0631",consumptionByOperatorDesc:"\u06a9\u06cc \u0686\u0642\u062f\u0631 \u0645\u0635\u0631\u0641 \u06a9\u0631\u062f\u0647",deliveryReport:"\u06af\u0632\u0627\u0631\u0634 \u062a\u062d\u0648\u06cc\u0644",deliveryReportDesc:"\u06a9\u06cc \u0686\u06cc \u0628\u0647 \u06a9\u06cc \u062a\u062d\u0648\u06cc\u0644 \u062f\u0627\u062f\u0647",suppliersReport:"\u062e\u0644\u0627\u0635\u0647 \u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u06af\u0627\u0646",suppliersReportDesc:"\u062a\u062d\u0644\u06cc\u0644 \u0647\u0632\u06cc\u0646\u0647 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u0647",financialSummary:"\u062e\u0644\u0627\u0635\u0647 \u0645\u0627\u0644\u06cc",financialSummaryDesc:"\u062c\u0645\u0639\u200c\u0647\u0627\u060c \u0634\u0627\u062e\u0635\u200c\u0647\u0627\u060c \u0627\u0639\u062f\u0627\u062f \u06a9\u0644\u06cc\u062f\u06cc",anomaliesReport:"\u062a\u0634\u062e\u06cc\u0635 \u063a\u06cc\u0631\u0639\u0627\u062f\u06cc",anomaliesDesc:"\u0627\u0644\u06af\u0648\u0647\u0627\u06cc \u0645\u0635\u0631\u0641 \u063a\u06cc\u0631\u0639\u0627\u062f\u06cc",activityLogReport:"\u06af\u0632\u0627\u0631\u0634 \u0641\u0639\u0627\u0644\u06cc\u062a",activityLogDesc:"\u0645\u0633\u06cc\u0631 \u06a9\u0627\u0645\u0644 \u062d\u0633\u0627\u0628\u0631\u0633\u06cc \u0628\u0627 \u06a9\u0627\u0631\u0628\u0631 \u0648 \u0632\u0645\u0627\u0646",reportGenerated:"\u06af\u0632\u0627\u0631\u0634 \u0628\u0627 \u0645\u0648\u0641\u0642\u06cc\u062a \u0633\u0627\u062e\u062a\u0647 \u0634\u062f",noReportsSelected:"\u062d\u062f\u0627\u0642\u0644 \u06cc\u06a9 \u06af\u0632\u0627\u0631\u0634 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646"}
+  he:{dashboard:"\u05dc\u05d5\u05d7 \u05d1\u05e7\u05e8\u05d4",itemsMgmt:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd",inventory:"\u05de\u05dc\u05d0\u05d9",purchases:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea",consumption:"\u05e6\u05e8\u05d9\u05db\u05d4",returns:"\u05d4\u05d7\u05d6\u05e8\u05d5\u05ea",orders:"\u05d4\u05d6\u05de\u05e0\u05d5\u05ea",suppliers:"\u05e1\u05e4\u05e7\u05d9\u05dd",activityLog:"\u05d9\u05d5\u05de\u05df \u05e4\u05e2\u05d9\u05dc\u05d5\u05ea",database:"\u05de\u05d0\u05d2\u05e8 \u05de\u05d9\u05d3\u05e2",caesarMap:"\u05de\u05e4\u05ea \u05e7\u05d9\u05e1\u05e8 \u05e8\u05d9\u05d6\u05d5\u05e8\u05d8",mapDesc:"\u05de\u05e4\u05d4 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u05e9\u05dc \u05e7\u05d9\u05e1\u05e8 \u05e8\u05d9\u05d6\u05d5\u05e8\u05d8",mapNoLocations:"\u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d5 \u05de\u05d9\u05e7\u05d5\u05de\u05d9\u05dd",mapTotalLocations:"\u05e1\u05da \u05d4\u05db\u05dc \u05de\u05d9\u05e7\u05d5\u05de\u05d9\u05dd",mapCategories:"\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d5\u05ea",mapShowAll:"\u05d4\u05e6\u05d2 \u05d4\u05db\u05dc",totalValue:"\u05e2\u05e8\u05da \u05de\u05dc\u05d0\u05d9 \u05db\u05d5\u05dc\u05dc",totalPurchases:"\u05e1\u05da \u05d4\u05d5\u05e6\u05d0\u05d5\u05ea",lowAlerts:"\u05d4\u05ea\u05e8\u05d0\u05d5\u05ea \u05de\u05dc\u05d0\u05d9 \u05e0\u05de\u05d5\u05da",pendingApprovals:"\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8",spendDept:"\u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05dc\u05e4\u05d9 \u05de\u05d7\u05dc\u05e7\u05d4",spendSupplier:"\u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05dc\u05e4\u05d9 \u05e1\u05e4\u05e7",recentPurchases:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d5\u05ea",recentConsumption:"\u05e6\u05e8\u05d9\u05db\u05d4 \u05d0\u05d7\u05e8\u05d5\u05e0\u05d4",newPurchase:"+ \u05e8\u05db\u05d9\u05e9\u05d4 \u05d7\u05d3\u05e9\u05d4",logConsumption:"+ \u05e8\u05d9\u05e9\u05d5\u05dd \u05e6\u05e8\u05d9\u05db\u05d4",newOrder:"+ \u05d4\u05d6\u05de\u05e0\u05d4 \u05d7\u05d3\u05e9\u05d4",addItem:"+ \u05d4\u05d5\u05e1\u05e3 \u05e4\u05e8\u05d9\u05d8",addReturn:"+ \u05d4\u05d5\u05e1\u05e3 \u05d4\u05d7\u05d6\u05e8\u05d4",exportExcel:"\u2191 \u05d9\u05d9\u05e6\u05d5\u05d0 Excel",approve:"\u05d0\u05e9\u05e8",reject:"\u05d3\u05d7\u05d4",receive:"\u05e7\u05d1\u05dc",edit:"\u05e2\u05e8\u05d5\u05da",del:"\u05de\u05d7\u05e7",save:"\u05e9\u05de\u05d5\u05e8",search:"\u05d7\u05e4\u05e9...",allDepts:"\u05db\u05dc \u05d4\u05de\u05d7\u05dc\u05e7\u05d5\u05ea",date:"\u05ea\u05d0\u05e8\u05d9\u05da",product:"\u05de\u05d5\u05e6\u05e8",qty:"\u05db\u05de\u05d5\u05ea",unitPrice:"\u05de\u05d7\u05d9\u05e8 \u05d9\u05d7\u05d9\u05d3\u05d4",total:"\u05e1\u05da \u05d4\u05db\u05dc",supplier:"\u05e1\u05e4\u05e7",department:"\u05de\u05d7\u05dc\u05e7\u05d4",invoice:"\u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05ea",orderNo:"\u05de\u05e1\u05e4\u05e8 \u05d4\u05d6\u05de\u05e0\u05d4",received:"\u05d4\u05ea\u05e7\u05d1\u05dc",note:"\u05d4\u05e2\u05e8\u05d4",location:"\u05de\u05d9\u05e7\u05d5\u05dd",operator:"\u05de\u05e4\u05e2\u05d9\u05dc",status:"\u05e1\u05d8\u05d8\u05d5\u05e1",actions:"\u05e4\u05e2\u05d5\u05dc\u05d5\u05ea",code:"\u05e7\u05d5\u05d3",unit:"\u05d9\u05d7\u05d9\u05d3\u05d4",purchased:"\u05e0\u05e8\u05db\u05e9",consumed:"\u05e0\u05e6\u05e8\u05da",returned:"\u05d4\u05d5\u05d7\u05d6\u05e8",stock:"\u05de\u05dc\u05d0\u05d9",avgPrice:"\u05de\u05d7\u05d9\u05e8 \u05de\u05de\u05d5\u05e6\u05e2",stockValue:"\u05e2\u05e8\u05da",lowStock:"\u05de\u05dc\u05d0\u05d9 \u05e0\u05de\u05d5\u05da",ok:"\u05ea\u05e7\u05d9\u05df",noAccess:"\u05d0\u05d9\u05df \u05d2\u05d9\u05e9\u05d4 \u05dc\u05d7\u05dc\u05e7 \u05d6\u05d4.",approvalNote:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea \u05d7\u05d3\u05e9\u05d5\u05ea \u05d3\u05d5\u05e8\u05e9\u05d5\u05ea \u05d0\u05d9\u05e9\u05d5\u05e8 \u05de\u05e0\u05d4\u05dc \u05dc\u05e4\u05e0\u05d9 \u05e2\u05d3\u05db\u05d5\u05df \u05d4\u05de\u05dc\u05d0\u05d9.",loading:"\u05d8\u05d5\u05e2\u05df...",logout:"\u05d4\u05ea\u05e0\u05ea\u05e7",discrepancy:"\u05d6\u05d5\u05d4\u05ea\u05d4 \u05e6\u05e8\u05d9\u05db\u05d4 \u05d7\u05e8\u05d9\u05d2\u05d4",staffWelcome:"\u05e8\u05e9\u05d5\u05dd \u05d0\u05ea \u05d4\u05e6\u05e8\u05d9\u05db\u05d4 \u05e9\u05dc\u05da \u05db\u05d0\u05df",selectProduct:"\u05d1\u05d7\u05e8 \u05de\u05d5\u05e6\u05e8...",selectDept:"\u05d1\u05d7\u05e8 \u05de\u05d7\u05dc\u05e7\u05d4...",selectLocation:"\u05d1\u05d7\u05e8 \u05de\u05d9\u05e7\u05d5\u05dd...",minStock:"\u05de\u05dc\u05d0\u05d9 \u05de\u05d9\u05e0\u05d9\u05de\u05dc\u05d9",itemCode:"\u05e7\u05d5\u05d3 \u05e4\u05e8\u05d9\u05d8",itemName:"\u05e9\u05dd \u05e4\u05e8\u05d9\u05d8",itemNameFa:"\u05e9\u05dd (\u05e4\u05e8\u05e1\u05d9\u05ea)",itemNameHe:"\u05e9\u05dd (\u05e2\u05d1\u05e8\u05d9\u05ea)",reason:"\u05e1\u05d9\u05d1\u05d4",fromLocation:"\u05de\u05de\u05d9\u05e7\u05d5\u05dd",receivedBy:"\u05d4\u05ea\u05e7\u05d1\u05dc \u05e2\u05dc \u05d9\u05d3\u05d9",deliveredTo:"\u05e0\u05de\u05e1\u05e8 \u05dc",deliveryPerson:"\u05e0\u05de\u05e1\u05e8 \u05e2\u05dc \u05d9\u05d3\u05d9",image:"\u05ea\u05de\u05d5\u05e0\u05d4",returnQty:"\u05db\u05de\u05d5\u05ea \u05d4\u05d7\u05d6\u05e8\u05d4",editItem:"\u05e2\u05e8\u05d5\u05da \u05e4\u05e8\u05d9\u05d8",newItem:"\u05e4\u05e8\u05d9\u05d8 \u05d7\u05d3\u05e9",overview:"\u05e1\u05e7\u05d9\u05e8\u05d4",catalog:"\u05e7\u05d8\u05dc\u05d5\u05d2",transactions:"\u05ea\u05e0\u05d5\u05e2\u05d5\u05ea",insights:"\u05ea\u05d5\u05d1\u05e0\u05d5\u05ea",products:"\u05de\u05d5\u05e6\u05e8\u05d9\u05dd",approved:"\u05d0\u05d5\u05e9\u05e8\u05d5",needsAttention:"\u05d3\u05d5\u05e8\u05e9 \u05ea\u05e9\u05d5\u05de\u05ea \u05dc\u05d1",allItemsOk:"\u05d4\u05db\u05dc \u05ea\u05e7\u05d9\u05df",awaitingApproval:"\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8",queueClear:"\u05d4\u05ea\u05d5\u05e8 \u05e8\u05d9\u05e7",stockHealth:"\u05de\u05e6\u05d1 \u05d4\u05de\u05dc\u05d0\u05d9",topItems:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05de\u05d5\u05d1\u05d9\u05dc\u05d9\u05dd",inStock:"\u05d1\u05de\u05dc\u05d0\u05d9",reports:"\u05d3\u05d5\u05d7\u05d5\u05ea",reportsDesc:"\u05e6\u05d5\u05e8 \u05d3\u05d5\u05d7\u05d5\u05ea \u05de\u05d5\u05ea\u05d0\u05de\u05d9\u05dd \u2014 \u05d1\u05d7\u05e8 \u05d7\u05dc\u05e7\u05d9\u05dd \u05d5\u05d4\u05d5\u05e8\u05d3 \u05db-Excel",selectReports:"\u05d1\u05d7\u05e8 \u05d3\u05d5\u05d7\u05d5\u05ea \u05dc\u05db\u05dc\u05d5\u05dc",selectAll:"\u05d1\u05d7\u05e8 \u05d4\u05db\u05dc",clearAll:"\u05e0\u05e7\u05d4",generateReport:"\u2193 \u05e6\u05d5\u05e8 \u05d3\u05d5\u05d7 (Excel)",reportInventory:"\u05de\u05dc\u05d0\u05d9",reportTransactions:"\u05ea\u05e0\u05d5\u05e2\u05d5\u05ea",reportAnalytics:"\u05e0\u05d9\u05ea\u05d5\u05d7",reportAudit:"\u05d1\u05d9\u05e7\u05d5\u05e8\u05ea",inventorySummary:"\u05e1\u05d9\u05db\u05d5\u05dd \u05de\u05dc\u05d0\u05d9",inventorySummaryDesc:"\u05db\u05dc \u05d4\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05e2\u05dd \u05de\u05dc\u05d0\u05d9 \u05d5\u05e2\u05e8\u05da",lowStockReport:"\u05de\u05dc\u05d0\u05d9 \u05e0\u05de\u05d5\u05da",lowStockDesc:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05de\u05ea\u05d7\u05ea \u05dc\u05e1\u05e3",topItemsByValue:"\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05de\u05d5\u05d1\u05d9\u05dc\u05d9\u05dd",topItemsByValueDesc:"\u05d4\u05e4\u05e8\u05d9\u05d8\u05d9\u05dd \u05d4\u05d9\u05e7\u05e8\u05d9\u05dd \u05d1\u05d9\u05d5\u05ea\u05e8",allPurchasesReport:"\u05db\u05dc \u05d4\u05e8\u05db\u05d9\u05e9\u05d5\u05ea",allPurchasesDesc:"\u05e8\u05e9\u05d9\u05de\u05d4 \u05de\u05dc\u05d0\u05d4 \u05e2\u05dd \u05e4\u05e8\u05d8\u05d9\u05dd",approvedPurchases:"\u05e8\u05db\u05d9\u05e9\u05d5\u05ea \u05de\u05d0\u05d5\u05e9\u05e8\u05d5\u05ea",approvedPurchasesDesc:"\u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05e9\u05d0\u05d5\u05e9\u05e8\u05d5",pendingPurchases:"\u05de\u05de\u05ea\u05d9\u05e0\u05d5\u05ea \u05dc\u05d0\u05d9\u05e9\u05d5\u05e8",pendingPurchasesDesc:"\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d4\u05d7\u05dc\u05d8\u05ea \u05de\u05e0\u05d4\u05dc",consumptionDetail:"\u05e4\u05d9\u05e8\u05d5\u05d8 \u05e6\u05e8\u05d9\u05db\u05d4",consumptionDetailDesc:"\u05de\u05d9 \u05dc\u05e7\u05d7, \u05de\u05d4, \u05de\u05d0\u05d9\u05e4\u05d4, \u05de\u05ea\u05d9",returnsReport:"\u05d4\u05d7\u05d6\u05e8\u05d5\u05ea",returnsDesc:"\u05de\u05dc\u05d0\u05d9 \u05e9\u05d4\u05d5\u05d7\u05d6\u05e8 \u05dc\u05de\u05d7\u05e1\u05df",ordersReport:"\u05d4\u05d6\u05de\u05e0\u05d5\u05ea",ordersReportDesc:"\u05d4\u05d6\u05de\u05e0\u05d5\u05ea \u05de\u05de\u05ea\u05d9\u05e0\u05d5\u05ea \u05d5\u05de\u05d0\u05d5\u05e9\u05e8\u05d5\u05ea",consumptionByDept:"\u05e6\u05e8\u05d9\u05db\u05d4 \u05dc\u05e4\u05d9 \u05de\u05d7\u05dc\u05e7\u05d4",consumptionByDeptDesc:"\u05e9\u05d9\u05de\u05d5\u05e9 \u05de\u05e6\u05d8\u05d1\u05e8 \u05dc\u05e4\u05d9 \u05de\u05d9\u05e7\u05d5\u05dd",consumptionByOperator:"\u05e6\u05e8\u05d9\u05db\u05d4 \u05dc\u05e4\u05d9 \u05de\u05e4\u05e2\u05d9\u05dc",consumptionByOperatorDesc:"\u05de\u05d9 \u05d4\u05e9\u05ea\u05de\u05e9 \u05d1\u05db\u05de\u05d4",deliveryReport:"\u05d3\u05d5\u05d7 \u05d0\u05e1\u05e4\u05e7\u05d4",deliveryReportDesc:"\u05de\u05d9 \u05de\u05e1\u05e8 \u05de\u05d4 \u05dc\u05de\u05d9",suppliersReport:"\u05e1\u05d9\u05db\u05d5\u05dd \u05e1\u05e4\u05e7\u05d9\u05dd",suppliersReportDesc:"\u05e0\u05d9\u05ea\u05d5\u05d7 \u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05dc\u05e4\u05d9 \u05e1\u05e4\u05e7",financialSummary:"\u05e1\u05d9\u05db\u05d5\u05dd \u05e4\u05d9\u05e0\u05e0\u05e1\u05d9",financialSummaryDesc:"\u05e1\u05da \u05d4\u05db\u05dc, \u05de\u05d3\u05d3\u05d9\u05dd \u05e8\u05d0\u05e9\u05d9\u05d9\u05dd",anomaliesReport:"\u05d6\u05d9\u05d4\u05d5\u05d9 \u05d7\u05e8\u05d9\u05d2\u05d5\u05ea",anomaliesDesc:"\u05d3\u05e4\u05d5\u05e1\u05d9 \u05e6\u05e8\u05d9\u05db\u05d4 \u05d7\u05e8\u05d9\u05d2\u05d9\u05dd",activityLogReport:"\u05d9\u05d5\u05de\u05df \u05e4\u05e2\u05d9\u05dc\u05d5\u05ea",activityLogDesc:"\u05d3\u05e8\u05da \u05d1\u05d9\u05e7\u05d5\u05e8\u05ea \u05de\u05dc\u05d0\u05d4",reportGenerated:"\u05d4\u05d3\u05d5\u05d7 \u05e0\u05d5\u05e6\u05e8 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4",noReportsSelected:"\u05d1\u05d7\u05e8 \u05dc\u05e4\u05d7\u05d5\u05ea \u05d3\u05d5\u05d7 \u05d0\u05d7\u05d3"},
+  fa:{dashboard:"\u062f\u0627\u0634\u0628\u0648\u0631\u062f",itemsMgmt:"\u06a9\u0627\u0644\u0627\u0647\u0627",inventory:"\u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631",purchases:"\u062e\u0631\u06cc\u062f\u0647\u0627",consumption:"\u0645\u0635\u0631\u0641",returns:"\u0628\u0631\u06af\u0634\u062a \u0628\u0647 \u0627\u0646\u0628\u0627\u0631",orders:"\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627",suppliers:"\u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u06af\u0627\u0646",activityLog:"\u06af\u0632\u0627\u0631\u0634 \u0641\u0639\u0627\u0644\u06cc\u062a",database:"\u062f\u06cc\u062a\u0627\u0628\u06cc\u0633",caesarMap:"\u0646\u0642\u0634\u0647 \u0631\u0632\u0648\u0631\u062a \u0633\u0632\u0627\u0631",mapDesc:"\u0646\u0642\u0634\u0647 \u062a\u0639\u0627\u0645\u0644\u06cc \u0631\u0632\u0648\u0631\u062a \u0633\u0632\u0627\u0631 \u2014 \u0628\u0631\u0627\u06cc \u062f\u06cc\u062f\u0646 \u062c\u0632\u0626\u06cc\u0627\u062a \u0631\u0648\u06cc \u067e\u06cc\u0646 \u06a9\u0644\u06cc\u06a9 \u06a9\u0646",mapNoLocations:"\u0645\u06a9\u0627\u0646\u06cc \u067e\u06cc\u062f\u0627 \u0646\u0634\u062f. \u062f\u0631 Supabase \u0627\u0636\u0627\u0641\u0647 \u06a9\u0646.",mapTotalLocations:"\u062a\u0639\u062f\u0627\u062f \u06a9\u0644 \u0645\u06a9\u0627\u0646\u200c\u0647\u0627",mapCategories:"\u062f\u0633\u062a\u0647\u200c\u0628\u0646\u062f\u06cc",mapShowAll:"\u0646\u0645\u0627\u06cc\u0634 \u0647\u0645\u0647",totalValue:"\u0627\u0631\u0632\u0634 \u06a9\u0644 \u0627\u0646\u0628\u0627\u0631",totalPurchases:"\u062c\u0645\u0639 \u062e\u0631\u06cc\u062f\u0647\u0627",lowAlerts:"\u0647\u0634\u062f\u0627\u0631 \u06a9\u0645\u200c\u0645\u0648\u062c\u0648\u062f\u06cc",pendingApprovals:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0623\u06cc\u06cc\u062f",spendDept:"\u0647\u0632\u06cc\u0646\u0647 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646",spendSupplier:"\u0647\u0632\u06cc\u0646\u0647 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u0647",recentPurchases:"\u0622\u062e\u0631\u06cc\u0646 \u062e\u0631\u06cc\u062f\u0647\u0627",recentConsumption:"\u0622\u062e\u0631\u06cc\u0646 \u0645\u0635\u0631\u0641\u200c\u0647\u0627",newPurchase:"+ \u062b\u0628\u062a \u062e\u0631\u06cc\u062f",logConsumption:"+ \u062b\u0628\u062a \u0645\u0635\u0631\u0641",newOrder:"+ \u0633\u0641\u0627\u0631\u0634 \u062c\u062f\u06cc\u062f",addItem:"+ \u0627\u0641\u0632\u0648\u062f\u0646 \u06a9\u0627\u0644\u0627",addReturn:"+ \u062b\u0628\u062a \u0628\u0631\u06af\u0634\u062a\u06cc",exportExcel:"\u2191 \u062e\u0631\u0648\u062c\u06cc \u0627\u06a9\u0633\u0644",approve:"\u062a\u0623\u06cc\u06cc\u062f",reject:"\u0631\u062f",receive:"\u062a\u062d\u0648\u06cc\u0644",edit:"\u0648\u06cc\u0631\u0627\u06cc\u0634",del:"\u062d\u0630\u0641",save:"\u0630\u062e\u06cc\u0631\u0647",search:"\u062c\u0633\u062a\u062c\u0648...",allDepts:"\u0647\u0645\u0647 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646\u200c\u0647\u0627",date:"\u062a\u0627\u0631\u06cc\u062e",product:"\u06a9\u0627\u0644\u0627",qty:"\u062a\u0639\u062f\u0627\u062f",unitPrice:"\u0642\u06cc\u0645\u062a \u0648\u0627\u062d\u062f",total:"\u062c\u0645\u0639 \u06a9\u0644",supplier:"\u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u0647",department:"\u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646",invoice:"\u0641\u0627\u06a9\u062a\u0648\u0631",orderNo:"\u0634\u0645\u0627\u0631\u0647 \u0633\u0641\u0627\u0631\u0634",received:"\u062a\u0627\u0631\u06cc\u062e \u062f\u0631\u06cc\u0627\u0641\u062a",note:"\u062a\u0648\u0636\u06cc\u062d\u0627\u062a",location:"\u0645\u062d\u0644 \u0645\u0635\u0631\u0641",operator:"\u0627\u067e\u0631\u0627\u062a\u0648\u0631",status:"\u0648\u0636\u0639\u06cc\u062a",actions:"\u0639\u0645\u0644\u06cc\u0627\u062a",code:"\u06a9\u062f",unit:"\u0648\u0627\u062d\u062f",purchased:"\u062e\u0631\u06cc\u062f\u0627\u0631\u06cc \u0634\u062f\u0647",consumed:"\u0645\u0635\u0631\u0641 \u0634\u062f\u0647",returned:"\u0628\u0631\u06af\u0634\u062a\u06cc",stock:"\u0645\u0648\u062c\u0648\u062f\u06cc",avgPrice:"\u0645\u06cc\u0627\u0646\u06af\u06cc\u0646 \u0642\u06cc\u0645\u062a",stockValue:"\u0627\u0631\u0632\u0634",lowStock:"\u06a9\u0645\u200c\u0645\u0648\u062c\u0648\u062f\u06cc",ok:"\u0645\u0637\u0644\u0648\u0628",noAccess:"\u0634\u0645\u0627 \u062f\u0633\u062a\u0631\u0633\u06cc \u0628\u0647 \u0627\u06cc\u0646 \u0628\u062e\u0634 \u0631\u0627 \u0646\u062f\u0627\u0631\u06cc\u062f.",approvalNote:"\u062e\u0631\u06cc\u062f\u0647\u0627\u06cc \u062c\u062f\u06cc\u062f \u0646\u06cc\u0627\u0632 \u0628\u0647 \u062a\u0623\u06cc\u06cc\u062f \u0645\u062f\u06cc\u0631 \u062f\u0627\u0631\u0646\u062f.",loading:"\u062f\u0631 \u062d\u0627\u0644 \u0628\u0627\u0631\u06af\u0630\u0627\u0631\u06cc...",logout:"\u062e\u0631\u0648\u062c",discrepancy:"\u0645\u0635\u0631\u0641 \u063a\u06cc\u0631\u0639\u0627\u062f\u06cc \u0634\u0646\u0627\u0633\u0627\u06cc\u06cc \u0634\u062f",staffWelcome:"\u0645\u0635\u0631\u0641 \u062e\u0648\u062f \u0631\u0627 \u0627\u06cc\u0646\u062c\u0627 \u062b\u0628\u062a \u06a9\u0646\u06cc\u062f",selectProduct:"\u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0627\u0644\u0627...",selectDept:"\u0627\u0646\u062a\u062e\u0627\u0628 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646...",selectLocation:"\u0627\u0646\u062a\u062e\u0627\u0628 \u0645\u062d\u0644...",minStock:"\u062d\u062f\u0627\u0642\u0644 \u0645\u0648\u062c\u0648\u062f\u06cc",itemCode:"\u06a9\u062f \u06a9\u0627\u0644\u0627",itemName:"\u0646\u0627\u0645 \u06a9\u0627\u0644\u0627",itemNameFa:"\u0646\u0627\u0645 (\u0641\u0627\u0631\u0633\u06cc)",itemNameHe:"\u0646\u0627\u0645 (\u0639\u0628\u0631\u06cc)",reason:"\u062f\u0644\u06cc\u0644",fromLocation:"\u0627\u0632 \u0645\u062d\u0644",receivedBy:"\u062f\u0631\u06cc\u0627\u0641\u062a\u200c\u06a9\u0646\u0646\u062f\u0647",deliveredTo:"\u062a\u062d\u0648\u06cc\u0644 \u0628\u0647",deliveryPerson:"\u062a\u062d\u0648\u06cc\u0644\u200c\u062f\u0647\u0646\u062f\u0647",image:"\u062a\u0635\u0648\u06cc\u0631",returnQty:"\u0645\u0642\u062f\u0627\u0631 \u0628\u0631\u06af\u0634\u062a\u06cc",editItem:"\u0648\u06cc\u0631\u0627\u06cc\u0634 \u06a9\u0627\u0644\u0627",newItem:"\u06a9\u0627\u0644\u0627\u06cc \u062c\u062f\u06cc\u062f",overview:"\u0646\u0645\u0627\u06cc \u06a9\u0644\u06cc",catalog:"\u06a9\u0627\u062a\u0627\u0644\u0648\u06af",transactions:"\u062a\u0631\u0627\u06a9\u0646\u0634\u200c\u0647\u0627",insights:"\u062a\u062d\u0644\u06cc\u0644",products:"\u06a9\u0627\u0644\u0627",approved:"\u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",needsAttention:"\u0646\u06cc\u0627\u0632 \u0628\u0647 \u062a\u0648\u062c\u0647",allItemsOk:"\u0647\u0645\u0647\u200c\u0686\u06cc\u0632 \u062e\u0648\u0628\u0647",awaitingApproval:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0623\u06cc\u06cc\u062f",queueClear:"\u0635\u0641 \u062e\u0627\u0644\u06cc\u0647",stockHealth:"\u0648\u0636\u0639\u06cc\u062a \u0645\u0648\u062c\u0648\u062f\u06cc",topItems:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u067e\u0631\u0627\u0631\u0632\u0634",inStock:"\u062f\u0631 \u0627\u0646\u0628\u0627\u0631",reports:"\u06af\u0632\u0627\u0631\u0634\u200c\u0647\u0627",reportsDesc:"\u06af\u0632\u0627\u0631\u0634\u200c\u0647\u0627\u06cc \u062f\u0644\u062e\u0648\u0627\u0647 \u0628\u0633\u0627\u0632 \u2014 \u0628\u062e\u0634\u200c\u0647\u0627 \u0631\u0648 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u060c Excel \u062f\u0627\u0646\u0644\u0648\u062f \u06a9\u0646",selectReports:"\u06af\u0632\u0627\u0631\u0634\u200c\u0647\u0627\u06cc \u0645\u0648\u0631\u062f \u0646\u0638\u0631 \u0631\u0648 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646",selectAll:"\u0627\u0646\u062a\u062e\u0627\u0628 \u0647\u0645\u0647",clearAll:"\u062d\u0630\u0641 \u0627\u0646\u062a\u062e\u0627\u0628",generateReport:"\u2193 \u0633\u0627\u062e\u062a \u06af\u0632\u0627\u0631\u0634 (Excel)",reportInventory:"\u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631",reportTransactions:"\u062a\u0631\u0627\u06a9\u0646\u0634\u200c\u0647\u0627",reportAnalytics:"\u062a\u062d\u0644\u06cc\u0644",reportAudit:"\u062d\u0633\u0627\u0628\u0631\u0633\u06cc",inventorySummary:"\u062e\u0644\u0627\u0635\u0647 \u0645\u0648\u062c\u0648\u062f\u06cc",inventorySummaryDesc:"\u0647\u0645\u0647 \u06a9\u0627\u0644\u0627\u0647\u0627 \u0628\u0627 \u0645\u0648\u062c\u0648\u062f\u06cc\u060c \u0627\u0631\u0632\u0634 \u0648 \u0648\u0636\u0639\u06cc\u062a",lowStockReport:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u06a9\u0645\u200c\u0645\u0648\u062c\u0648\u062f",lowStockDesc:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u0632\u06cc\u0631 \u062d\u062f\u0627\u0642\u0644 \u062a\u0639\u0631\u06cc\u0641 \u0634\u062f\u0647",topItemsByValue:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u067e\u0631\u0627\u0631\u0632\u0634",topItemsByValueDesc:"\u0628\u0627\u0627\u0631\u0632\u0634\u200c\u062a\u0631\u06cc\u0646 \u0627\u0642\u0644\u0627\u0645 \u0627\u0646\u0628\u0627\u0631",allPurchasesReport:"\u06a9\u0644 \u062e\u0631\u06cc\u062f\u0647\u0627",allPurchasesDesc:"\u0644\u06cc\u0633\u062a \u06a9\u0627\u0645\u0644 \u0628\u0627 \u0647\u0645\u0647 \u062c\u0632\u0626\u06cc\u0627\u062a",approvedPurchases:"\u062e\u0631\u06cc\u062f\u0647\u0627\u06cc \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",approvedPurchasesDesc:"\u0647\u0632\u06cc\u0646\u0647\u200c\u0647\u0627\u06cc \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647\u060c \u062a\u0645\u0631\u06a9\u0632 \u0645\u0627\u0644\u06cc",pendingPurchases:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0623\u06cc\u06cc\u062f",pendingPurchasesDesc:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0635\u0645\u06cc\u0645 \u0645\u062f\u06cc\u0631",consumptionDetail:"\u062c\u0632\u0626\u06cc\u0627\u062a \u0645\u0635\u0631\u0641",consumptionDetailDesc:"\u06a9\u06cc \u0686\u06cc \u0628\u0631\u062f\u0627\u0634\u062a\u060c \u0627\u0632 \u06a9\u062c\u0627\u060c \u06a9\u06cc",returnsReport:"\u0628\u0631\u06af\u0634\u062a\u06cc\u200c\u0647\u0627",returnsDesc:"\u06a9\u0627\u0644\u0627\u0647\u0627\u06cc \u0628\u0631\u06af\u0634\u062a\u06cc \u0628\u0647 \u0627\u0646\u0628\u0627\u0631",ordersReport:"\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627",ordersReportDesc:"\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627\u06cc \u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u0648 \u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",consumptionByDept:"\u0645\u0635\u0631\u0641 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062f\u067e\u0627\u0631\u062a\u0645\u0627\u0646",consumptionByDeptDesc:"\u0645\u0635\u0631\u0641 \u062a\u062c\u0645\u06cc\u0639\u06cc \u0628\u0631 \u0627\u0633\u0627\u0633 \u0645\u062d\u0644",consumptionByOperator:"\u0645\u0635\u0631\u0641 \u0628\u0631 \u0627\u0633\u0627\u0633 \u0627\u067e\u0631\u0627\u062a\u0648\u0631",consumptionByOperatorDesc:"\u06a9\u06cc \u0686\u0642\u062f\u0631 \u0645\u0635\u0631\u0641 \u06a9\u0631\u062f\u0647",deliveryReport:"\u06af\u0632\u0627\u0631\u0634 \u062a\u062d\u0648\u06cc\u0644",deliveryReportDesc:"\u06a9\u06cc \u0686\u06cc \u0628\u0647 \u06a9\u06cc \u062a\u062d\u0648\u06cc\u0644 \u062f\u0627\u062f\u0647",suppliersReport:"\u062e\u0644\u0627\u0635\u0647 \u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u06af\u0627\u0646",suppliersReportDesc:"\u062a\u062d\u0644\u06cc\u0644 \u0647\u0632\u06cc\u0646\u0647 \u0628\u0631 \u0627\u0633\u0627\u0633 \u062a\u0623\u0645\u06cc\u0646\u200c\u06a9\u0646\u0646\u062f\u0647",financialSummary:"\u062e\u0644\u0627\u0635\u0647 \u0645\u0627\u0644\u06cc",financialSummaryDesc:"\u062c\u0645\u0639\u200c\u0647\u0627\u060c \u0634\u0627\u062e\u0635\u200c\u0647\u0627\u060c \u0627\u0639\u062f\u0627\u062f \u06a9\u0644\u06cc\u062f\u06cc",anomaliesReport:"\u062a\u0634\u062e\u06cc\u0635 \u063a\u06cc\u0631\u0639\u0627\u062f\u06cc",anomaliesDesc:"\u0627\u0644\u06af\u0648\u0647\u0627\u06cc \u0645\u0635\u0631\u0641 \u063a\u06cc\u0631\u0639\u0627\u062f\u06cc",activityLogReport:"\u06af\u0632\u0627\u0631\u0634 \u0641\u0639\u0627\u0644\u06cc\u062a",activityLogDesc:"\u0645\u0633\u06cc\u0631 \u06a9\u0627\u0645\u0644 \u062d\u0633\u0627\u0628\u0631\u0633\u06cc \u0628\u0627 \u06a9\u0627\u0631\u0628\u0631 \u0648 \u0632\u0645\u0627\u0646",reportGenerated:"\u06af\u0632\u0627\u0631\u0634 \u0628\u0627 \u0645\u0648\u0641\u0642\u06cc\u062a \u0633\u0627\u062e\u062a\u0647 \u0634\u062f",noReportsSelected:"\u062d\u062f\u0627\u0642\u0644 \u06cc\u06a9 \u06af\u0632\u0627\u0631\u0634 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646"}
 };
 
 const DEPTS = ["General Maintenance","Gardening","Cleaning","Pools","Security","Equipment Repairs"];
@@ -76,7 +76,7 @@ const NAV_GROUPS = [
   {key:"database",     items:["caesarMap","syncMaps"]},
   {key:"insights",     items:["reports","suppliers","activityLog"]},
 ];
-const TAB_ICONS = {reports:"\ud83d\udccb",dashboard:"\u25c8",itemsMgmt:"\u229e",inventory:"\u25a6",purchases:"\u2193",consumption:"\u2197",returns:"\u21a9",orders:"\u25ce",suppliers:"\u22a1",activityLog:"\ud83d\udccb",caesarMap:"\ud83d\uddfa",syncMaps:"\u21c5"};
+const TAB_ICONS = {reports:"\ud83d\udccb",dashboard:"\u25c8",itemsMgmt:"\u229e",inventory:"\u25a6",purchases:"\u2193",consumption:"\u2197",returns:"\u21a9",orders:"\u25ce",suppliers:"\u22a1",activityLog:"\ud83d\udccb",caesarMap:"\ud83d\uddfa"};
 
 const CATEGORY_COLORS = {"building":"#6366f1","pool":"#22d3ee","office":"#f59e0b","f&b":"#ef4444","facility":"#10b981","garden":"#34d399","security":"#a78bfa","spa":"#ec4899","default":"#8b5cf6"};
 const getCategoryColor = (cat) => CATEGORY_COLORS[(cat||"").toLowerCase()] || CATEGORY_COLORS.default;
@@ -1045,7 +1045,7 @@ export default function App() {
             </div>
           </>}
 
-          {tab==="syncMaps"&&isAdmin&&<SyncMapsPanel TH={TH} isMobile={isMobile} supabase={supabase} />}
+          {tab==="syncMaps"&&isAdmin&&<SyncMapsPanel TH={TH} isMobile={isMobile} />}
 
           {tab==="reports"&&isAdmin&&<>
             <div style={{marginBottom:20}}>
@@ -1241,36 +1241,60 @@ export default function App() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════
-// SyncMapsPanel — migrate localStorage → Supabase
-// Admin only · safe upsert · re-runnable
-// ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════
+// SyncMapsPanel — admin only
+// ═══════════════════════════════════════════
 const SYNC_PROPERTIES = [
-  {lsKey:"caesar_resort_map", slug:"iskele", name:"Caesar Resort",       icon:"🏖️", color:"#7c5cff"},
-  {lsKey:"caesar_blue_map",   slug:"blue",   name:"Caesar Blue",         icon:"🌊", color:"#06b6d4"},
-  {lsKey:"caesar_cliff_map",  slug:"cliff",  name:"Caesar Cliff",        icon:"⛰️", color:"#16a34a"},
-  {lsKey:"caesar_beach_map",  slug:"beach",  name:"Caesar Beach",        icon:"🏖️", color:"#f59e0b"},
+  {lsKey:"caesar_resort_map", slug:"iskele", name:"Caesar Resort", icon:"🏖️", color:"#7c5cff"},
+  {lsKey:"caesar_blue_map",   slug:"blue",   name:"Caesar Blue",   icon:"🌊", color:"#06b6d4"},
+  {lsKey:"caesar_cliff_map",  slug:"cliff",  name:"Caesar Cliff",  icon:"⛰️", color:"#16a34a"},
+  {lsKey:"caesar_beach_map",  slug:"beach",  name:"Caesar Beach",  icon:"🏖️", color:"#f59e0b"},
 ];
 
-function SyncMapsPanel({TH, isMobile, supabase}) {
-  const [log,    setLog]    = React.useState([{type:"info", msg:"Ready. Choose a source and click Sync."}]);
-  const [status, setStatus] = React.useState({}); // {slug: "idle"|"syncing"|"ok"|"error"}
-  const [counts, setCounts] = React.useState({}); // {slug: n}
-  const [syncing,setSyncing]= React.useState(false);
-  const [mode,   setMode]   = React.useState("upsert"); // upsert | replace
-  const [source, setSource] = React.useState("browser"); // browser | file
-  const [fileData,setFileData]=React.useState(null); // parsed backup JSON
-  const [progress,setProgress]=React.useState({done:0,total:0});
-  const logRef = React.useRef(null);
+function SyncMapsPanel({TH, isMobile}) {
+  const [logs,     setLogs]     = useState([{type:"info", msg:"آماده. منبع داده را انتخاب کن و Sync بزن."}]);
+  const [statuses, setStatuses] = useState({});
+  const [counts,   setCounts]   = useState({});
+  const [syncing,  setSyncing]  = useState(false);
+  const [mode,     setMode]     = useState("upsert");
+  const [source,   setSource]   = useState("file");
+  const [fileData, setFileData] = useState(null);
+  const [progress, setProgress] = useState({done:0, total:0});
+  const logRef = useRef(null);
 
-  // ── helpers ──
-  const addLog = React.useCallback((msg, type="info")=>{
-    setLog(l=>[...l, {type, msg, time: new Date().toLocaleTimeString("en-GB")}]);
-    setTimeout(()=>{ if(logRef.current) logRef.current.scrollTop=logRef.current.scrollHeight; },50);
-  },[]);
+  function addLog(msg, type="info") {
+    setLogs(l => [...l, {type, msg, time: new Date().toLocaleTimeString("en-GB")}]);
+    setTimeout(() => { if(logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight; }, 50);
+  }
 
-  // ── read localStorage ──
-  function readLocalStorage() {
+  function handleFile(e) {
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const raw = JSON.parse(ev.target.result);
+        const maps = raw.maps || raw;
+        const parsed = {};
+        let total = 0;
+        for(const p of SYNC_PROPERTIES) {
+          const d = maps[p.lsKey];
+          if(d?.items?.length) {
+            parsed[p.lsKey] = d.items;
+            total += d.items.length;
+            addLog(`${p.icon} ${p.name}: ${d.items.length} آیتم`, "ok");
+          }
+        }
+        setFileData(parsed);
+        addLog(`✅ فایل بارگذاری شد — ${total} آیتم`, "ok");
+      } catch(err) {
+        addLog("خطا در parse: " + err.message, "err");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function readBrowser() {
     const data = {};
     let total = 0;
     for(const p of SYNC_PROPERTIES) {
@@ -1281,231 +1305,201 @@ function SyncMapsPanel({TH, isMobile, supabase}) {
           if(parsed?.items?.length) {
             data[p.lsKey] = parsed.items;
             total += parsed.items.length;
-            addLog(`${p.icon} ${p.name}: ${parsed.items.length} items از localStorage`, "ok");
-          } else { addLog(`${p.name}: localStorage خالی یا بدون items`, "warn"); }
-        } else { addLog(`${p.name}: کلید ${p.lsKey} در localStorage پیدا نشد`, "warn"); }
-      } catch(e) { addLog(`${p.name} خطا: ${e.message}`, "err"); }
+            addLog(`${p.icon} ${p.name}: ${parsed.items.length} آیتم از localStorage`, "ok");
+          } else {
+            addLog(`${p.name}: localStorage خالی`, "warn");
+          }
+        } else {
+          addLog(`${p.name}: پیدا نشد (key: ${p.lsKey})`, "warn");
+        }
+      } catch(err) {
+        addLog(`${p.name} خطا: ${err.message}`, "err");
+      }
     }
-    addLog(`مجموع: ${total} آیتم از localStorage خوانده شد`, "info");
+    addLog(`مجموع: ${total} آیتم`, "info");
     return data;
   }
 
-  // ── parse uploaded file ──
-  function handleFile(e) {
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const raw = JSON.parse(ev.target.result);
-        // support master backup format: { maps: { caesar_resort_map: {items:[]} } }
-        const maps = raw.maps || raw;
-        const parsed = {};
-        let total = 0;
-        for(const p of SYNC_PROPERTIES) {
-          const d = maps[p.lsKey];
-          if(d?.items?.length) {
-            parsed[p.lsKey] = d.items;
-            total += d.items.length;
-            addLog(`${p.icon} ${p.name}: ${d.items.length} items از فایل`, "ok");
-          }
-        }
-        setFileData(parsed);
-        addLog(`✅ فایل بارگذاری شد — ${total} آیتم در ${Object.keys(parsed).length} property`, "ok");
-      } catch(err) { addLog("خطا در parse JSON: " + err.message, "err"); }
-    };
-    reader.readAsText(file);
-  }
-
-  // ── item → Supabase row ──
   function toRow(item, slug) {
     return {
-      name:           item.name || "Unnamed",
-      category:       item.category || "facility",
-      property_slug:  slug,
-      on_map:         item.placed === true,
-      lat:            item.lat ?? null,
-      lng:            item.lng ?? null,
-      map_x:          item.x   ?? null,
-      map_y:          item.y   ?? null,
-      notes:          item.id  ?? null,
-      is_active:      true,
-      updated_at:     new Date().toISOString(),
+      name:          item.name || "Unnamed",
+      category:      item.category || "facility",
+      property_slug: slug,
+      on_map:        item.placed === true,
+      lat:           item.lat ?? null,
+      lng:           item.lng ?? null,
+      map_x:         item.x   ?? null,
+      map_y:         item.y   ?? null,
+      notes:         item.id  ?? null,
+      is_active:     true,
+      updated_at:    new Date().toISOString(),
     };
   }
 
-  // ── main sync ──
   async function startSync() {
     setSyncing(true);
-    setLog([]);
-    setStatus({});
-    setProgress({done:0,total:0});
+    setLogs([]);
+    setStatuses({});
+    setProgress({done:0, total:0});
 
-    const data = source==="browser" ? readLocalStorage() : (fileData||{});
-    const allItems = Object.values(data).reduce((a,v)=>a+v.length,0);
-    if(allItems===0) {
-      addLog("❌ هیچ داده‌ای پیدا نشد. ابتدا فایل backup را بارگذاری کنید.", "err");
+    const data = source === "browser" ? readBrowser() : (fileData || {});
+    const allItems = Object.values(data).reduce((a,v) => a + v.length, 0);
+
+    if(allItems === 0) {
+      addLog("❌ هیچ داده‌ای پیدا نشد.", "err");
       setSyncing(false);
       return;
     }
 
     addLog(`━━━ شروع sync (${mode.toUpperCase()}) — ${allItems} آیتم ━━━`, "info");
-    let done=0, succTotal=0, errTotal=0;
+    let done = 0, succTotal = 0, errTotal = 0;
 
     for(const p of SYNC_PROPERTIES) {
       const items = data[p.lsKey];
       if(!items?.length) continue;
 
-      setStatus(s=>({...s,[p.slug]:"syncing"}));
-      addLog(`▸ ${p.icon} ${p.name} (${p.slug}) — ${items.length} items`, "info");
+      setStatuses(s => ({...s, [p.slug]: "syncing"}));
+      addLog(`▸ ${p.icon} ${p.name} — ${items.length} items`, "info");
 
-      // REPLACE: delete first
-      if(mode==="replace") {
-        addLog(`  🗑 حذف رکوردهای قدیمی ${p.slug}…`, "warn");
-        const {error:delErr} = await supabase
-          .from("resort_locations")
-          .delete()
-          .eq("property_slug", p.slug);
+      if(mode === "replace") {
+        addLog(`  حذف رکوردهای قدیمی ${p.slug}…`, "warn");
+        const {error: delErr} = await supabase.from("resort_locations").delete().eq("property_slug", p.slug);
         if(delErr) {
           addLog(`  ❌ خطا در حذف: ${delErr.message}`, "err");
-          setStatus(s=>({...s,[p.slug]:"error"}));
+          setStatuses(s => ({...s, [p.slug]: "error"}));
           continue;
         }
-        addLog(`  ✓ رکوردهای قدیمی حذف شدند`, "ok");
+        addLog(`  ✓ حذف شد`, "ok");
       }
 
-      // BATCH upsert chunks of 50
-      const CHUNK=50;
-      let propOk=0, propErr=0;
-      for(let i=0;i<items.length;i+=CHUNK) {
-        const chunk = items.slice(i,i+CHUNK);
-        const rows  = chunk.map(it=>toRow(it, p.slug));
+      const CHUNK = 50;
+      let propOk = 0, propErr = 0;
+
+      for(let i = 0; i < items.length; i += CHUNK) {
+        const chunk = items.slice(i, i + CHUNK);
+        const rows  = chunk.map(it => toRow(it, p.slug));
+
         const {error} = await supabase
           .from("resort_locations")
-          .upsert(rows, {onConflict:"name,property_slug", ignoreDuplicates:false});
+          .upsert(rows, {onConflict: "name,property_slug", ignoreDuplicates: false});
 
         if(!error) {
-          propOk += chunk.length;
+          propOk    += chunk.length;
           succTotal += chunk.length;
         } else {
-          // fallback: one-by-one
-          addLog(`  ⚠️ batch خطا (${error.message.slice(0,60)})، تلاش یک به یک…`, "warn");
+          addLog(`  ⚠️ batch خطا: ${error.message.slice(0,80)}`, "warn");
           for(const row of rows) {
-            const {error:e2} = await supabase.from("resort_locations").upsert([row],{onConflict:"name,property_slug"});
-            if(!e2){propOk++;succTotal++;}
-            else{propErr++;errTotal++;addLog(`  ✗ ${row.name}: ${e2.message.slice(0,80)}`,"err");}
+            const {error: e2} = await supabase.from("resort_locations").upsert([row], {onConflict:"name,property_slug"});
+            if(!e2) { propOk++; succTotal++; }
+            else    { propErr++; errTotal++; addLog(`  ✗ ${row.name}: ${e2.message.slice(0,60)}`, "err"); }
             done++;
-            setProgress({done,total:allItems});
+            setProgress({done, total: allItems});
           }
           continue;
         }
-        done+=chunk.length;
-        setProgress({done,total:allItems});
-        setCounts(c=>({...c,[p.slug]:propOk}));
+
+        done += chunk.length;
+        setProgress({done, total: allItems});
+        setCounts(c => ({...c, [p.slug]: propOk}));
       }
 
-      setCounts(c=>({...c,[p.slug]:propOk}));
-      if(propErr===0) {
-        setStatus(s=>({...s,[p.slug]:"ok"}));
+      setCounts(c => ({...c, [p.slug]: propOk}));
+      if(propErr === 0) {
+        setStatuses(s => ({...s, [p.slug]: "ok"}));
         addLog(`  ✅ ${p.name}: ${propOk} آیتم sync شد`, "ok");
       } else {
-        setStatus(s=>({...s,[p.slug]:"error"}));
+        setStatuses(s => ({...s, [p.slug]: "error"}));
         addLog(`  ⚠️ ${p.name}: ${propOk} موفق، ${propErr} خطا`, "warn");
       }
     }
 
-    addLog(`━━━ پایان — ✅ ${succTotal} موفق  ❌ ${errTotal} خطا ━━━`, errTotal>0?"warn":"ok");
+    addLog(`━━━ پایان — ✅ ${succTotal} موفق  ❌ ${errTotal} خطا ━━━`, errTotal > 0 ? "warn" : "ok");
     setSyncing(false);
   }
 
-  // ── styles ──
-  const card   = {background:TH.bgCard,border:`1px solid ${TH.border}`,borderRadius:14,padding:18,marginBottom:16};
-  const muted  = {color:TH.textMuted,fontSize:12};
-  const h1s    = {color:TH.textHeading,fontSize:22,fontWeight:800,letterSpacing:"-0.03em",margin:0};
-  const subs   = {color:TH.textMuted,fontSize:13,marginTop:4};
-  const btnBase= {border:"none",borderRadius:9,padding:"10px 18px",fontFamily:"inherit",fontSize:13,fontWeight:700,cursor:"pointer"};
-  const pct    = progress.total>0 ? Math.round(progress.done/progress.total*100) : 0;
+  const pct = progress.total > 0 ? Math.round(progress.done / progress.total * 100) : 0;
 
-  const STATUS_STYLE = {
-    idle:    {bg:"rgba(100,116,139,.1)", border:"rgba(100,116,139,.2)", color:TH.textMuted, label:"Waiting"},
-    syncing: {bg:"rgba(59,130,246,.1)", border:"rgba(59,130,246,.3)",  color:"#60a5fa",    label:"Syncing…"},
-    ok:      {bg:"rgba(34,197,94,.1)",  border:"rgba(34,197,94,.3)",   color:"#22c55e",    label:"Synced ✓"},
-    error:   {bg:"rgba(239,68,68,.1)",  border:"rgba(239,68,68,.3)",   color:"#f87171",    label:"Error ✗"},
+  const ST = {
+    idle:    {bg:"rgba(100,116,139,.1)", border:"rgba(100,116,139,.2)", color:"#64748b", label:"Waiting"},
+    syncing: {bg:"rgba(59,130,246,.1)",  border:"rgba(59,130,246,.3)",  color:"#60a5fa", label:"Syncing…"},
+    ok:      {bg:"rgba(34,197,94,.1)",   border:"rgba(34,197,94,.3)",   color:"#22c55e", label:"Synced ✓"},
+    error:   {bg:"rgba(239,68,68,.1)",   border:"rgba(239,68,68,.3)",   color:"#f87171", label:"Error ✗"},
   };
+
+  const card = {background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:18, marginBottom:16};
+  const label = {color:TH.textMuted, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12, display:"block"};
+  const btnBase = {border:"none", borderRadius:9, padding:"10px 16px", fontFamily:"inherit", fontSize:13, fontWeight:700, cursor:"pointer"};
 
   return (
     <>
       <div style={{marginBottom:20}}>
-        <h1 style={h1s}>⇅ Sync Maps → Supabase</h1>
-        <div style={subs}>داده‌های نقشه‌ها را از localStorage یا فایل backup به Supabase منتقل کن. هر بار safe برای re-run.</div>
+        <h1 style={{color:TH.textHeading, fontSize:22, fontWeight:800, letterSpacing:"-0.03em", margin:0}}>⇅ Sync Maps → Supabase</h1>
+        <div style={{color:TH.textMuted, fontSize:13, marginTop:4}}>داده‌های نقشه را از backup JSON به Supabase منتقل کن. هر بار safe برای re-run.</div>
       </div>
 
-      {/* ── Properties status ── */}
+      {/* Properties */}
       <div style={card}>
-        <div style={{...muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>⬡ Properties</div>
-        <div style={{display:"grid",gap:8}}>
-          {SYNC_PROPERTIES.map(p=>{
-            const st = STATUS_STYLE[status[p.slug]||"idle"];
-            const cnt = counts[p.slug];
-            return (
-              <div key={p.slug} style={{display:"flex",alignItems:"center",gap:12,padding:"11px 14px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:10}}>
-                <div style={{width:36,height:36,borderRadius:10,background:p.color+"22",border:`1px solid ${p.color}44`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{p.icon}</div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{color:TH.textHeading,fontSize:13.5,fontWeight:700}}>{p.name}</div>
-                  <div style={{...muted,fontSize:11,marginTop:1,fontFamily:"monospace"}}>{p.lsKey} → <b style={{color:"#3dd6f5"}}>{p.slug}</b></div>
-                </div>
-                <div style={{padding:"3px 10px",borderRadius:99,fontSize:11,fontWeight:700,background:st.bg,border:`1px solid ${st.border}`,color:st.color,whiteSpace:"nowrap"}}>
-                  {cnt!=null && status[p.slug]==="ok" ? `✓ ${cnt} items` : st.label}
-                </div>
+        <span style={label}>⬡ Properties</span>
+        {SYNC_PROPERTIES.map(p => {
+          const st = ST[statuses[p.slug] || "idle"];
+          const cnt = counts[p.slug];
+          return (
+            <div key={p.slug} style={{display:"flex", alignItems:"center", gap:12, padding:"11px 14px", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, marginBottom:8}}>
+              <div style={{width:34, height:34, borderRadius:9, background:p.color+"22", border:`1px solid ${p.color}44`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:17, flexShrink:0}}>{p.icon}</div>
+              <div style={{flex:1}}>
+                <div style={{color:TH.textHeading, fontSize:13, fontWeight:700}}>{p.name}</div>
+                <div style={{color:TH.textMuted, fontSize:11, fontFamily:"monospace", marginTop:1}}>{p.lsKey} → <b style={{color:"#3dd6f5"}}>{p.slug}</b></div>
               </div>
-            );
-          })}
-        </div>
+              <div style={{padding:"3px 10px", borderRadius:99, fontSize:11, fontWeight:700, background:st.bg, border:`1px solid ${st.border}`, color:st.color, whiteSpace:"nowrap"}}>
+                {cnt != null && statuses[p.slug] === "ok" ? `✓ ${cnt} items` : st.label}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* ── Source ── */}
+      {/* Source */}
       <div style={card}>
-        <div style={{...muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>⬡ منبع داده</div>
-        <div style={{display:"flex",gap:8,marginBottom:16}}>
-          {[{v:"browser",l:"🌐 این Browser"},  {v:"file",l:"📄 فایل Backup JSON"}].map(({v,l})=>(
-            <button key={v} onClick={()=>setSource(v)} style={{...btnBase,flex:1,background:source===v?"rgba(61,214,245,.1)":TH.bgInput,border:`1px solid ${source===v?"#3dd6f5":TH.border}`,color:source===v?"#3dd6f5":TH.textMuted}}>
+        <span style={label}>⬡ منبع داده</span>
+        <div style={{display:"flex", gap:8, marginBottom:14}}>
+          {[{v:"file",l:"📄 فایل Backup JSON"},{v:"browser",l:"🌐 این Browser"}].map(({v,l}) => (
+            <button key={v} onClick={() => setSource(v)} style={{...btnBase, flex:1, background:source===v?"rgba(61,214,245,.1)":TH.bgInput, border:`1px solid ${source===v?"#3dd6f5":TH.border}`, color:source===v?"#3dd6f5":TH.textMuted}}>
               {l}
             </button>
           ))}
         </div>
-        {source==="browser"&&(
-          <div style={{background:"rgba(245,200,66,.06)",border:"1px solid rgba(245,200,66,.2)",borderRadius:9,padding:"12px 14px",...muted,color:"#d4a91e",lineHeight:1.7}}>
-            ⚠️ این گزینه فقط وقتی در همان browser که داده‌ها داری باز کنی کار می‌کنه.<br/>
-            اگه داده روی کامپیوتر دیگه‌ای هست، از گزینه "فایل Backup" استفاده کن.
-          </div>
+        {source === "file" && (
+          <label style={{display:"flex", flexDirection:"column", alignItems:"center", gap:8, padding:"22px", border:`2px dashed ${TH.border}`, borderRadius:12, cursor:"pointer"}}>
+            <input type="file" accept=".json" onChange={handleFile} style={{display:"none"}} />
+            <div style={{fontSize:28}}>📦</div>
+            <div style={{color:TH.textMuted, fontSize:13, textAlign:"center"}}>
+              {fileData
+                ? <span style={{color:"#22c55e", fontWeight:700}}>✓ {Object.values(fileData).reduce((a,v)=>a+v.length,0)} آیتم بارگذاری شد</span>
+                : <span>فایل <b style={{color:"#3dd6f5"}}>caesar_maps_backup_*.json</b> را اینجا بگذار</span>
+              }
+            </div>
+          </label>
         )}
-        {source==="file"&&(
-          <div>
-            <label style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,padding:"24px",border:`2px dashed ${TH.border}`,borderRadius:12,cursor:"pointer",transition:"border-color .2s"}}>
-              <input type="file" accept=".json" onChange={handleFile} style={{display:"none"}}/>
-              <div style={{fontSize:32}}>📦</div>
-              <div style={{color:TH.textMuted,fontSize:13}}>
-                {fileData ? <span style={{color:"#22c55e",fontWeight:700}}>✓ فایل بارگذاری شد ({Object.values(fileData).reduce((a,v)=>a+v.length,0)} آیتم)</span>
-                          : <span>فایل <b style={{color:"#3dd6f5"}}>caesar_maps_backup_*.json</b> را اینجا بگذار</span>}
-              </div>
-            </label>
+        {source === "browser" && (
+          <div style={{background:"rgba(245,200,66,.06)", border:"1px solid rgba(245,200,66,.2)", borderRadius:9, padding:"12px 14px", color:"#d4a91e", fontSize:12, lineHeight:1.7}}>
+            ⚠️ فقط در همان browser که داده‌ها داری کار می‌کنه.
           </div>
         )}
       </div>
 
-      {/* ── Mode + Sync button ── */}
+      {/* Mode + Sync */}
       <div style={card}>
-        <div style={{...muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:14}}>⬡ حالت sync</div>
-        <div style={{display:"flex",gap:8,marginBottom:18}}>
+        <span style={label}>⬡ حالت sync</span>
+        <div style={{display:"flex", gap:8, marginBottom:16}}>
           {[
-            {v:"upsert",  l:"Upsert (توصیه شده)", d:"آیتم‌های موجود آپدیت، جدید اضافه می‌شن — بی‌خطر برای re-run"},
-            {v:"replace", l:"Replace (پاک و بازنویسی)", d:"ابتدا همه آیتم‌های property را حذف، بعد دوباره می‌نویسد"},
-          ].map(({v,l,d})=>(
-            <label key={v} style={{flex:1,display:"flex",gap:10,padding:"12px 14px",background:mode===v?"rgba(61,214,245,.06)":TH.bgInput,border:`1px solid ${mode===v?"#3dd6f5":TH.border}`,borderRadius:10,cursor:"pointer"}}>
-              <input type="radio" name="syncmode" checked={mode===v} onChange={()=>setMode(v)} style={{accentColor:"#3dd6f5",marginTop:2}}/>
+            {v:"upsert",  l:"Upsert (توصیه شده)", d:"آیتم‌های موجود آپدیت، جدید اضافه — بی‌خطر برای re-run"},
+            {v:"replace", l:"Replace (پاک + بازنویسی)", d:"ابتدا DELETE، سپس INSERT — clean slate"},
+          ].map(({v,l,d}) => (
+            <label key={v} style={{flex:1, display:"flex", gap:10, padding:"12px", background:mode===v?"rgba(61,214,245,.06)":TH.bgInput, border:`1px solid ${mode===v?"#3dd6f5":TH.border}`, borderRadius:10, cursor:"pointer"}}>
+              <input type="radio" name="syncmode" checked={mode===v} onChange={() => setMode(v)} style={{accentColor:"#3dd6f5", marginTop:2}} />
               <div>
-                <div style={{color:TH.text,fontWeight:700,fontSize:13}}>{l}</div>
-                <div style={{...muted,fontSize:11,marginTop:2,lineHeight:1.5}}>{d}</div>
+                <div style={{color:TH.text, fontWeight:700, fontSize:13}}>{l}</div>
+                <div style={{color:TH.textMuted, fontSize:11, marginTop:2, lineHeight:1.5}}>{d}</div>
               </div>
             </label>
           ))}
@@ -1513,35 +1507,33 @@ function SyncMapsPanel({TH, isMobile, supabase}) {
 
         <button
           onClick={startSync}
-          disabled={syncing||(source==="file"&&!fileData)}
-          style={{...btnBase,width:"100%",background:syncing?"rgba(100,116,139,.2)":"linear-gradient(135deg,#7c5cff,#3dd6f5)",color:"#fff",fontSize:14,padding:"13px",opacity:(syncing||(source==="file"&&!fileData))?0.5:1,boxShadow:syncing?"none":"0 4px 18px rgba(124,92,255,.3)"}}>
+          disabled={syncing || (source==="file" && !fileData)}
+          style={{...btnBase, width:"100%", fontSize:14, padding:"13px", background:syncing?"rgba(100,116,139,.2)":"linear-gradient(135deg,#7c5cff,#3dd6f5)", color:"#fff", opacity:(syncing||(source==="file"&&!fileData))?0.5:1, boxShadow:syncing?"none":"0 4px 18px rgba(124,92,255,.3)"}}>
           {syncing ? `⏳ در حال sync… (${pct}%)` : "🚀 شروع Sync به Supabase"}
         </button>
 
-        {/* Progress bar */}
-        {syncing&&(
+        {syncing && (
           <div style={{marginTop:14}}>
-            <div style={{display:"flex",justifyContent:"space-between",...muted,marginBottom:6,fontSize:11}}>
-              <span>{progress.done} / {progress.total} آیتم</span>
-              <span>{pct}%</span>
+            <div style={{display:"flex", justifyContent:"space-between", color:TH.textMuted, fontSize:11, marginBottom:5}}>
+              <span>{progress.done} / {progress.total}</span><span>{pct}%</span>
             </div>
-            <div style={{height:5,background:TH.bgInput,borderRadius:99,overflow:"hidden"}}>
-              <div style={{height:"100%",background:"linear-gradient(90deg,#7c5cff,#3dd6f5)",borderRadius:99,width:pct+"%",transition:"width .3s"}}/>
+            <div style={{height:5, background:TH.bgInput, borderRadius:99, overflow:"hidden"}}>
+              <div style={{height:"100%", background:"linear-gradient(90deg,#7c5cff,#3dd6f5)", width:pct+"%", transition:"width .3s", borderRadius:99}} />
             </div>
           </div>
         )}
       </div>
 
-      {/* ── Log ── */}
-      <div style={{...card,padding:0,overflow:"hidden"}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 18px",borderBottom:`1px solid ${TH.border}`}}>
-          <div style={{...muted,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>⬡ Log</div>
-          <button onClick={()=>setLog([])} style={{...btnBase,padding:"4px 10px",fontSize:11,background:TH.bgInput,border:`1px solid ${TH.border}`,color:TH.textMuted}}>پاک کردن</button>
+      {/* Log */}
+      <div style={{...card, padding:0, overflow:"hidden"}}>
+        <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 18px", borderBottom:`1px solid ${TH.border}`}}>
+          <span style={{color:TH.textMuted, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em"}}>⬡ Log</span>
+          <button onClick={() => setLogs([])} style={{...btnBase, padding:"4px 10px", fontSize:11, background:TH.bgInput, border:`1px solid ${TH.border}`, color:TH.textMuted}}>پاک</button>
         </div>
-        <div ref={logRef} style={{fontFamily:"monospace",fontSize:11.5,lineHeight:1.9,maxHeight:280,overflowY:"auto",padding:"14px 18px",background:"#060a10"}}>
-          {log.map((l,i)=>(
-            <div key={i} style={{display:"flex",gap:10}}>
-              <span style={{color:"#475569",flexShrink:0}}>{l.time||"--"}</span>
+        <div ref={logRef} style={{fontFamily:"monospace", fontSize:11.5, lineHeight:1.9, maxHeight:260, overflowY:"auto", padding:"14px 18px", background:"#060a10"}}>
+          {logs.map((l,i) => (
+            <div key={i} style={{display:"flex", gap:10}}>
+              <span style={{color:"#475569", flexShrink:0}}>{l.time||"--"}</span>
               <span style={{color:l.type==="ok"?"#22c55e":l.type==="err"?"#f87171":l.type==="warn"?"#f97316":"#3dd6f5"}}>{l.msg}</span>
             </div>
           ))}
