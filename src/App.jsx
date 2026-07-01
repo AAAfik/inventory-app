@@ -1,6 +1,18 @@
 import { useState, useEffect } from "react"
 import { supabase } from "./supabase"
 import Inventory from "./inventory-system"
+import OperatorApp from "./components/Pools/OperatorApp"
+
+// ─── Feature flags ──────────────────────────────────────────────────
+// Set POOLS_ENABLED = true to bring the Pools module back.
+const POOLS_ENABLED = false
+
+const ADMIN_EMAILS = [
+  "admin@inventory.com",
+  "hezicaesar@gmail.com",
+  "alireza.ariyannekoo@afikgroup.com",
+  "anzhelaklavdieva2@gmail.com",
+]
 
 export default function App() {
   const [session, setSession] = useState(null)
@@ -10,6 +22,7 @@ export default function App() {
   const [error, setError] = useState("")
   const [isLogging, setIsLogging] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem("stocktrack-theme") || "dark")
+  const [opForce, setOpForce] = useState(window.location.hash === "#operator")
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -26,6 +39,12 @@ export default function App() {
     const handler = () => setTheme(localStorage.getItem("stocktrack-theme") || "dark")
     window.addEventListener("storage", handler)
     return () => window.removeEventListener("storage", handler)
+  }, [])
+
+  useEffect(() => {
+    const onHash = () => setOpForce(window.location.hash === "#operator")
+    window.addEventListener("hashchange", onHash)
+    return () => window.removeEventListener("hashchange", onHash)
   }, [])
 
   async function handleLogin(e) {
@@ -55,14 +74,12 @@ export default function App() {
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:bg,fontFamily:"'Inter','Tahoma',sans-serif",padding:20}}>
       <div style={{background:cardBg,border:`1px solid ${border}`,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:420,boxShadow:isDark?"none":"0 10px 40px rgba(0,0,0,0.06)"}}>
 
-        {/* Theme toggle - top right */}
         <div style={{position:"absolute",top:20,right:20}}>
           <button onClick={()=>{const newT=isDark?"light":"dark";setTheme(newT);localStorage.setItem("stocktrack-theme",newT);}} style={{background:inputBg,border:`1px solid ${border}`,borderRadius:9,color:text,padding:"7px 14px",cursor:"pointer",fontSize:13,fontFamily:"inherit"}}>
             {isDark?"☀ Light":"🌙 Dark"}
           </button>
         </div>
 
-        {/* Logo */}
         <div style={{textAlign:"center",marginBottom:32}}>
           <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:64,height:64,borderRadius:16,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",fontSize:30,color:"#fff",marginBottom:14,boxShadow:"0 8px 24px rgba(99,102,241,0.3)"}}>▦</div>
           <div style={{color:text,fontSize:26,fontWeight:800,letterSpacing:"-0.5px"}}>StockTrack</div>
@@ -102,6 +119,28 @@ export default function App() {
     </div>
   )
 
-  // When logged in, render the inventory directly - it has its own header
+  // ─── Logged in ────────────────────────────────────────────────────
+  const userEmail = session?.user?.email || ""
+  const isAdmin = ADMIN_EMAILS.includes(userEmail)
+  const showOperator = POOLS_ENABLED && (opForce || !isAdmin)
+
+  if (showOperator) {
+    const TH = isDark ? {
+      bg:"#0e1220", bgCard:"#161b2c", bgInput:"#0e1220", bgElev:"#1a2035",
+      header:"#111827", headerBorder:"#1a2035",
+      text:"#f0f4ff", textHeading:"#ffffff", textMuted:"#8892b0", textDim:"#4a5568",
+      border:"#252f4a", divider:"#1a2035", accentBorder:"#4338ca",
+      accent:"#818cf8", accentBg:"rgba(99,102,241,0.12)", accentText:"#818cf8",
+    } : {
+      bg:"#f6f7fb", bgCard:"#ffffff", bgInput:"#f6f7fb", bgElev:"#f0f2f8",
+      header:"#ffffff", headerBorder:"#e6e9f2",
+      text:"#0d1530", textHeading:"#050d24", textMuted:"#6b7592", textDim:"#9ca3af",
+      border:"#e6e9f2", divider:"#f0f2f8", accentBorder:"#6366f1",
+      accent:"#6366f1", accentBg:"rgba(99,102,241,0.08)", accentText:"#6366f1",
+    }
+    const isMobile = window.innerWidth < 900
+    return <OperatorApp TH={TH} lang="en" isMobile={isMobile} user={session.user} />
+  }
+
   return <Inventory />
 }
