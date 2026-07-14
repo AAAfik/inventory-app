@@ -89,7 +89,7 @@ export default function UsersTab({ TH, isMobile }) {
       if (nPassword.length < 6) throw new Error("Password must be at least 6 characters");
       if (nRoles.length === 0) throw new Error("Select at least one role");
 
-      const { data, error } = await supabase.functions.invoke('admin-create-user', {
+      const resp = await supabase.functions.invoke('admin-create-user', {
         body: {
           email:     nEmail.trim(),
           password:  nPassword,
@@ -97,7 +97,21 @@ export default function UsersTab({ TH, isMobile }) {
           roles:     nRoles,
         },
       });
-      if (error) throw error;
+      // Extract detailed error even on non-2xx
+      let data = resp.data;
+      if (resp.error) {
+        // Try to read the response body for the real error
+        try {
+          const ctx = resp.error?.context;
+          if (ctx && typeof ctx.json === 'function') {
+            const body = await ctx.json();
+            if (body?.error) throw new Error(body.error);
+          }
+        } catch (parseErr) {
+          if (parseErr.message && parseErr.message !== '[object Object]') throw parseErr;
+        }
+        throw new Error(resp.error.message || 'Function call failed');
+      }
       if (data?.error) throw new Error(data.error);
 
       setSuccess(`User ${nEmail} created with roles: ${nRoles.join(', ')}.\n\nPassword: ${nPassword}\n\nSave this password now — you won't see it again.`);
