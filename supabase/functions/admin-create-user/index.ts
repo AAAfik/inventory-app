@@ -72,7 +72,7 @@ serve(async (req) => {
 
     // Assign roles
     if (Array.isArray(roles) && roles.length) {
-      const rows = roles.map((role) => ({ user_id: newUser.user.id, role, granted_by: caller.id }));
+      const rows = roles.map((role) => ({ user_id: newUser.user.id, role }));
       const { error: e2 } = await admin.schema("procure").from("user_roles").insert(rows);
       if (e2) {
         await admin.auth.admin.deleteUser(newUser.user.id);
