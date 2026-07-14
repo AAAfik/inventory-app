@@ -14,30 +14,30 @@ const ADMIN_EMAILS = ["admin@inventory.com", "hezicaesar@gmail.com", "alireza.ar
 
 const THEMES = {
   dark: {
-    bg:"#0e1220", bgElev:"#161b2c", bgCard:"#161b2c", bgInput:"#0e1220", bgHover:"#1a2035",
-    text:"#f0f4ff", textMuted:"#8892b0", textDim:"#4a5568", textHeading:"#f0f4ff",
-    border:"#1e2942", borderStrong:"#252f4a", divider:"#1a2035",
-    sidebar:"#090d18", sidebarBorder:"#1a2035",
-    header:"#161b2c", headerBorder:"#1e2942",
-    accent:"#6366f1", accentText:"#a5b4fc", accentBg:"rgba(99,102,241,.12)", accentBorder:"rgba(99,102,241,.3)",
+    bg:"#000000", bgElev:"#0a0a0a", bgCard:"#0a0a0a", bgInput:"#111111", bgHover:"#1a1a1a",
+    text:"#f4efe4", textMuted:"#8f8f8f", textDim:"#5c5c5c", textHeading:"#ffffff",
+    border:"#1f1f1f", borderStrong:"#2a2a2a", divider:"#161616",
+    sidebar:"#000000", sidebarBorder:"#1f1f1f",
+    header:"#000000", headerBorder:"#1f1f1f",
+    accent:"#C9A960", accentText:"#D4B876", accentBg:"rgba(201,169,96,.10)", accentBorder:"rgba(201,169,96,.30)",
   },
   light: {
-    bg:"#f6f7fb", bgElev:"#ffffff", bgCard:"#ffffff", bgInput:"#f6f7fb", bgHover:"#f0f2f8",
-    text:"#1a2240", textMuted:"#6b7592", textDim:"#9aa3b8", textHeading:"#0d1530",
-    border:"#e6e9f2", borderStrong:"#d0d6e3", divider:"#eef0f6",
-    sidebar:"#ffffff", sidebarBorder:"#e6e9f2",
-    header:"#ffffff", headerBorder:"#e6e9f2",
-    accent:"#6366f1", accentText:"#6366f1", accentBg:"rgba(99,102,241,.08)", accentBorder:"rgba(99,102,241,.25)",
+    bg:"#F4EFE4", bgElev:"#ffffff", bgCard:"#ffffff", bgInput:"#F4EFE4", bgHover:"#EDE6D5",
+    text:"#0a1f35", textMuted:"#6b7280", textDim:"#9ca3af", textHeading:"#0a1f35",
+    border:"#E5DFCE", borderStrong:"#D0C7B0", divider:"#EDE6D5",
+    sidebar:"#ffffff", sidebarBorder:"#E5DFCE",
+    header:"#ffffff", headerBorder:"#E5DFCE",
+    accent:"#8B7A44", accentText:"#8B7A44", accentBg:"rgba(139,122,68,.08)", accentBorder:"rgba(139,122,68,.30)",
   },
 };
 
 const KPI_COLORS = {
-  blue:   { solid:"#4f7df0", grad:"linear-gradient(135deg,#4f7df0,#6c95f5)" },
-  orange: { solid:"#f59e0b", grad:"linear-gradient(135deg,#f59e0b,#fbbf24)" },
-  purple: { solid:"#8b5cf6", grad:"linear-gradient(135deg,#8b5cf6,#a78bfa)" },
-  red:    { solid:"#f87171", grad:"linear-gradient(135deg,#ef4444,#f87171)" },
-  green:  { solid:"#10b981", grad:"linear-gradient(135deg,#059669,#34d399)" },
-  cyan:   { solid:"#06b6d4", grad:"linear-gradient(135deg,#0891b2,#22d3ee)" },
+  blue:   { solid:"#C9A960", grad:"linear-gradient(135deg,#C9A960,#D4B876)" },
+  orange: { solid:"#D97706", grad:"linear-gradient(135deg,#B45309,#D97706)" },
+  purple: { solid:"#8B7A44", grad:"linear-gradient(135deg,#8B7A44,#C9A960)" },
+  red:    { solid:"#DC2626", grad:"linear-gradient(135deg,#B91C1C,#DC2626)" },
+  green:  { solid:"#059669", grad:"linear-gradient(135deg,#047857,#059669)" },
+  cyan:   { solid:"#0891B2", grad:"linear-gradient(135deg,#0E7490,#0891B2)" },
 };
 
 const T = {
@@ -531,7 +531,7 @@ export default function App() {
   const addBtn = {background:TH.accent,border:"none",borderRadius:9,color:"#fff",padding:"9px 16px",cursor:"pointer",fontSize:12.5,fontWeight:600,fontFamily:"inherit",boxShadow:`0 1px 3px ${TH.accent}40`};
   const eBtn = {background:"transparent",border:`1px solid ${TH.borderStrong}`,borderRadius:6,color:TH.textMuted,padding:"4px 9px",cursor:"pointer",fontSize:11,marginRight:4,fontFamily:"inherit"};
   const dBtn = {background:"transparent",border:"1px solid rgba(248,113,113,.4)",borderRadius:6,color:"#ef4444",padding:"4px 9px",cursor:"pointer",fontSize:11,fontFamily:"inherit"};
-  const saveBtn = {width:"100%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:14,fontWeight:700,fontFamily:"inherit",marginTop:8,boxShadow:"0 4px 12px rgba(99,102,241,.3)"};
+  const saveBtn = {width:"100%",background:"linear-gradient(135deg,#C9A960,#8B7A44)",border:"none",borderRadius:10,color:"#fff",padding:"12px",cursor:"pointer",fontSize:14,fontWeight:700,fontFamily:"inherit",marginTop:8,boxShadow:"0 4px 12px rgba(201,169,96,.3)"};
   const srchInput = {background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:9,padding:"9px 14px",color:TH.text,fontSize:13,outline:"none",width:240,fontFamily:"inherit"};
 
   const dateStr = now.toLocaleDateString("en-GB",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
@@ -543,10 +543,9 @@ export default function App() {
       <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,borderBottom:`1px solid ${TH.headerBorder}`,height:isMobile?54:60,display:"flex",alignItems:"center",padding:isMobile?"0 12px":"0 24px",gap:isMobile?8:16,flexShrink:0}}>
         {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>\u2630</button>}
         <div style={{display:"flex",alignItems:"center",gap:10,minWidth:isMobile?0:200}}>
-          <div style={{width:34,height:34,borderRadius:9,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,color:"#fff",fontWeight:800,flexShrink:0}}>\u25a6</div>
-          {!isMobile&&<div>
-            <div style={{color:TH.textHeading,fontWeight:800,fontSize:15,letterSpacing:"-0.3px"}}>StockTrack</div>
-            <div style={{color:TH.accent,fontSize:10,fontWeight:600,letterSpacing:"0.06em"}}>\u25cf LIVE</div>
+          <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:isMobile?32:38,width:"auto",display:"block",flexShrink:0}}/>
+          {!isMobile&&<div style={{borderLeft:`1px solid ${TH.border}`,paddingLeft:12,marginLeft:4}}>
+            <div style={{color:TH.accent,fontSize:9,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase"}}>\u25cf LIVE</div>
           </div>}
         </div>
 
@@ -569,7 +568,7 @@ export default function App() {
         </div>
 
         <div style={{display:"flex",alignItems:"center",gap:isMobile?0:9,padding:isMobile?"3px":"5px 11px 5px 5px",background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:30}}>
-          <div style={{width:isMobile?26:28,height:isMobile?26:28,borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontWeight:700,fontSize:12}}>{user?.email?.charAt(0).toUpperCase()||"A"}</div>
+          <div style={{width:isMobile?26:28,height:isMobile?26:28,borderRadius:"50%",background:"linear-gradient(135deg,#C9A960,#8B7A44)",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontWeight:800,fontSize:12}}>{user?.email?.charAt(0).toUpperCase()||"A"}</div>
           {!isMobile&&<div style={{fontSize:11,lineHeight:1.2}}>
             <div style={{color:TH.text,fontWeight:600}}>{isAdmin?"Admin":"Staff"}</div>
             <div style={{color:TH.textMuted,fontSize:10}}>{user?.email?.split("@")[0]}</div>
@@ -629,7 +628,7 @@ export default function App() {
             </div>
 
             <div style={{display:"flex",gap:10,marginBottom:22,flexWrap:"wrap"}}>
-              <button onClick={()=>openM("purchase",{date:"",itemId:"",qty:"",unitPrice:"",supplier:"",invoice:"",orderNo:"",receivedDate:"",department:"",note:""})} style={{background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:10,color:"#fff",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit",boxShadow:"0 4px 12px rgba(99,102,241,.25)"}}>{t.newPurchase}</button>
+              <button onClick={()=>openM("purchase",{date:"",itemId:"",qty:"",unitPrice:"",supplier:"",invoice:"",orderNo:"",receivedDate:"",department:"",note:""})} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)",border:"none",borderRadius:10,color:"#fff",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit",boxShadow:"0 4px 12px rgba(201,169,96,.25)"}}>{t.newPurchase}</button>
               <button onClick={()=>openM("consumption",{date:new Date().toISOString().slice(0,10),itemId:"",qty:"",location:"",operator:"",deliveredTo:"",deliveryPerson:"",note:""})} style={{background:"rgba(245,158,11,.12)",border:"1px solid rgba(245,158,11,.4)",borderRadius:10,color:"#f59e0b",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.logConsumption}</button>
               <button onClick={()=>openM("return",{date:new Date().toISOString().slice(0,10),itemId:"",qty:"",reason:"",fromLocation:"",receivedBy:"",note:""})} style={{background:"rgba(16,185,129,.1)",border:"1px solid rgba(16,185,129,.35)",borderRadius:10,color:"#10b981",padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.addReturn}</button>
               <button onClick={()=>openM("item",{code:"",name:"",unit:"unit",min_stock:0,supplier:"",image_url:""})} style={{background:TH.bgInput,border:`1px solid ${TH.borderStrong}`,borderRadius:10,color:TH.text,padding:"10px 18px",cursor:"pointer",fontSize:12.5,fontWeight:700,fontFamily:"inherit"}}>{t.addItem}</button>
