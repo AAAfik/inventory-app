@@ -541,11 +541,11 @@ export default function App() {
     <div dir={lang==="fa"||lang==="he"?"rtl":"ltr"} style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:TH.bg,color:TH.text,fontFamily:lang==="fa"?"'Vazirmatn','Tahoma',sans-serif":lang==="he"?"'Heebo','Arial',sans-serif":"'Inter','Segoe UI',system-ui,sans-serif"}}>
 
       <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,borderBottom:`1px solid ${TH.headerBorder}`,height:isMobile?54:60,display:"flex",alignItems:"center",padding:isMobile?"0 12px":"0 24px",gap:isMobile?8:16,flexShrink:0}}>
-        {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>\u2630</button>}
+        {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>☰</button>}
         <div style={{display:"flex",alignItems:"center",gap:10,minWidth:isMobile?0:200}}>
           <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:isMobile?32:38,width:"auto",display:"block",flexShrink:0}}/>
           {!isMobile&&<div style={{borderLeft:`1px solid ${TH.border}`,paddingLeft:12,marginLeft:4}}>
-            <div style={{color:TH.accent,fontSize:9,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase"}}>\u25cf LIVE</div>
+            <div style={{color:TH.accent,fontSize:9,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase"}}>● LIVE</div>
           </div>}
         </div>
 
@@ -575,7 +575,7 @@ export default function App() {
           </div>}
         </div>
 
-        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>\u21aa{!isMobile&&" "+t.logout}</button>
+        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>↪{!isMobile&&" "+t.logout}</button>
       </header>
 
       <div style={{display:"flex",flex:1,minHeight:0,position:"relative"}}>
@@ -724,9 +724,9 @@ export default function App() {
               <div style={cardTitle}>
                 <span>{t.stockHealth}</span>
                 <div style={{display:"flex",gap:14,fontSize:11,fontWeight:500}}>
-                  <span style={{color:"#10b981"}}>\u25cf OK</span>
-                  <span style={{color:"#f59e0b"}}>\u25cf Low</span>
-                  <span style={{color:"#ef4444"}}>\u25cf Critical</span>
+                  <span style={{color:"#10b981"}}>● OK</span>
+                  <span style={{color:"#f59e0b"}}>● Low</span>
+                  <span style={{color:"#ef4444"}}>● Critical</span>
                 </div>
               </div>
               <div style={{display:"grid",gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill,minmax(280px,1fr))",gap:"10px 24px"}}>
@@ -776,7 +776,7 @@ export default function App() {
                 {consumptions.slice(0,5).map(c=>{const it=items.find(i=>i.id===c.itemId);return(
                   <div key={c.id} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",padding:"8px 0",borderBottom:`1px solid ${TH.divider}`,gap:8}}>
                     <div style={{flex:1,minWidth:0}}><div style={{color:TH.text,fontSize:12,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{it?.name}</div><div style={{color:TH.textMuted,fontSize:10,marginTop:2}}>{c.date} \u00b7 {c.location}</div></div>
-                    <div style={{flexShrink:0}}><span style={{background:"rgba(245,158,11,.15)",color:"#f59e0b",borderRadius:6,padding:"3px 9px",fontSize:11,fontWeight:700}}>\u2197 {c.qty} {it?.unit}</span></div>
+                    <div style={{flexShrink:0}}><span style={{background:"rgba(245,158,11,.15)",color:"#f59e0b",borderRadius:6,padding:"3px 9px",fontSize:11,fontWeight:700}}>↗ {c.qty} {it?.unit}</span></div>
                   </div>
                 );})}
               </div>
@@ -1244,7 +1244,7 @@ export default function App() {
       </Modal>
 
       <Modal open={modal==="return"} title={t.addReturn} onClose={closeM} theme={TH}>
-        <div style={{background:"rgba(16,185,129,.08)",border:"1px solid rgba(16,185,129,.3)",borderRadius:9,padding:"9px 12px",marginBottom:14,fontSize:12,color:"#10b981"}}>\u21a9 {lang==="fa"?"\u0627\u06cc\u0646 \u06a9\u0627\u0644\u0627 \u0628\u0647 \u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631 \u0627\u0636\u0627\u0641\u0647 \u0645\u06cc\u200c\u0634\u0648\u062f":"This will add back to warehouse stock"}</div>
+        <div style={{background:"rgba(16,185,129,.08)",border:"1px solid rgba(16,185,129,.3)",borderRadius:9,padding:"9px 12px",marginBottom:14,fontSize:12,color:"#10b981"}}>↩ {lang==="fa"?"\u0627\u06cc\u0646 \u06a9\u0627\u0644\u0627 \u0628\u0647 \u0645\u0648\u062c\u0648\u062f\u06cc \u0627\u0646\u0628\u0627\u0631 \u0627\u0636\u0627\u0641\u0647 \u0645\u06cc\u200c\u0634\u0648\u062f":"This will add back to warehouse stock"}</div>
         <Inp label={`${t.date} *`} value={form.date} onChange={sf("date")} type="date" required theme={TH}/>
         <Sel label={`${t.product} *`} value={form.itemId} onChange={v=>sf("itemId")(Number(v))} options={[{value:"",label:t.selectProduct},...items.map(i=>({value:i.id,label:i.name}))]} theme={TH}/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0 12px"}}>
