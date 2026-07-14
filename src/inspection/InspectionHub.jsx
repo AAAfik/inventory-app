@@ -5,7 +5,6 @@
 import { useState } from "react";
 import NewInspectionTab from "./tabs/NewInspectionTab";
 import InspectionsListTab from "./tabs/InspectionsListTab";
-import OpenIssuesTab from "./tabs/OpenIssuesTab";
 
 export default function InspectionHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
   const [tab, setTab] = useState(isMobile ? "new" : "list");

@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "./supabase";
 
 export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
   const [stats, setStats] = useState(null);
