@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
 // UsersTab.jsx — team management (owner only)
-// Assign roles to users: warehouse_keeper, inspector, procurement, owner
+// Creates users via Supabase Edge Function and assigns roles
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
@@ -21,19 +21,23 @@ const ROLE_LABELS = {
 };
 
 export default function UsersTab({ TH, isMobile }) {
-  const [users, setUsers] = useState([]);         // combined: users + roles
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [newRole, setNewRole] = useState("warehouse_keeper");
+  const [users, setUsers]       = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
+  const [success, setSuccess]   = useState(null);
+  const [busy, setBusy]         = useState(false);
+  const [showAdd, setShowAdd]   = useState(false);
+
+  const [nEmail, setNEmail]     = useState("");
+  const [nName, setNName]       = useState("");
+  const [nPassword, setNPassword] = useState("");
+  const [nRoles, setNRoles]     = useState([]);
 
   useEffect(() => { load(); }, []);
 
   async function load() {
     setLoading(true); setError(null);
     try {
-      // Get all user_roles, group by user_id
       const { data: rolesData, error: e1 } = await supabase
         .schema('procure').from('user_roles')
         .select('id, user_id, role, is_active, created_at')
@@ -41,24 +45,17 @@ export default function UsersTab({ TH, isMobile }) {
         .order('user_id');
       if (e1) throw e1;
 
-      // Group by user_id
       const byUser = {};
       (rolesData || []).forEach(r => {
         if (!byUser[r.user_id]) byUser[r.user_id] = { user_id: r.user_id, roles: [] };
         byUser[r.user_id].roles.push({ id: r.id, role: r.role });
       });
 
-      // We can't easily list auth.users from client, so use whatever info we have
-      // For each user_id, try to get their email via a lookup (best-effort)
       const list = Object.values(byUser);
-
-      // Also add current user if not in list
       const { data: { user: me } } = await supabase.auth.getUser();
-      if (me && !byUser[me.id]) {
-        list.push({ user_id: me.id, roles: [], email: me.email, is_me: true });
-      } else if (me && byUser[me.id]) {
-        byUser[me.id].email = me.email;
-        byUser[me.id].is_me = true;
+      if (me) {
+        if (!byUser[me.id]) list.push({ user_id: me.id, roles: [], email: me.email, is_me: true });
+        else { byUser[me.id].email = me.email; byUser[me.id].is_me = true; }
       }
 
       setUsers(list);
@@ -69,26 +66,43 @@ export default function UsersTab({ TH, isMobile }) {
     }
   }
 
-  async function addRole() {
-    setBusy(true); setError(null);
+  function toggleRole(r) {
+    setNRoles(prev => prev.includes(r) ? prev.filter(x => x !== r) : [...prev, r]);
+  }
+
+  function resetForm() {
+    setNEmail(""); setNName(""); setNPassword(""); setNRoles([]);
+    setShowAdd(false);
+  }
+
+  function genPassword() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+    let p = "";
+    for (let i = 0; i < 12; i++) p += chars[Math.floor(Math.random() * chars.length)];
+    setNPassword(p);
+  }
+
+  async function createUser() {
+    setBusy(true); setError(null); setSuccess(null);
     try {
-      if (!newEmail.trim()) throw new Error("Email is required.");
-      if (!newRole) throw new Error("Role is required.");
+      if (!nEmail.trim() || !nPassword) throw new Error("Email and password required");
+      if (nPassword.length < 6) throw new Error("Password must be at least 6 characters");
+      if (nRoles.length === 0) throw new Error("Select at least one role");
 
-      // Look up user by email — this requires a manual step since we can't query auth.users from client
-      // Workaround: use RPC or ask admin to first sign up the user in Supabase Auth
-      // Best approach: expect admin to have created user via Supabase dashboard first
-      // Then paste email here — we search among existing users_roles by joining with auth via RPC
+      const { data, error } = await supabase.functions.invoke('admin-create-user', {
+        body: {
+          email:     nEmail.trim(),
+          password:  nPassword,
+          full_name: nName.trim() || null,
+          roles:     nRoles,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      // Since we can't reliably get user_id from email on client, instruct admin:
-      throw new Error(
-        "To add a role to a new user:\n\n" +
-        "1) In Supabase → Authentication → Users → Add User with email: " + newEmail.trim() + "\n" +
-        "2) Then run this SQL:\n\n" +
-        "INSERT INTO procure.user_roles (user_id, role)\n" +
-        "SELECT id, '" + newRole + "'::procure.role_kind FROM auth.users WHERE email = '" + newEmail.trim() + "';\n\n" +
-        "3) The user logs in — they'll see their assigned module."
-      );
+      setSuccess(`User ${nEmail} created with roles: ${nRoles.join(', ')}.\n\nPassword: ${nPassword}\n\nSave this password now — you won't see it again.`);
+      resetForm();
+      await load();
     } catch (e) {
       setError(e.message || String(e));
     } finally {
@@ -114,8 +128,7 @@ export default function UsersTab({ TH, isMobile }) {
     setBusy(true); setError(null);
     try {
       const { error } = await supabase.schema('procure').from('user_roles').insert([{
-        user_id: userId,
-        role,
+        user_id: userId, role,
       }]);
       if (error) throw error;
       await load();
@@ -128,11 +141,18 @@ export default function UsersTab({ TH, isMobile }) {
 
   return (
     <div>
-      <div style={{marginBottom:20}}>
-        <div style={{fontSize:isMobile?20:26, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>Team & Roles</div>
-        <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-          Assign roles to control what each person can access
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20, flexWrap:"wrap", gap:12}}>
+        <div>
+          <div style={{fontSize:isMobile?20:26, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>Team & Roles</div>
+          <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>Create users, assign roles, control access</div>
         </div>
+        {!showAdd && (
+          <button onClick={() => { setShowAdd(true); genPassword(); }} style={{
+            background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+            color:"#000", padding:"11px 22px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
+            boxShadow:"0 4px 14px rgba(201,169,96,0.3)",
+          }}>+ New User</button>
+        )}
       </div>
 
       {error && (
@@ -141,24 +161,65 @@ export default function UsersTab({ TH, isMobile }) {
         </div>
       )}
 
-      {/* Add new user role - explanation card */}
-      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:20, marginBottom:20}}>
-        <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:10}}>➕ Add role to a user</div>
-        <div style={{fontSize:12, color:TH.textMuted, marginBottom:12, lineHeight:1.5}}>
-          To add a role, the person must first be a user in Supabase Auth.
-          <br/><strong style={{color:TH.text}}>1.</strong> Add them via Supabase → Authentication → Users → Add User
-          <br/><strong style={{color:TH.text}}>2.</strong> Come back here and click "+" next to their name below
+      {success && (
+        <div style={{background:"rgba(201,169,96,0.1)", border:"1px solid rgba(201,169,96,0.4)", borderRadius:10, padding:14, color:TH.accent, fontSize:13, marginBottom:14, whiteSpace:"pre-wrap"}}>
+          ✓ {success}
         </div>
-        <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
-          <input value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="Email of user to add" style={{flex:1, minWidth:220, background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit"}}/>
-          <select value={newRole} onChange={e => setNewRole(e.target.value)} style={{background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit"}}>
-            {Object.entries(ROLE_LABELS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-          </select>
-          <button onClick={addRole} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"9px 18px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:busy?0.6:1}}>Show SQL</button>
-        </div>
-      </div>
+      )}
 
-      {/* Users list */}
+      {showAdd && (
+        <div style={{background:TH.bgCard, border:`2px solid ${TH.accentBorder}`, borderRadius:14, padding:20, marginBottom:20}}>
+          <div style={{fontSize:16, fontWeight:800, color:TH.text, marginBottom:14}}>➕ Create new user</div>
+
+          <div style={{display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:12, marginBottom:12}}>
+            <div>
+              <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Email *</label>
+              <input value={nEmail} onChange={e => setNEmail(e.target.value)} placeholder="user@afikgroup.com" style={inputStyle(TH)} />
+            </div>
+            <div>
+              <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Full name</label>
+              <input value={nName} onChange={e => setNName(e.target.value)} placeholder="Optional" style={inputStyle(TH)} />
+            </div>
+          </div>
+
+          <div style={{marginBottom:12}}>
+            <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Password *</label>
+            <div style={{display:"flex", gap:8}}>
+              <input value={nPassword} onChange={e => setNPassword(e.target.value)} type="text" style={{...inputStyle(TH), fontFamily:"monospace"}} />
+              <button onClick={genPassword} type="button" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 14px", cursor:"pointer", fontSize:12, fontFamily:"inherit", whiteSpace:"nowrap"}}>🎲 Regen</button>
+            </div>
+            <div style={{fontSize:10, color:TH.textDim, marginTop:4}}>Share this password with the user — they can change it later.</div>
+          </div>
+
+          <div style={{marginBottom:16}}>
+            <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:8, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Roles * (choose one or more)</label>
+            <div style={{display:"grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap:6}}>
+              {Object.entries(ROLE_LABELS).map(([k, v]) => {
+                const on = nRoles.includes(k);
+                return (
+                  <button key={k} onClick={() => toggleRole(k)} type="button" style={{
+                    background: on ? v.color+"22" : "transparent",
+                    border: `2px solid ${on ? v.color : TH.border}`,
+                    borderRadius:8, color: on ? v.color : TH.textMuted,
+                    padding:"10px 12px", cursor:"pointer", fontSize:12, fontWeight:on?700:500, fontFamily:"inherit",
+                    textAlign:"left",
+                  }}>
+                    {on ? "✓ " : ""}{v.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div style={{display:"flex", gap:10, justifyContent:"flex-end"}}>
+            <button onClick={resetForm} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px 20px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
+            <button onClick={createUser} disabled={busy || !nEmail || !nPassword || nRoles.length===0} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"11px 28px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit", opacity: (busy || !nEmail || !nPassword || nRoles.length===0) ? 0.5 : 1}}>
+              {busy ? "Creating..." : "✓ Create user"}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>👥 Current team ({users.length})</div>
 
       {loading ? (
@@ -179,15 +240,15 @@ export default function UsersTab({ TH, isMobile }) {
                   </div>
                 </div>
               </div>
-              <div style={{display:"flex", flexWrap:"wrap", gap:6}}>
+              <div style={{display:"flex", flexWrap:"wrap", gap:6, alignItems:"center"}}>
                 {u.roles.length === 0 ? (
-                  <span style={{color:TH.textDim, fontSize:12, fontStyle:"italic"}}>No roles assigned — no module access</span>
+                  <span style={{color:TH.textDim, fontSize:12, fontStyle:"italic"}}>No roles — no module access</span>
                 ) : u.roles.map(r => {
                   const meta = ROLE_LABELS[r.role] || { label: r.role, color: '#8f8f8f' };
                   return (
                     <span key={r.id} style={{background:meta.color+"22", color:meta.color, padding:"4px 10px", borderRadius:6, fontSize:11, fontWeight:600, display:"inline-flex", alignItems:"center", gap:6}}>
                       {meta.label}
-                      <button onClick={() => removeRole(r.id)} title="Remove role" style={{background:"transparent", border:"none", color:meta.color, cursor:"pointer", padding:0, fontSize:12, fontFamily:"inherit"}}>×</button>
+                      <button onClick={() => removeRole(r.id)} title="Remove role" style={{background:"transparent", border:"none", color:meta.color, cursor:"pointer", padding:0, fontSize:14, fontFamily:"inherit", lineHeight:1}}>×</button>
                     </span>
                   );
                 })}
@@ -207,17 +268,20 @@ export default function UsersTab({ TH, isMobile }) {
         </div>
       )}
 
-      {/* Legend */}
       <div style={{marginTop:24, padding:16, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12}}>
         <div style={{fontSize:13, fontWeight:700, color:TH.text, marginBottom:10}}>📖 Access matrix</div>
         <div style={{fontSize:12, color:TH.textMuted, lineHeight:1.7}}>
           <strong style={{color:TH.accent}}>Owner / Auditor</strong> — full access to everything<br/>
-          <strong style={{color:TH.accent}}>Warehouse Keeper</strong> — Dashboard + Warehouse Manager only<br/>
+          <strong style={{color:TH.accent}}>Warehouse Keeper</strong> — Dashboard + Warehouse only<br/>
           <strong style={{color:TH.accent}}>Inspector</strong> — Dashboard + Inspections only<br/>
-          <strong style={{color:TH.accent}}>Procurement (any variant)</strong> — Dashboard + Caesar Procure only<br/>
+          <strong style={{color:TH.accent}}>Procurement (any)</strong> — Dashboard + Caesar Procure only<br/>
           <strong style={{color:TH.textMuted}}>No roles</strong> — Dashboard view only
         </div>
       </div>
     </div>
   );
+}
+
+function inputStyle(TH) {
+  return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
 }
