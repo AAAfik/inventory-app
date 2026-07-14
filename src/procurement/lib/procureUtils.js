@@ -42,6 +42,12 @@ export function canSeeApprovalQueue(roles) {
     ROLES.OWNER, ROLES.AUDITOR,
   ]);
 }
+export function canSeeVendors(roles) {
+  return hasAnyRole(roles, [
+    ROLES.PROCUREMENT_OFFICER, ROLES.DEPUTY_OFFICER,
+    ROLES.FINANCE_OFFICER, ROLES.OWNER, ROLES.AUDITOR,
+  ]);
+}
 export function canSeeAuditLog(roles) {
   return hasAnyRole(roles, [ROLES.OWNER, ROLES.AUDITOR]);
 }

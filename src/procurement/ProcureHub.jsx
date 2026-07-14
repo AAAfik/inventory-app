@@ -5,10 +5,11 @@
 import { useState } from "react";
 import { useProcureRoles } from "./hooks/useProcureRoles";
 import {
-  canSeeRequisitions, canSeeApprovalQueue, canSeeAuditLog,
+  canSeeRequisitions, canSeeApprovalQueue, canSeeAuditLog, canSeeVendors,
 } from "./lib/procureUtils";
 import RequisitionsTab  from "./tabs/RequisitionsTab";
 import ApprovalQueueTab from "./tabs/ApprovalQueueTab";
+import VendorsTab       from "./tabs/VendorsTab";
 import AuditLogTab      from "./tabs/AuditLogTab";
 
 export default function ProcureHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
@@ -43,6 +44,7 @@ export default function ProcureHub({ TH, lang = "en", isMobile = false, isAdmin 
   const tabs = [];
   if (canSeeRequisitions(roles) || isAdmin) tabs.push({ key: "requisitions", icon: "📝", label: "Requisitions" });
   if (canSeeApprovalQueue(roles) || isAdmin) tabs.push({ key: "approvals",   icon: "✓", label: "Approval Queue" });
+  if (canSeeVendors(roles)      || isAdmin) tabs.push({ key: "vendors",      icon: "🏢", label: "Vendors" });
   if (canSeeAuditLog(roles)     || isAdmin) tabs.push({ key: "audit",        icon: "🔍", label: "Audit Log" });
 
   // If selected tab not available, fall back to first
@@ -94,6 +96,7 @@ export default function ProcureHub({ TH, lang = "en", isMobile = false, isAdmin 
       {/* Content */}
       {activeKey === "requisitions" && <RequisitionsTab TH={TH} isMobile={isMobile} roles={roles} isAdmin={isAdmin} />}
       {activeKey === "approvals"    && <ApprovalQueueTab TH={TH} isMobile={isMobile} roles={roles} isAdmin={isAdmin} />}
+      {activeKey === "vendors"      && <VendorsTab TH={TH} isMobile={isMobile} />}
       {activeKey === "audit"        && <AuditLogTab TH={TH} isMobile={isMobile} />}
     </div>
   );
