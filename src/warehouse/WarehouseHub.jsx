@@ -5,6 +5,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
 import { fmtMoney, isOverdue, daysUntil } from "./lib/warehouseUtils";
+import { tr } from "../i18n";
 import QuickAddTab from "./tabs/QuickAddTab";
 import AssetsTab from "./tabs/AssetsTab";
 import CheckInOutTab from "./tabs/CheckInOutTab";
@@ -12,6 +13,7 @@ import ConsumablesTab from "./tabs/ConsumablesTab";
 import WarehousesTab from "./tabs/WarehousesTab";
 
 export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
+  const L = tr(lang);
   const [tab, setTab] = useState(isMobile ? "quickadd" : "assets");
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(null);
@@ -47,30 +49,30 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
   const bump = () => setRefreshKey(k => k + 1);
 
   const tabs = [
-    { key: "quickadd",    icon: "📸", label: "Quick Add" },
-    { key: "assets",      icon: "📦", label: "Assets" },
-    { key: "checkinout",  icon: "⇄",  label: "Check In/Out", badge: stats?.overdueReturns || 0 },
-    { key: "consumables", icon: "🧴", label: "Consumables" },
-    { key: "warehouses",  icon: "🏬", label: "Warehouses" },
+    { key: "quickadd",    icon: "📸", label: L.quickAdd },
+    { key: "assets",      icon: "📦", label: L.assets },
+    { key: "checkinout",  icon: "⇄",  label: L.checkInOut, badge: stats?.overdueReturns || 0 },
+    { key: "consumables", icon: "🧴", label: L.consumables },
+    { key: "warehouses",  icon: "🏬", label: L.warehouses },
   ];
 
   return (
     <div>
       <div style={{marginBottom:14}}>
-        <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>Warehouse Manager</div>
+        <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{L.warehouseTitle}</div>
         {!isMobile && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-          Equipment, tools, vehicles & consumables across all properties
+          {L.warehouseSub}
         </div>}
       </div>
 
       {/* Stats bar */}
       {stats && (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(5,1fr)", gap:8, marginBottom:16}}>
-          <Stat TH={TH} label="Assets" value={stats.total} />
-          <Stat TH={TH} label="Total Value" value={fmtMoney(stats.totalValue)} />
-          <Stat TH={TH} label="Checked Out" value={stats.checkedOut} onClick={() => setTab("checkinout")} />
-          <Stat TH={TH} label="Overdue Returns" value={stats.overdueReturns} alert={stats.overdueReturns > 0} onClick={() => setTab("checkinout")} />
-          <Stat TH={TH} label="Service Due ≤7d" value={stats.serviceDue} alert={stats.serviceDue > 0} onClick={() => setTab("assets")} />
+          <Stat TH={TH} label={L.assets} value={stats.total} />
+          <Stat TH={TH} label={L.totalValue} value={fmtMoney(stats.totalValue)} />
+          <Stat TH={TH} label={L.checkedOutK} value={stats.checkedOut} onClick={() => setTab("checkinout")} />
+          <Stat TH={TH} label={L.overdueReturns} value={stats.overdueReturns} alert={stats.overdueReturns > 0} onClick={() => setTab("checkinout")} />
+          <Stat TH={TH} label={L.serviceDue7} value={stats.serviceDue} alert={stats.serviceDue > 0} onClick={() => setTab("assets")} />
         </div>
       )}
 
@@ -98,11 +100,11 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
         })}
       </div>
 
-      {tab === "quickadd"    && <QuickAddTab TH={TH} isMobile={isMobile} onSaved={() => { bump(); setTab("assets"); }} />}
-      {tab === "assets"      && <AssetsTab key={refreshKey} TH={TH} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
-      {tab === "checkinout"  && <CheckInOutTab key={"co-"+refreshKey} TH={TH} isMobile={isMobile} onChanged={bump} />}
-      {tab === "consumables" && <ConsumablesTab TH={TH} isMobile={isMobile} isAdmin={isAdmin} />}
-      {tab === "warehouses"  && <WarehousesTab TH={TH} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "quickadd"    && <QuickAddTab TH={TH} lang={lang} isMobile={isMobile} onSaved={() => { bump(); setTab("assets"); }} />}
+      {tab === "assets"      && <AssetsTab key={refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
+      {tab === "checkinout"  && <CheckInOutTab key={"co-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
+      {tab === "consumables" && <ConsumablesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "warehouses"  && <WarehousesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
     </div>
   );
 }

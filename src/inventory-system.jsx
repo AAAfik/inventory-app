@@ -1144,9 +1144,9 @@ export default function App() {
 
           {POOLS_ENABLED&&tab==="pools"&&<PoolsHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
 
-          {tab==="dashboard"&&<DashboardTab TH={TH} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
+          {tab==="dashboard"&&<DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
 
-          {tab==="users"&&canSeeUsers&&<UsersTab TH={TH} isMobile={isMobile} />}
+          {tab==="users"&&canSeeUsers&&<UsersTab TH={TH} lang={lang} isMobile={isMobile} />}
 
           {WAREHOUSE_ENABLED&&tab==="warehouse"&&canSeeWarehouse&&<WarehouseHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isOwner} />}
 

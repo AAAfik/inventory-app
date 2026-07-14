@@ -5,8 +5,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 import { INSPECTION_STATUS, formatDate } from "../lib/inspectionUtils";
+import { tr } from "../../i18n";
 
-export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, properties, areas, onClose }) {
+export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, inspectionId, properties, areas, onClose }) {
+  const L = tr(lang);
+  const STATUS_LBL = { ok: L.statusOk, minor_issue: L.statusMinor, major_issue: L.statusMajor, critical: L.statusCritical, needs_repair: L.statusRepair, fixed: L.statusFixed };
+  const SEV_LBL = [L.sevNone, L.sevLow, L.sevMedium, L.sevHigh, L.sevCritical];
   const [ins, setIns]     = useState(null);
   const [updates, setUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -116,7 +120,7 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
     }
   }
 
-  if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>Loading...</div>;
+  if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>;
   if (!ins) return null;
 
   const meta = INSPECTION_STATUS[ins.status] || { label: ins.status, color: '#8f8f8f' };
@@ -138,10 +142,10 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
       )}
 
       <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16, gap:12}}>
-        <button onClick={onClose} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>← Back</button>
+        <button onClick={onClose} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>{L.back}</button>
         <div style={{display:"flex", gap:8, alignItems:"center"}}>
-          {isAdmin && !editMode && <button onClick={startEdit} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.text, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", fontWeight:600}}>✏️ Edit</button>}
-          {isAdmin && <button onClick={deleteInspection} style={{background:"transparent", border:"1px solid rgba(143,143,143,0.4)", borderRadius:8, color:"#8f8f8f", padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>🗑 Delete</button>}
+          {isAdmin && !editMode && <button onClick={startEdit} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.text, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", fontWeight:600}}>{L.edit}</button>}
+          {isAdmin && <button onClick={deleteInspection} style={{background:"transparent", border:"1px solid rgba(143,143,143,0.4)", borderRadius:8, color:"#8f8f8f", padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>{L.del}</button>}
           <div style={{fontSize:11, color:TH.textMuted, fontFamily:"monospace"}}>{ins.inspection_no}</div>
         </div>
       </div>
@@ -149,44 +153,44 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
       {/* Admin edit form */}
       {editMode && edit && (
         <div style={{background:TH.bgCard, border:`2px solid ${TH.accentBorder}`, borderRadius:14, padding:18, marginBottom:16}}>
-          <div style={{fontSize:15, fontWeight:800, color:TH.text, marginBottom:12}}>✏️ Edit inspection</div>
+          <div style={{fontSize:15, fontWeight:800, color:TH.text, marginBottom:12}}>{L.editInspection}</div>
           <div style={{marginBottom:10}}>
-            <label style={editLbl(TH)}>Title *</label>
+            <label style={editLbl(TH)}>{L.titleLbl}</label>
             <input value={edit.title} onChange={e => setEdit({...edit, title: e.target.value})} style={editInp(TH)} />
           </div>
           <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:10, marginBottom:10}}>
             <div>
-              <label style={editLbl(TH)}>Status</label>
+              <label style={editLbl(TH)}>{L.statusLbl}</label>
               <select value={edit.status} onChange={e => {
                 const s = e.target.value;
                 const sevMap = { ok:0, minor_issue:1, major_issue:2, critical:3, needs_repair:2, fixed:0 };
                 setEdit({...edit, status: s, severity: sevMap[s] ?? edit.severity});
               }} style={editInp(TH)}>
-                {STATUS_OPTIONS.map(k => <option key={k} value={k}>{INSPECTION_STATUS[k]?.label || k}</option>)}
+                {STATUS_OPTIONS.map(k => <option key={k} value={k}>{STATUS_LBL[k] || k}</option>)}
               </select>
             </div>
             <div>
-              <label style={editLbl(TH)}>Severity (0-4)</label>
+              <label style={editLbl(TH)}>{L.severity} (0-4)</label>
               <select value={edit.severity} onChange={e => setEdit({...edit, severity: e.target.value})} style={editInp(TH)}>
-                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} — {['None','Low','Medium','High','Critical'][n]}</option>)}
+                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} — {SEV_LBL[n]}</option>)}
               </select>
             </div>
           </div>
           <div style={{marginBottom:10}}>
-            <label style={editLbl(TH)}>Report</label>
+            <label style={editLbl(TH)}>{L.reportBlock}</label>
             <textarea value={edit.report} onChange={e => setEdit({...edit, report: e.target.value})} rows={4} style={{...editInp(TH), resize:"vertical"}} />
           </div>
           <div style={{marginBottom:10}}>
-            <label style={editLbl(TH)}>Action required</label>
+            <label style={editLbl(TH)}>{L.actionRequired}</label>
             <input value={edit.action_required} onChange={e => setEdit({...edit, action_required: e.target.value})} style={editInp(TH)} />
           </div>
           <div style={{marginBottom:12}}>
-            <label style={editLbl(TH)}>Location note</label>
+            <label style={editLbl(TH)}>{L.location}</label>
             <input value={edit.location_note} onChange={e => setEdit({...edit, location_note: e.target.value})} style={editInp(TH)} />
           </div>
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-            <button onClick={() => { setEditMode(false); setEdit(null); }} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
-            <button onClick={saveEdit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? "Saving..." : "Save changes"}</button>
+            <button onClick={() => { setEditMode(false); setEdit(null); }} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
+            <button onClick={saveEdit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? L.saving : L.saveChanges}</button>
           </div>
         </div>
       )}
@@ -197,40 +201,40 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
       <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, borderLeft:`4px solid ${meta.color}`, padding:20, marginBottom:16}}>
         <div style={{display:"flex", alignItems:"flex-start", justifyContent:"space-between", gap:12, flexWrap:"wrap", marginBottom:14}}>
           <div style={{flex:1, minWidth:200}}>
-            <div style={{fontSize:11, color:meta.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>{meta.label}</div>
+            <div style={{fontSize:11, color:meta.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>{STATUS_LBL[ins.status] || meta.label}</div>
             <div style={{fontSize:isMobile?18:22, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>{ins.title}</div>
           </div>
-          <span style={{padding:"6px 14px", borderRadius:20, background:meta.color+"22", color:meta.color, fontSize:12, fontWeight:700, alignSelf:"flex-start"}}>● {meta.label}</span>
+          <span style={{padding:"6px 14px", borderRadius:20, background:meta.color+"22", color:meta.color, fontSize:12, fontWeight:700, alignSelf:"flex-start"}}>● {STATUS_LBL[ins.status] || meta.label}</span>
         </div>
 
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(3, 1fr)", gap:14, marginBottom:14}}>
-          <Info TH={TH} label="Property">{wh?.name || '—'}</Info>
-          <Info TH={TH} label="Area">{area?.name || '—'}</Info>
-          <Info TH={TH} label="Severity">{['None','Low','Medium','High','Critical'][ins.severity] || '—'}</Info>
-          <Info TH={TH} label="Inspector">{ins.inspector_email || '—'}</Info>
-          <Info TH={TH} label="Reported">{formatDate(ins.created_at)}</Info>
-          {ins.resolved_at && <Info TH={TH} label="Resolved">{formatDate(ins.resolved_at)}</Info>}
+          <Info TH={TH} label={L.property.replace(" *","")}>{wh?.name || '—'}</Info>
+          <Info TH={TH} label={L.area}>{area?.name || '—'}</Info>
+          <Info TH={TH} label={L.severity}>{SEV_LBL[ins.severity] || "—"}</Info>
+          <Info TH={TH} label={L.inspector}>{ins.inspector_email || '—'}</Info>
+          <Info TH={TH} label={L.reported}>{formatDate(ins.created_at)}</Info>
+          {ins.resolved_at && <Info TH={TH} label={L.resolved}>{formatDate(ins.resolved_at)}</Info>}
         </div>
 
         {ins.location_note && <div style={{padding:10, background:TH.bgInput, borderRadius:8, fontSize:12, color:TH.textMuted, marginBottom:10}}>📍 {ins.location_note}</div>}
 
         {ins.report && (
           <div style={{marginTop:10, padding:14, background:TH.bgInput, borderRadius:10, borderLeft:`3px solid ${TH.accent}`}}>
-            <div style={{fontSize:11, color:TH.textMuted, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>Report</div>
+            <div style={{fontSize:11, color:TH.textMuted, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>{L.reportBlock}</div>
             <div style={{fontSize:14, color:TH.text, whiteSpace:"pre-wrap", lineHeight:1.5}}>{ins.report}</div>
           </div>
         )}
 
         {ins.action_required && (
           <div style={{marginTop:10, padding:14, background:"rgba(201,169,96,0.08)", border:`1px solid rgba(201,169,96,0.3)`, borderRadius:10}}>
-            <div style={{fontSize:11, color:TH.accent, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>⚡ Action required</div>
+            <div style={{fontSize:11, color:TH.accent, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>⚡ {L.actionRequired}</div>
             <div style={{fontSize:14, color:TH.text}}>{ins.action_required}</div>
           </div>
         )}
 
         {ins.resolution_note && (
           <div style={{marginTop:10, padding:14, background:"rgba(201,169,96,0.06)", borderRadius:10}}>
-            <div style={{fontSize:11, color:TH.accent, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>✓ Resolution</div>
+            <div style={{fontSize:11, color:TH.accent, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>{L.resolution}</div>
             <div style={{fontSize:13, color:TH.text}}>{ins.resolution_note}</div>
           </div>
         )}
@@ -239,7 +243,7 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
       {/* Photos */}
       {ins.photos?.length > 0 && (
         <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16, marginBottom:16}}>
-          <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>📷 Photos ({ins.photos.length})</div>
+          <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>{L.photos} ({ins.photos.length})</div>
           <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2, 1fr)":"repeat(auto-fill, minmax(160px, 1fr))", gap:8}}>
             {ins.photos.map((url, i) => (
               <div key={i} onClick={() => setPhotoZoom(url)} style={{cursor:"pointer", borderRadius:10, overflow:"hidden", background:"#000", aspectRatio:"1"}}>
@@ -256,18 +260,18 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
           width:"100%", background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
           color:"#000", padding:"14px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit", marginBottom:16,
         }}>
-          ✓ Mark as resolved
+          {L.markResolved}
         </button>
       )}
 
       {resolveMode && (
         <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16, marginBottom:16}}>
-          <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:10}}>Mark as resolved</div>
+          <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:10}}>{L.markResolved}</div>
           <textarea
             value={resolutionNote}
             onChange={e => setResolutionNote(e.target.value)}
             rows={3}
-            placeholder="How was this fixed? (optional)"
+            placeholder={L.howFixed}
             style={{
               width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8,
               padding:"10px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit",
@@ -275,9 +279,9 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
             }}
           />
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-            <button onClick={() => { setResolveMode(false); setResolutionNote(""); }} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 16px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
+            <button onClick={() => { setResolveMode(false); setResolutionNote(""); }} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 16px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
             <button onClick={markResolved} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:busy?0.6:1}}>
-              {busy ? "Saving..." : "Confirm"}
+              {busy ? L.saving : L.confirm}
             </button>
           </div>
         </div>
@@ -286,7 +290,7 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
       {/* Updates history */}
       {updates.length > 0 && (
         <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16}}>
-          <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>📋 History ({updates.length})</div>
+          <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>{L.history} ({updates.length})</div>
           <div style={{display:"flex", flexDirection:"column", gap:8}}>
             {updates.map(u => (
               <div key={u.id} style={{padding:"10px 12px", background:TH.bgInput, borderRadius:8}}>

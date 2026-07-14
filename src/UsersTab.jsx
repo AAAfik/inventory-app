@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
+import { tr } from "./i18n";
 
 const ROLE_LABELS = {
   owner:               { label: "Owner (full access)",         color: "#C9A960" },
@@ -20,7 +21,8 @@ const ROLE_LABELS = {
   approver_high:       { label: "High-level Approver",         color: "#C9A960" },
 };
 
-export default function UsersTab({ TH, isMobile }) {
+export default function UsersTab({ TH, lang = "en", isMobile }) {
+  const L = tr(lang);
   const [users, setUsers]       = useState([]);
   const [loading, setLoading]   = useState(true);
   const [error, setError]       = useState(null);
@@ -157,15 +159,15 @@ export default function UsersTab({ TH, isMobile }) {
     <div>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20, flexWrap:"wrap", gap:12}}>
         <div>
-          <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>Team & Roles</div>
-          <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>Create users, assign roles, control access</div>
+          <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{L.teamRoles}</div>
+          <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>{L.teamSub}</div>
         </div>
         {!showAdd && (
           <button onClick={() => { setShowAdd(true); genPassword(); }} style={{
             background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
             color:"#000", padding:"11px 22px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
             boxShadow:"0 4px 14px rgba(201,169,96,0.3)",
-          }}>+ New User</button>
+          }}>{L.newUser}</button>
         )}
       </div>
 
@@ -183,30 +185,30 @@ export default function UsersTab({ TH, isMobile }) {
 
       {showAdd && (
         <div style={{background:TH.bgCard, border:`2px solid ${TH.accentBorder}`, borderRadius:14, padding:20, marginBottom:20}}>
-          <div style={{fontSize:16, fontWeight:800, color:TH.text, marginBottom:14}}>➕ Create new user</div>
+          <div style={{fontSize:16, fontWeight:800, color:TH.text, marginBottom:14}}>{L.createNewUser}</div>
 
           <div style={{display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:12, marginBottom:12}}>
             <div>
-              <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Email *</label>
+              <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.email}</label>
               <input value={nEmail} onChange={e => setNEmail(e.target.value)} placeholder="user@afikgroup.com" style={inputStyle(TH)} />
             </div>
             <div>
-              <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Full name</label>
+              <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.fullName}</label>
               <input value={nName} onChange={e => setNName(e.target.value)} placeholder="Optional" style={inputStyle(TH)} />
             </div>
           </div>
 
           <div style={{marginBottom:12}}>
-            <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Password *</label>
+            <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.password}</label>
             <div style={{display:"flex", gap:8}}>
               <input value={nPassword} onChange={e => setNPassword(e.target.value)} type="text" style={{...inputStyle(TH), fontFamily:"monospace"}} />
-              <button onClick={genPassword} type="button" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 14px", cursor:"pointer", fontSize:12, fontFamily:"inherit", whiteSpace:"nowrap"}}>🎲 Regen</button>
+              <button onClick={genPassword} type="button" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 14px", cursor:"pointer", fontSize:12, fontFamily:"inherit", whiteSpace:"nowrap"}}>{L.regen}</button>
             </div>
-            <div style={{fontSize:10, color:TH.textDim, marginTop:4}}>Share this password with the user — they can change it later.</div>
+            <div style={{fontSize:10, color:TH.textDim, marginTop:4}}>{L.sharePassword}</div>
           </div>
 
           <div style={{marginBottom:16}}>
-            <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:8, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>Roles * (choose one or more)</label>
+            <label style={{display:"block", color:TH.textMuted, fontSize:11, marginBottom:8, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.rolesChoose}</label>
             <div style={{display:"grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)", gap:6}}>
               {Object.entries(ROLE_LABELS).map(([k, v]) => {
                 const on = nRoles.includes(k);
@@ -226,21 +228,21 @@ export default function UsersTab({ TH, isMobile }) {
           </div>
 
           <div style={{display:"flex", gap:10, justifyContent:"flex-end"}}>
-            <button onClick={resetForm} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px 20px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
+            <button onClick={resetForm} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px 20px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
             <button onClick={createUser} disabled={busy || !nEmail || !nPassword || nRoles.length===0} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"11px 28px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit", opacity: (busy || !nEmail || !nPassword || nRoles.length===0) ? 0.5 : 1}}>
-              {busy ? "Creating..." : "✓ Create user"}
+              {busy ? L.creating : L.createUser}
             </button>
           </div>
         </div>
       )}
 
-      <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>👥 Current team ({users.length})</div>
+      <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>{L.currentTeam} ({users.length})</div>
 
       {loading ? (
-        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>Loading...</div>
+        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>
       ) : users.length === 0 ? (
         <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
-          No users with assigned roles yet.
+          {L.noUsersYet}
         </div>
       ) : (
         <div style={{display:"flex", flexDirection:"column", gap:10}}>
@@ -250,13 +252,13 @@ export default function UsersTab({ TH, isMobile }) {
                 <div style={{flex:1, minWidth:200}}>
                   <div style={{fontSize:14, fontWeight:700, color:TH.text, display:"flex", alignItems:"center", gap:8, flexWrap:"wrap"}}>
                     {u.email || <span style={{color:TH.textDim, fontFamily:"monospace", fontSize:11}}>{u.user_id.slice(0,8)}...</span>}
-                    {u.is_me && <span style={{background:TH.accentBg, color:TH.accent, padding:"2px 8px", borderRadius:5, fontSize:10, fontWeight:700}}>YOU</span>}
+                    {u.is_me && <span style={{background:TH.accentBg, color:TH.accent, padding:"2px 8px", borderRadius:5, fontSize:10, fontWeight:700}}>{L.you}</span>}
                   </div>
                 </div>
               </div>
               <div style={{display:"flex", flexWrap:"wrap", gap:6, alignItems:"center"}}>
                 {u.roles.length === 0 ? (
-                  <span style={{color:TH.textDim, fontSize:12, fontStyle:"italic"}}>No roles — no module access</span>
+                  <span style={{color:TH.textDim, fontSize:12, fontStyle:"italic"}}>{L.noRoles}</span>
                 ) : u.roles.map(r => {
                   const meta = ROLE_LABELS[r.role] || { label: r.role, color: '#8f8f8f' };
                   return (
@@ -271,7 +273,7 @@ export default function UsersTab({ TH, isMobile }) {
                   value=""
                   style={{background:"transparent", border:`1px dashed ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"3px 8px", fontSize:11, fontFamily:"inherit", cursor:"pointer"}}
                 >
-                  <option value="">+ Add role...</option>
+                  <option value="">{L.addRole}</option>
                   {Object.entries(ROLE_LABELS).filter(([k]) => !u.roles.some(r => r.role === k)).map(([k, v]) => (
                     <option key={k} value={k}>{v.label}</option>
                   ))}
@@ -283,7 +285,7 @@ export default function UsersTab({ TH, isMobile }) {
       )}
 
       <div style={{marginTop:24, padding:16, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12}}>
-        <div style={{fontSize:13, fontWeight:700, color:TH.text, marginBottom:10}}>📖 Access matrix</div>
+        <div style={{fontSize:13, fontWeight:700, color:TH.text, marginBottom:10}}>{L.accessMatrix}</div>
         <div style={{fontSize:12, color:TH.textMuted, lineHeight:1.7}}>
           <strong style={{color:TH.accent}}>Owner / Auditor</strong> — full access to everything<br/>
           <strong style={{color:TH.accent}}>Warehouse Keeper</strong> — Dashboard + Warehouse only<br/>

@@ -5,8 +5,11 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { INSPECTION_STATUS, INSPECTION_CATEGORIES, nextInspectionNo } from "../lib/inspectionUtils";
+import { tr } from "../../i18n";
 
-export default function NewInspectionTab({ TH, isMobile, onSaved }) {
+export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved }) {
+  const L = tr(lang);
+  const STATUS_LBL = { ok: L.statusOk, minor_issue: L.statusMinor, major_issue: L.statusMajor, critical: L.statusCritical, needs_repair: L.statusRepair, fixed: L.statusFixed };
   const [areas, setAreas]       = useState([]);
   const [properties, setProperties] = useState([]);
   const [loading, setLoading]   = useState(true);
@@ -141,9 +144,9 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
     return (
       <div style={{padding:"40px 20px", textAlign:"center", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12}}>
         <div style={{fontSize:60, marginBottom:16}}>✅</div>
-        <div style={{fontSize:20, fontWeight:800, color:"#C9A960", marginBottom:8}}>Success!</div>
+        <div style={{fontSize:20, fontWeight:800, color:"#C9A960", marginBottom:8}}>{L.success}</div>
         <div style={{fontSize:14, color:TH.text}}>{success}</div>
-        <div style={{fontSize:12, color:TH.textMuted, marginTop:12}}>Opening list...</div>
+        <div style={{fontSize:12, color:TH.textMuted, marginTop:12}}>{L.openingList}</div>
       </div>
     );
   }
@@ -154,9 +157,9 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
       <div>
         <div style={{textAlign:"center", padding:"30px 20px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, marginBottom:16}}>
           <div style={{fontSize:isMobile?52:64, marginBottom:16}}>🔍📸</div>
-          <div style={{fontSize:isMobile?18:22, fontWeight:800, color:TH.text, marginBottom:8}}>Start walk-around inspection</div>
+          <div style={{fontSize:isMobile?18:22, fontWeight:800, color:TH.text, marginBottom:8}}>{L.startWalk}</div>
           <div style={{fontSize:13, color:TH.textMuted, marginBottom:24, padding:"0 10px"}}>
-            Take one or more photos of the area or equipment you're inspecting.
+            {L.takePhotosDesc}
           </div>
 
           <input
@@ -179,9 +182,9 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
               boxShadow: "0 8px 24px rgba(201,169,96,0.3)",
             }}
           >
-            📷 Take photo(s)
+            {L.takePhotos}
           </button>
-          <div style={{fontSize:11, color:TH.textDim, marginTop:12}}>Or select from gallery — you can add multiple</div>
+          <div style={{fontSize:11, color:TH.textDim, marginTop:12}}>{L.orGallery}</div>
 
           <div style={{marginTop:24}}>
             <button
@@ -192,7 +195,7 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
                 cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit",
               }}
             >
-              Skip photos — write report only →
+              {L.skipPhotos}
             </button>
           </div>
         </div>
@@ -237,7 +240,7 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
 
       {/* Status pills (severity) */}
       <div style={{marginBottom:14}}>
-        <div style={{fontSize:11, color:TH.textMuted, fontWeight:600, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Status</div>
+        <div style={{fontSize:11, color:TH.textMuted, fontWeight:600, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.statusLbl}</div>
         <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:6}}>
           {['ok', 'minor_issue', 'major_issue', 'critical', 'needs_repair', 'fixed'].map(k => {
             const meta = INSPECTION_STATUS[k];
@@ -250,7 +253,7 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
                 padding: "10px 4px", cursor: "pointer", fontSize: 11, fontWeight: 700,
                 fontFamily: "inherit",
               }}>
-                {meta.label}
+                {STATUS_LBL[k] || meta.label}
               </button>
             );
           })}
@@ -259,11 +262,11 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
 
       {/* Title */}
       <div style={{marginBottom:12}}>
-        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>Title *</label>
+        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{L.titleLbl}</label>
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
-          placeholder='e.g. "Pool #2 pump making noise"'
+          placeholder={L.titlePh}
           autoFocus
           style={{
             width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`,
@@ -275,7 +278,7 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
 
       {/* Property */}
       <div style={{marginBottom:12}}>
-        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>Property *</label>
+        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{L.property}</label>
         <select value={propertyId} onChange={e => { setPropertyId(e.target.value); setAreaId(""); }} style={selectStyle(TH)}>
           {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
@@ -283,21 +286,21 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
 
       {/* Area */}
       <div style={{marginBottom:12}}>
-        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>Area / Location</label>
+        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{L.area}</label>
         <select value={areaId} onChange={e => setAreaId(e.target.value)} style={selectStyle(TH)}>
-          <option value="">Select area (optional)...</option>
+          <option value="">{L.selectArea}</option>
           {filteredAreas.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
       </div>
 
       {/* Report */}
       <div style={{marginBottom:12}}>
-        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>Report / What did you find?</label>
+        <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{L.reportLbl}</label>
         <textarea
           value={report}
           onChange={e => setReport(e.target.value)}
           rows={4}
-          placeholder="Describe what you inspected and any observations..."
+          placeholder={L.reportPh}
           style={{
             width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`,
             borderRadius:10, padding:"12px 14px", color:TH.text, fontSize:14,
@@ -309,11 +312,11 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
       {/* Action required (only shown if not OK) */}
       {status !== 'ok' && status !== 'fixed' && (
         <div style={{marginBottom:12}}>
-          <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>Action required</label>
+          <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{L.actionRequired}</label>
           <input
             value={actionRequired}
             onChange={e => setActionRequired(e.target.value)}
-            placeholder='e.g. "Replace pump within 48h"'
+            placeholder={L.actionPh}
             style={{
               width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`,
               borderRadius:10, padding:"12px 14px", color:TH.text, fontSize:14,
@@ -325,12 +328,12 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
 
       {/* Location note (free-form) */}
       <details style={{marginBottom:16, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:10, padding:14}}>
-        <summary style={{cursor:"pointer", color:TH.textMuted, fontSize:13, fontWeight:600}}>+ Location details</summary>
+        <summary style={{cursor:"pointer", color:TH.textMuted, fontSize:13, fontWeight:600}}>{L.locationDetails}</summary>
         <div style={{marginTop:10}}>
           <input
             value={locationNote}
             onChange={e => setLocationNote(e.target.value)}
-            placeholder='Free-form location, e.g. "Building A, 2nd floor, room 205"'
+            placeholder={L.locationPh}
             style={{
               width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`,
               borderRadius:8, padding:"10px 12px", color:TH.text, fontSize:13,
@@ -350,7 +353,7 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
             cursor:"pointer", fontSize:14, fontWeight:600, fontFamily:"inherit",
           }}
         >
-          Cancel
+          {L.cancel}
         </button>
         <button
           onClick={submit}
@@ -364,7 +367,7 @@ export default function NewInspectionTab({ TH, isMobile, onSaved }) {
             boxShadow: submitting ? "none" : "0 4px 14px rgba(201,169,96,0.3)",
           }}
         >
-          {submitting ? "Saving..." : "✓ Save inspection"}
+          {submitting ? L.saving : L.saveInspection}
         </button>
       </div>
     </div>

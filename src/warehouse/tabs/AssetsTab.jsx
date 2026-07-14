@@ -5,9 +5,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 import { ASSET_KINDS, ASSET_STATUS, fmtMoney, serviceStatus } from "../lib/warehouseUtils";
+import { tr } from "../../i18n";
 import AssetDetail from "./AssetDetail";
 
-export default function AssetsTab({ TH, isMobile, isAdmin, onChanged }) {
+export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChanged }) {
+  const L = tr(lang);
   const [assets, setAssets] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ export default function AssetsTab({ TH, isMobile, isAdmin, onChanged }) {
 
   if (selected) {
     return <AssetDetail
-      TH={TH} isMobile={isMobile} isAdmin={isAdmin}
+      TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin}
       assetId={selected}
       warehouses={warehouses}
       onClose={() => { setSelected(null); loadAll(); onChanged?.(); }}
@@ -70,7 +72,7 @@ export default function AssetsTab({ TH, isMobile, isAdmin, onChanged }) {
     <div>
       {/* Kind pills */}
       <div style={{display:"flex", gap:8, marginBottom:12, overflowX:"auto"}}>
-        {[["all", { label: "All", icon: "📦" }], ...Object.entries(ASSET_KINDS)].map(([k, meta]) => {
+        {[["all", { label: L.all, icon: "📦" }], ...Object.entries(ASSET_KINDS).map(([k,v]) => [k, {...v, label: L[k] || v.label}])].map(([k, meta]) => {
           const on = kindFilter === k;
           return (
             <button key={k} onClick={() => setKindFilter(k)} style={{
@@ -91,18 +93,18 @@ export default function AssetsTab({ TH, isMobile, isAdmin, onChanged }) {
           borderRadius: 20, color: serviceFilter ? "#C9A960" : TH.textMuted,
           padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: serviceFilter ? 700 : 500,
           fontFamily: "inherit", whiteSpace: "nowrap",
-        }}>🔧 Service due</button>
+        }}>{L.serviceDueBtn}</button>
       </div>
 
       {/* Search + filters */}
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr 1fr", gap:8, marginBottom:16}}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Search name, serial, plate, holder..." style={inputStyle(TH)} />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchAssets} style={inputStyle(TH)} />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">All statuses</option>
-          {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          <option value="all">{L.allStatuses}</option>
+          {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{({available:L.available,checked_out:L.checkedOut,in_service:L.inService,damaged:L.damaged,lost:L.lost,retired:L.retired})[k] || v.label}</option>)}
         </select>
         <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">All warehouses</option>
+          <option value="all">{L.allWarehouses}</option>
           {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
       </div>
@@ -110,10 +112,10 @@ export default function AssetsTab({ TH, isMobile, isAdmin, onChanged }) {
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
 
       {loading ? (
-        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>Loading...</div>
+        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>
       ) : filt.length === 0 ? (
         <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
-          No assets match your filters.
+          {L.noAssetsMatch}
         </div>
       ) : (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill, minmax(300px, 1fr))", gap:14}}>

@@ -3,17 +3,19 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState } from "react";
+import { tr } from "../i18n";
 import NewInspectionTab from "./tabs/NewInspectionTab";
 import InspectionsListTab from "./tabs/InspectionsListTab";
 
 export default function InspectionHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
+  const L = tr(lang);
   const [tab, setTab] = useState(isMobile ? "new" : "list");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const tabs = [
-    { key: "new",       icon: "📸", label: "New Inspection" },
-    { key: "list",      icon: "📋", label: "All Inspections" },
-    { key: "issues",    icon: "🚨", label: "Open Issues" },
+    { key: "new",       icon: "📸", label: L.newInspection },
+    { key: "list",      icon: "📋", label: L.allInspections },
+    { key: "issues",    icon: "🚨", label: L.openIssuesTab },
   ];
 
   const bump = () => setRefreshKey(k => k + 1);
@@ -22,10 +24,10 @@ export default function InspectionHub({ TH, lang = "en", isMobile = false, isAdm
     <div>
       <div style={{marginBottom:16}}>
         <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>
-          Inspections
+          {L.inspectionsTitle}
         </div>
         {!isMobile && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-          Walk-around inspection reports with photos and severity levels
+          {L.inspectionsSub}
         </div>}
       </div>
 
@@ -55,9 +57,9 @@ export default function InspectionHub({ TH, lang = "en", isMobile = false, isAdm
         })}
       </div>
 
-      {tab === "new"    && <NewInspectionTab TH={TH} isMobile={isMobile} onSaved={() => { bump(); setTab("list"); }} />}
-      {tab === "list"   && <InspectionsListTab key={refreshKey} TH={TH} isMobile={isMobile} isAdmin={isAdmin} />}
-      {tab === "issues" && <InspectionsListTab key={"issues-"+refreshKey} TH={TH} isMobile={isMobile} isAdmin={isAdmin} onlyOpenIssues />}
+      {tab === "new"    && <NewInspectionTab TH={TH} lang={lang} isMobile={isMobile} onSaved={() => { bump(); setTab("list"); }} />}
+      {tab === "list"   && <InspectionsListTab key={refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "issues" && <InspectionsListTab key={"issues-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onlyOpenIssues />}
     </div>
   );
 }

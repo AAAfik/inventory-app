@@ -6,9 +6,11 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { fmtDate, daysUntil } from "../lib/warehouseUtils";
+import { tr } from "../../i18n";
 import AssetDetail from "./AssetDetail";
 
-export default function CheckInOutTab({ TH, isMobile, onChanged }) {
+export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) {
+  const L = tr(lang);
   const [out, setOut] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ export default function CheckInOutTab({ TH, isMobile, onChanged }) {
 
   if (selected) {
     return <AssetDetail
-      TH={TH} isMobile={isMobile}
+      TH={TH} lang={lang} isMobile={isMobile}
       assetId={selected}
       warehouses={warehouses}
       onClose={() => { setSelected(null); load(); onChanged?.(); }}
@@ -99,26 +101,26 @@ export default function CheckInOutTab({ TH, isMobile, onChanged }) {
     <div>
       {/* Scan bar */}
       <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16, marginBottom:16}}>
-        <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:10}}>▦ Find asset by QR or number</div>
+        <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:10}}>{L.scanTitle}</div>
         {!scanning ? (
           <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
             <button onClick={startScan} style={{
               background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
               color:"#000", padding:"12px 22px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
-            }}>📷 Scan QR</button>
+            }}>{L.scanQR}</button>
             <input
               value={manualNo}
               onChange={e => setManualNo(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && openByNo(manualNo)}
-              placeholder="or type: EQP-2026-00001"
+              placeholder={L.typeAssetNo}
               style={{flex:1, minWidth:180, background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, padding:"11px 12px", color:TH.text, fontSize:14, outline:"none", fontFamily:"monospace", boxSizing:"border-box"}}
             />
-            <button onClick={() => openByNo(manualNo)} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.text, padding:"11px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Open</button>
+            <button onClick={() => openByNo(manualNo)} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.text, padding:"11px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.open}</button>
           </div>
         ) : (
           <div>
             <video ref={videoRef} muted playsInline style={{width:"100%", maxHeight:320, borderRadius:10, background:"#000", objectFit:"cover"}} />
-            <button onClick={stopScan} style={{marginTop:10, width:"100%", background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>✕ Stop scanning</button>
+            <button onClick={stopScan} style={{marginTop:10, width:"100%", background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.stopScan}</button>
           </div>
         )}
       </div>
@@ -126,13 +128,13 @@ export default function CheckInOutTab({ TH, isMobile, onChanged }) {
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
 
       {/* Checked-out list */}
-      <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>↗ Currently checked out ({out.length})</div>
+      <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>{L.currentlyOut} ({out.length})</div>
 
       {loading ? (
-        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>Loading...</div>
+        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>
       ) : out.length === 0 ? (
         <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
-          Everything is in the warehouse ✓
+          {L.allInWarehouse}
         </div>
       ) : (
         <div style={{display:"flex", flexDirection:"column", gap:10}}>
@@ -160,12 +162,12 @@ export default function CheckInOutTab({ TH, isMobile, onChanged }) {
                   {a.expected_return_at ? (
                     <>
                       <div style={{fontSize:11, color: overdue ? "#C9A960" : TH.textMuted, fontWeight: overdue ? 800 : 500}}>
-                        {overdue ? `OVERDUE ${-d}d` : d === 0 ? 'Due today' : `${d}d left`}
+                        {overdue ? `${L.overdue} ${-d}d` : d === 0 ? L.dueToday : `${d}${L.daysLeft}`}
                       </div>
                       <div style={{fontSize:10, color:TH.textDim}}>{fmtDate(a.expected_return_at)}</div>
                     </>
                   ) : (
-                    <div style={{fontSize:11, color:TH.textDim}}>No return date</div>
+                    <div style={{fontSize:11, color:TH.textDim}}>{L.noReturnDate}</div>
                   )}
                 </div>
               </div>

@@ -5,8 +5,10 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
+import { tr } from "../../i18n";
 
-export default function ConsumablesTab({ TH, isMobile, isAdmin }) {
+export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
+  const L = tr(lang);
   const [items, setItems] = useState([]);
   const [stock, setStock] = useState([]);
   const [warehouses, setWarehouses] = useState([]);
@@ -90,9 +92,9 @@ export default function ConsumablesTab({ TH, isMobile, isAdmin }) {
   return (
     <div>
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr auto", gap:8, marginBottom:16}}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Search item..." style={inp(TH)} />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchItem} style={inp(TH)} />
         <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inp(TH)}>
-          <option value="all">All warehouses</option>
+          <option value="all">{L.allWarehouses}</option>
           {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
         <button onClick={() => setLowOnly(v => !v)} style={{
@@ -100,7 +102,7 @@ export default function ConsumablesTab({ TH, isMobile, isAdmin }) {
           border:`1px solid ${lowOnly ? "#8B7A44" : TH.border}`, borderRadius:8,
           color: lowOnly ? "#C9A960" : TH.textMuted, padding:"9px 16px",
           cursor:"pointer", fontSize:13, fontWeight: lowOnly ? 700 : 500, fontFamily:"inherit", whiteSpace:"nowrap",
-        }}>⚠ Low only</button>
+        }}>{L.lowOnly}</button>
       </div>
 
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
@@ -116,27 +118,27 @@ export default function ConsumablesTab({ TH, isMobile, isAdmin }) {
               border:`2px solid ${adjDir==='in' ? "#C9A960" : TH.border}`, borderRadius:9,
               color: adjDir==='in' ? "#C9A960" : TH.textMuted, padding:"10px", cursor:"pointer",
               fontSize:13, fontWeight:700, fontFamily:"inherit",
-            }}>＋ Stock IN</button>
+            }}>{L.stockIn}</button>
             <button onClick={() => setAdjDir('out')} style={{
               flex:1, background: adjDir==='out' ? "rgba(139,122,68,0.15)" : "transparent",
               border:`2px solid ${adjDir==='out' ? "#8B7A44" : TH.border}`, borderRadius:9,
               color: adjDir==='out' ? "#C9A960" : TH.textMuted, padding:"10px", cursor:"pointer",
               fontSize:13, fontWeight:700, fontFamily:"inherit",
-            }}>－ Issue OUT</button>
+            }}>{L.issueOut}</button>
           </div>
           <div style={{display:"flex", gap:8, marginBottom:10}}>
-            <input type="number" inputMode="decimal" value={adjQty} onChange={e => setAdjQty(e.target.value)} placeholder="Qty" autoFocus style={{...inp(TH), fontSize:18, fontWeight:700, textAlign:"center", maxWidth:120}} />
+            <input type="number" inputMode="decimal" value={adjQty} onChange={e => setAdjQty(e.target.value)} placeholder={L.qty} autoFocus style={{...inp(TH), fontSize:18, fontWeight:700, textAlign:"center", maxWidth:120}} />
             <input value={adjNote} onChange={e => setAdjNote(e.target.value)} placeholder="Note (e.g. pool 7 cleaning)" style={inp(TH)} />
           </div>
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-            <button onClick={() => setAdjusting(null)} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
-            <button onClick={applyAdjust} disabled={busy || !adjQty} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:(busy||!adjQty)?0.5:1}}>{busy ? "Saving..." : "Apply"}</button>
+            <button onClick={() => setAdjusting(null)} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
+            <button onClick={applyAdjust} disabled={busy || !adjQty} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:(busy||!adjQty)?0.5:1}}>{busy ? L.saving : L.apply}</button>
           </div>
         </div>
       )}
 
       {loading ? (
-        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>Loading...</div>
+        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>
       ) : rows.length === 0 ? (
         <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center", fontSize:13}}>
           No stock rows. Use ＋/－ on an item after selecting a specific warehouse, or add items in the legacy Items tab.
@@ -157,7 +159,7 @@ export default function ConsumablesTab({ TH, isMobile, isAdmin }) {
                 <div style={{fontSize:18, fontWeight:800, color: low ? "#C9A960" : TH.text, lineHeight:1}}>
                   {qty} <span style={{fontSize:10, color:TH.textDim, fontWeight:500}}>{item.unit || ''}</span>
                 </div>
-                {low && <div style={{fontSize:9, color:"#C9A960", fontWeight:700}}>LOW (min {item.min_stock})</div>}
+                {low && <div style={{fontSize:9, color:"#C9A960", fontWeight:700}}>{L.low} ({L.min} {item.min_stock})</div>}
               </div>
               <button onClick={() => setAdjusting({ itemId: item.id, warehouseId: warehouse.id, current: qty, itemName: item.name, whName: warehouse.name })} style={{
                 background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8,

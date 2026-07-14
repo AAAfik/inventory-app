@@ -8,8 +8,10 @@ import { useState, useEffect, useRef } from "react";
 import QRCode from "qrcode";
 import { supabase } from "../../supabase";
 import { ASSET_KINDS, ASSET_STATUS, MOVEMENT_TYPES, fmtDate, fmtDateTime, fmtMoney, daysUntil, serviceStatus } from "../lib/warehouseUtils";
+import { tr } from "../../i18n";
 
-export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses, onClose }) {
+export default function AssetDetail({ TH, lang = "en", isMobile, isAdmin, assetId, warehouses, onClose }) {
+  const L = tr(lang);
   const [asset, setAsset] = useState(null);
   const [movements, setMovements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -224,7 +226,7 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
     }
   }
 
-  if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>Loading...</div>;
+  if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>;
   if (!asset) return null;
 
   const kindMeta = ASSET_KINDS[asset.kind] || {};
@@ -237,8 +239,8 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
   return (
     <div>
       <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16, gap:12}}>
-        <button onClick={onClose} style={btnGhost(TH)}>← Back</button>
-        <button onClick={showQR} style={btnGhost(TH)}>▦ QR Label</button>
+        <button onClick={onClose} style={btnGhost(TH)}>{L.back}</button>
+        <button onClick={showQR} style={btnGhost(TH)}>{L.qrLabel}</button>
       </div>
 
       {error && <ErrBox TH={TH}>{error}</ErrBox>}
@@ -271,15 +273,15 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
             <div style={{fontSize:isMobile?18:22, fontWeight:800, color:TH.text}}>{asset.name}</div>
             <div style={{fontSize:11, color:TH.textDim, fontFamily:"monospace", marginBottom:10}}>{asset.asset_no}</div>
             <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(3, 1fr)", gap:10}}>
-              <Info TH={TH} label="Kind">{kindMeta.icon} {kindMeta.label}</Info>
-              {asset.brand && <Info TH={TH} label="Brand / Model">{asset.brand} {asset.model}</Info>}
-              {asset.serial_number && <Info TH={TH} label="Serial">{asset.serial_number}</Info>}
-              {asset.plate_number && <Info TH={TH} label="Plate">{asset.plate_number}</Info>}
-              <Info TH={TH} label="Warehouse">{wh?.name || '—'}</Info>
-              {asset.purchase_price != null && <Info TH={TH} label="Value">{fmtMoney(asset.purchase_price, asset.currency)}</Info>}
-              {asset.purchased_at && <Info TH={TH} label="Purchased">{fmtDate(asset.purchased_at)}</Info>}
-              {asset.last_service_date && <Info TH={TH} label="Last service">{fmtDate(asset.last_service_date)}</Info>}
-              {asset.next_service_date && <Info TH={TH} label="Next service">{fmtDate(asset.next_service_date)}</Info>}
+              <Info TH={TH} label={L.kind}>{kindMeta.icon} {kindMeta.label}</Info>
+              {asset.brand && <Info TH={TH} label={L.brandModel}>{asset.brand} {asset.model}</Info>}
+              {asset.serial_number && <Info TH={TH} label={L.serial}>{asset.serial_number}</Info>}
+              {asset.plate_number && <Info TH={TH} label={L.plate}>{asset.plate_number}</Info>}
+              <Info TH={TH} label={L.warehouse}>{wh?.name || '—'}</Info>
+              {asset.purchase_price != null && <Info TH={TH} label={L.value}>{fmtMoney(asset.purchase_price, asset.currency)}</Info>}
+              {asset.purchased_at && <Info TH={TH} label={L.purchased}>{fmtDate(asset.purchased_at)}</Info>}
+              {asset.last_service_date && <Info TH={TH} label={L.lastService}>{fmtDate(asset.last_service_date)}</Info>}
+              {asset.next_service_date && <Info TH={TH} label={L.nextService}>{fmtDate(asset.next_service_date)}</Info>}
             </div>
           </div>
         </div>
@@ -287,11 +289,11 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
         {/* Alerts */}
         {asset.status === 'checked_out' && (
           <div style={{marginTop:14, padding:12, background:"rgba(139,122,68,0.12)", border:"1px solid rgba(139,122,68,0.4)", borderRadius:10, fontSize:13, color:TH.text}}>
-            👤 With <strong>{asset.holder_name || 'unknown'}</strong>
+            👤 {L.with} <strong>{asset.holder_name || 'unknown'}</strong>
             {asset.holder_phone && <> · 📞 {asset.holder_phone}</>}
             {asset.expected_return_at && (
-              <> · Return: {fmtDate(asset.expected_return_at)}
-                {returnDays !== null && returnDays < 0 && <strong style={{color:"#C9A960"}}> — OVERDUE {-returnDays}d</strong>}
+              <> · {L.returnLbl} {fmtDate(asset.expected_return_at)}
+                {returnDays !== null && returnDays < 0 && <strong style={{color:"#C9A960"}}> — {L.overdue} {-returnDays}d</strong>}
               </>
             )}
           </div>
@@ -306,93 +308,93 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
       {/* Action buttons */}
       {!action && (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4, 1fr)", gap:8, marginBottom:16}}>
-          {asset.status !== 'checked_out' && <ActionBtn onClick={() => setAction('checkout')} primary>↗ Check Out</ActionBtn>}
-          {asset.status === 'checked_out' && <ActionBtn onClick={() => setAction('checkin')} primary>↩ Check In</ActionBtn>}
-          <ActionBtn TH={TH} onClick={() => setAction('transfer')}>⇄ Transfer</ActionBtn>
-          <ActionBtn TH={TH} onClick={() => { setFNextService(""); setAction('service'); }}>🔧 Log Service</ActionBtn>
-          <ActionBtn TH={TH} onClick={showQR}>▦ QR Label</ActionBtn>
-          {isAdmin && <ActionBtn TH={TH} onClick={startEdit}>✏️ Edit</ActionBtn>}
-          {isAdmin && <ActionBtn TH={TH} onClick={deleteAsset} danger>🗑 Delete</ActionBtn>}
+          {asset.status !== 'checked_out' && <ActionBtn onClick={() => setAction('checkout')} primary>{L.checkOut}</ActionBtn>}
+          {asset.status === 'checked_out' && <ActionBtn onClick={() => setAction('checkin')} primary>{L.checkIn}</ActionBtn>}
+          <ActionBtn TH={TH} onClick={() => setAction('transfer')}>{L.transfer}</ActionBtn>
+          <ActionBtn TH={TH} onClick={() => { setFNextService(""); setAction('service'); }}>{L.logService}</ActionBtn>
+          <ActionBtn TH={TH} onClick={showQR}>{L.qrLabel}</ActionBtn>
+          {isAdmin && <ActionBtn TH={TH} onClick={startEdit}>{L.edit}</ActionBtn>}
+          {isAdmin && <ActionBtn TH={TH} onClick={deleteAsset} danger>{L.del}</ActionBtn>}
         </div>
       )}
 
       {/* Admin edit form */}
       {action === 'edit' && edit && (
-        <FormCard TH={TH} title="✏️ Edit asset" onCancel={() => { setAction(null); setEdit(null); }} onSubmit={saveEdit} busy={busy} submitLabel="Save changes">
+        <FormCard TH={TH} title={L.editTitle} onCancel={() => { setAction(null); setEdit(null); }} onSubmit={saveEdit} busy={busy} submitLabel={L.saveChanges}>
           <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:10}}>
-            <Field TH={TH} label="Name *"><input value={edit.name} onChange={e => setEdit({...edit, name: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Status">
+            <Field TH={TH} label={L.name}><input value={edit.name} onChange={e => setEdit({...edit, name: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.statusLbl}>
               <select value={edit.status} onChange={e => setEdit({...edit, status: e.target.value})} style={inp(TH)}>
                 {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
               </select>
             </Field>
-            <Field TH={TH} label="Brand"><input value={edit.brand} onChange={e => setEdit({...edit, brand: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Model"><input value={edit.model} onChange={e => setEdit({...edit, model: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Serial number"><input value={edit.serial_number} onChange={e => setEdit({...edit, serial_number: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Plate (vehicles)"><input value={edit.plate_number} onChange={e => setEdit({...edit, plate_number: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Warehouse">
+            <Field TH={TH} label={L.brand}><input value={edit.brand} onChange={e => setEdit({...edit, brand: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.model}><input value={edit.model} onChange={e => setEdit({...edit, model: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.serialNumber}><input value={edit.serial_number} onChange={e => setEdit({...edit, serial_number: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.plateVehicles}><input value={edit.plate_number} onChange={e => setEdit({...edit, plate_number: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.warehouse}>
               <select value={edit.warehouse_id} onChange={e => setEdit({...edit, warehouse_id: e.target.value})} style={inp(TH)}>
                 <option value="">—</option>
                 {(warehouses || []).map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
               </select>
             </Field>
-            <Field TH={TH} label="Holder name (if out)"><input value={edit.holder_name} onChange={e => setEdit({...edit, holder_name: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Purchase price"><input type="number" value={edit.purchase_price} onChange={e => setEdit({...edit, purchase_price: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Currency">
+            <Field TH={TH} label={L.holderName}><input value={edit.holder_name} onChange={e => setEdit({...edit, holder_name: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.purchasePrice}><input type="number" value={edit.purchase_price} onChange={e => setEdit({...edit, purchase_price: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.currency}>
               <select value={edit.currency} onChange={e => setEdit({...edit, currency: e.target.value})} style={inp(TH)}>
                 <option>EUR</option><option>USD</option><option>TRY</option><option>GBP</option>
               </select>
             </Field>
-            <Field TH={TH} label="Purchased date"><input type="date" value={edit.purchased_at} onChange={e => setEdit({...edit, purchased_at: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Supplier"><input value={edit.supplier_name} onChange={e => setEdit({...edit, supplier_name: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Warranty until"><input type="date" value={edit.warranty_expires_at} onChange={e => setEdit({...edit, warranty_expires_at: e.target.value})} style={inp(TH)} /></Field>
-            <Field TH={TH} label="Next service date"><input type="date" value={edit.next_service_date} onChange={e => setEdit({...edit, next_service_date: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.purchasedDate}><input type="date" value={edit.purchased_at} onChange={e => setEdit({...edit, purchased_at: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.supplier}><input value={edit.supplier_name} onChange={e => setEdit({...edit, supplier_name: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.warrantyUntil}><input type="date" value={edit.warranty_expires_at} onChange={e => setEdit({...edit, warranty_expires_at: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label={L.nextServiceDate}><input type="date" value={edit.next_service_date} onChange={e => setEdit({...edit, next_service_date: e.target.value})} style={inp(TH)} /></Field>
           </div>
-          <Field TH={TH} label="Notes"><textarea value={edit.notes} onChange={e => setEdit({...edit, notes: e.target.value})} rows={3} style={{...inp(TH), resize:"vertical"}} /></Field>
+          <Field TH={TH} label={L.notes}><textarea value={edit.notes} onChange={e => setEdit({...edit, notes: e.target.value})} rows={3} style={{...inp(TH), resize:"vertical"}} /></Field>
         </FormCard>
       )}
 
       {/* Action forms */}
       {action === 'checkout' && (
-        <FormCard TH={TH} title="↗ Check out asset" onCancel={() => setAction(null)} onSubmit={checkout} busy={busy} submitLabel="Check out">
-          <Field TH={TH} label="Given to (name) *"><input value={fHolder} onChange={e => setFHolder(e.target.value)} placeholder="e.g. Mehmet (pool technician)" style={inp(TH)} autoFocus /></Field>
-          <Field TH={TH} label="Phone"><input value={fPhone} onChange={e => setFPhone(e.target.value)} placeholder="+90..." style={inp(TH)} /></Field>
-          <Field TH={TH} label="Expected return"><input type="date" value={fReturn} onChange={e => setFReturn(e.target.value)} style={inp(TH)} /></Field>
-          <Field TH={TH} label="Purpose"><input value={fPurpose} onChange={e => setFPurpose(e.target.value)} placeholder="e.g. Pool maintenance at Blue" style={inp(TH)} /></Field>
+        <FormCard TH={TH} title={L.checkOutTitle} onCancel={() => setAction(null)} onSubmit={checkout} busy={busy} submitLabel={L.checkOut}>
+          <Field TH={TH} label={L.givenTo}><input value={fHolder} onChange={e => setFHolder(e.target.value)} placeholder="e.g. Mehmet (pool technician)" style={inp(TH)} autoFocus /></Field>
+          <Field TH={TH} label={L.phone}><input value={fPhone} onChange={e => setFPhone(e.target.value)} placeholder="+90..." style={inp(TH)} /></Field>
+          <Field TH={TH} label={L.expectedReturn}><input type="date" value={fReturn} onChange={e => setFReturn(e.target.value)} style={inp(TH)} /></Field>
+          <Field TH={TH} label={L.purpose}><input value={fPurpose} onChange={e => setFPurpose(e.target.value)} placeholder="e.g. Pool maintenance at Blue" style={inp(TH)} /></Field>
         </FormCard>
       )}
 
       {action === 'checkin' && (
-        <FormCard TH={TH} title="↩ Check in asset" onCancel={() => setAction(null)} onSubmit={checkin} busy={busy} submitLabel="Check in">
+        <FormCard TH={TH} title={L.checkInTitle} onCancel={() => setAction(null)} onSubmit={checkin} busy={busy} submitLabel={L.checkIn}>
           <div style={{fontSize:13, color:TH.textMuted, marginBottom:10}}>Returning from: <strong style={{color:TH.text}}>{asset.holder_name || 'unknown'}</strong></div>
-          <Field TH={TH} label="Condition note"><input value={fNote} onChange={e => setFNote(e.target.value)} placeholder="e.g. OK / minor scratch" style={inp(TH)} autoFocus /></Field>
+          <Field TH={TH} label={L.conditionNote}><input value={fNote} onChange={e => setFNote(e.target.value)} placeholder="e.g. OK / minor scratch" style={inp(TH)} autoFocus /></Field>
         </FormCard>
       )}
 
       {action === 'transfer' && (
-        <FormCard TH={TH} title="⇄ Transfer to another warehouse" onCancel={() => setAction(null)} onSubmit={transfer} busy={busy} submitLabel="Transfer">
-          <Field TH={TH} label="Destination warehouse *">
+        <FormCard TH={TH} title={L.transferTitle} onCancel={() => setAction(null)} onSubmit={transfer} busy={busy} submitLabel={L.transfer}>
+          <Field TH={TH} label={L.destWarehouse}>
             <select value={fWh} onChange={e => setFWh(e.target.value)} style={inp(TH)}>
               <option value="">Select...</option>
               {(warehouses || []).filter(w => w.id !== asset.warehouse_id).map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
             </select>
           </Field>
-          <Field TH={TH} label="Note"><input value={fNote} onChange={e => setFNote(e.target.value)} style={inp(TH)} /></Field>
+          <Field TH={TH} label={L.note}><input value={fNote} onChange={e => setFNote(e.target.value)} style={inp(TH)} /></Field>
         </FormCard>
       )}
 
       {action === 'service' && (
-        <FormCard TH={TH} title="🔧 Log service / maintenance" onCancel={() => setAction(null)} onSubmit={logService} busy={busy} submitLabel="Save service">
-          <Field TH={TH} label="What was done"><input value={fNote} onChange={e => setFNote(e.target.value)} placeholder="e.g. Oil change, filter replaced" style={inp(TH)} autoFocus /></Field>
-          <Field TH={TH} label="Next service date"><input type="date" value={fNextService} onChange={e => setFNextService(e.target.value)} style={inp(TH)} /></Field>
+        <FormCard TH={TH} title={L.serviceTitle} onCancel={() => setAction(null)} onSubmit={logService} busy={busy} submitLabel={L.logService}>
+          <Field TH={TH} label={L.whatDone}><input value={fNote} onChange={e => setFNote(e.target.value)} placeholder="e.g. Oil change, filter replaced" style={inp(TH)} autoFocus /></Field>
+          <Field TH={TH} label={L.nextServiceDate}><input type="date" value={fNextService} onChange={e => setFNextService(e.target.value)} style={inp(TH)} /></Field>
         </FormCard>
       )}
 
       {/* Movement timeline */}
       <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16}}>
-        <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>📋 History ({movements.length})</div>
+        <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:12}}>{L.history} ({movements.length})</div>
         {movements.length === 0 ? (
-          <div style={{color:TH.textDim, fontSize:13, textAlign:"center", padding:14}}>No movements yet</div>
+          <div style={{color:TH.textDim, fontSize:13, textAlign:"center", padding:14}}>{L.noMovements}</div>
         ) : (
           <div style={{display:"flex", flexDirection:"column", gap:0}}>
             {movements.map((m, i) => {
@@ -450,7 +452,7 @@ function FormCard({ TH, title, children, onCancel, onSubmit, busy, submitLabel }
       {children}
       <div style={{display:"flex", gap:8, justifyContent:"flex-end", marginTop:14}}>
         <button onClick={onCancel} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
-        <button onClick={onSubmit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? "Saving..." : submitLabel}</button>
+        <button onClick={onSubmit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? "..." : submitLabel}</button>
       </div>
     </div>
   );

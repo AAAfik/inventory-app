@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { ASSET_KINDS, nextAssetNo } from "../lib/warehouseUtils";
 
-export default function QuickAddTab({ TH, isMobile, onSaved }) {
+export default function QuickAddTab({ TH, lang = "en", isMobile, onSaved }) {
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);

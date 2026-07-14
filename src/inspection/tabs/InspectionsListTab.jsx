@@ -5,9 +5,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 import { INSPECTION_STATUS, formatDate, severityColor } from "../lib/inspectionUtils";
+import { tr } from "../../i18n";
 import InspectionDetail from "./InspectionDetail";
 
-export default function InspectionsListTab({ TH, isMobile, isAdmin, onlyOpenIssues = false }) {
+export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin, onlyOpenIssues = false }) {
+  const L = tr(lang);
+  const STATUS_LBL = { ok: L.statusOk, minor_issue: L.statusMinor, major_issue: L.statusMajor, critical: L.statusCritical, needs_repair: L.statusRepair, fixed: L.statusFixed };
   const [inspections, setInspections] = useState([]);
   const [properties, setProperties]   = useState([]);
   const [areas, setAreas]             = useState([]);
@@ -46,7 +49,7 @@ export default function InspectionsListTab({ TH, isMobile, isAdmin, onlyOpenIssu
 
   if (selected) {
     return <InspectionDetail
-      TH={TH} isMobile={isMobile} isAdmin={isAdmin}
+      TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin}
       inspectionId={selected}
       properties={properties} areas={areas}
       onClose={() => { setSelected(null); loadAll(); }}
@@ -82,13 +85,13 @@ export default function InspectionsListTab({ TH, isMobile, isAdmin, onlyOpenIssu
     <div>
       {/* Filters */}
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr 1fr", gap:8, marginBottom:16}}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Search title, report, number..." style={inputStyle(TH)} />
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchInsp} style={inputStyle(TH)} />
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">All statuses ({statusCounts.all})</option>
-          {Object.entries(INSPECTION_STATUS).map(([k, v]) => <option key={k} value={k}>{v.label} ({statusCounts[k] || 0})</option>)}
+          <option value="all">{L.allStatuses} ({statusCounts.all})</option>
+          {Object.entries(INSPECTION_STATUS).map(([k, v]) => <option key={k} value={k}>{STATUS_LBL[k] || v.label} ({statusCounts[k] || 0})</option>)}
         </select>
         <select value={propertyFilter} onChange={e => setPropertyFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">All properties</option>
+          <option value="all">{L.allProperties}</option>
           {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
       </div>
@@ -96,12 +99,12 @@ export default function InspectionsListTab({ TH, isMobile, isAdmin, onlyOpenIssu
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
 
       {loading ? (
-        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>Loading...</div>
+        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading}</div>
       ) : filt.length === 0 ? (
         <div style={{padding:"56px 24px", background:TH.bgCard, border:`1px dashed ${TH.border}`, borderRadius:16, color:TH.textMuted, textAlign:"center"}}>
           <div style={{fontSize:44, marginBottom:12, opacity:0.6}}>{onlyOpenIssues ? "✓" : "🔍"}</div>
-          <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:4}}>{onlyOpenIssues ? "All clear" : "No inspections yet"}</div>
-          <div style={{fontSize:12.5}}>{onlyOpenIssues ? "Every reported issue has been resolved." : "Start a walk-around with 'New Inspection' — photos, status, report."}</div>
+          <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:4}}>{onlyOpenIssues ? L.allClear : L.noInspEmpty}</div>
+          <div style={{fontSize:12.5}}>{onlyOpenIssues ? L.allResolved : L.startWalkDesc}</div>
         </div>
       ) : (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill, minmax(320px, 1fr))", gap:14}}>
@@ -126,7 +129,7 @@ export default function InspectionsListTab({ TH, isMobile, isAdmin, onlyOpenIssu
                 )}
                 <div style={{padding:14}}>
                   <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:8, marginBottom:6}}>
-                    <div style={{fontSize:11, color:meta.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px"}}>{meta.label}</div>
+                    <div style={{fontSize:11, color:meta.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px"}}>{STATUS_LBL[ins.status] || meta.label}</div>
                     <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace"}}>{ins.inspection_no}</div>
                   </div>
                   <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:6, lineHeight:1.3}}>{ins.title}</div>

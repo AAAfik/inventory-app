@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
+import { tr } from "./i18n";
 
 const INS_STATUS = {
   ok:            { label: 'OK',       color: '#C9A960' },
@@ -38,7 +39,8 @@ function money(n, cur='EUR') {
   return sym + Number(n).toLocaleString('en-GB', { maximumFractionDigits: 2 });
 }
 
-export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
+export default function DashboardTab({ TH, lang = "en", isMobile, isAdmin, onNav }) {
+  const L = tr(lang);
   const [stats, setStats] = useState(null);
   const [recentInspections, setRecentInspections] = useState([]);
   const [recentAssets, setRecentAssets] = useState([]);
@@ -120,10 +122,10 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
             padding:20, boxSizing:"border-box",
           }}>
             {modal.type === 'inspection' ? (
-              <InspectionModal TH={TH} isMobile={isMobile} ins={modal.data} propMap={propMap} areaMap={areaMap}
+              <InspectionModal TH={TH} L={L} isMobile={isMobile} ins={modal.data} propMap={propMap} areaMap={areaMap}
                 onZoom={setPhotoZoom} onClose={() => setModal(null)} onOpenModule={() => { setModal(null); onNav?.('inspection'); }} />
             ) : (
-              <AssetModal TH={TH} isMobile={isMobile} asset={modal.data} whMap={whMap}
+              <AssetModal TH={TH} L={L} isMobile={isMobile} asset={modal.data} whMap={whMap}
                 onZoom={setPhotoZoom} onClose={() => setModal(null)} onOpenModule={() => { setModal(null); onNav?.('warehouse'); }} />
             )}
           </div>
@@ -131,9 +133,9 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
       )}
 
       <div style={{marginBottom:20}}>
-        <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>Dashboard</div>
+        <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{L.dashboard}</div>
         <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-          Live overview of assets, inspections, and procurement across Caesar Projects
+          {L.dashSub}
         </div>
       </div>
 
@@ -142,23 +144,23 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
       {/* KPI grid */}
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4, 1fr)", gap:14, marginBottom:24}}>
         <KPI TH={TH} onClick={() => onNav?.("warehouse")}
-          label="Total Assets" value={s.totalAssets}
-          sub={`${s.assetsByKind.equipment} equip · ${s.assetsByKind.tool} tools · ${s.assetsByKind.vehicle} vehicles`} gradient />
+          label={L.totalAssets} value={s.totalAssets}
+          sub={`${s.assetsByKind.equipment} ${L.equip} · ${s.assetsByKind.tool} ${L.tools} · ${s.assetsByKind.vehicle} ${L.vehicles}`} gradient />
         <KPI TH={TH} onClick={() => onNav?.("warehouse")}
-          label="Warehouses" value={s.warehouses} sub="Across all properties" />
+          label={L.warehousesK} value={s.warehouses} sub={L.acrossProps} />
         <KPI TH={TH} onClick={() => onNav?.("inspection")}
-          label="Open Issues" value={s.openIssues}
-          sub={s.criticalCount > 0 ? `${s.criticalCount} critical` : "Under review"} highlight={s.criticalCount > 0} />
+          label={L.openIssues} value={s.openIssues}
+          sub={s.criticalCount > 0 ? `${s.criticalCount} ${L.critical}` : L.underReview} highlight={s.criticalCount > 0} />
         <KPI TH={TH} onClick={() => onNav?.("procure")}
-          label="Pending Requisitions" value={s.pendingRequisitions}
-          sub={s.pendingRequisitions > 0 ? "Awaiting approval" : "Queue clear"} />
+          label={L.pendingReqs} value={s.pendingRequisitions}
+          sub={s.pendingRequisitions > 0 ? L.awaitingApproval : L.queueClear} />
       </div>
 
       {/* Feeds */}
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:14}}>
-        <FeedCard TH={TH} title="Recent Inspections" onNavAll={() => onNav?.("inspection")}>
+        <FeedCard TH={TH} title={L.recentInspections} viewAllLabel={L.viewAll} onNavAll={() => onNav?.("inspection")}>
           {recentInspections.length === 0 ? (
-            <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>No inspections yet</div>
+            <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>{L.noInspYet}</div>
           ) : recentInspections.map(i => {
             const meta = INS_STATUS[i.status] || { label: i.status, color: TH.textMuted };
             const cover = i.photos?.[0];
@@ -181,9 +183,9 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
           })}
         </FeedCard>
 
-        <FeedCard TH={TH} title="Recently Registered Assets" onNavAll={() => onNav?.("warehouse")}>
+        <FeedCard TH={TH} title={L.recentAssets} viewAllLabel={L.viewAll} onNavAll={() => onNav?.("warehouse")}>
           {recentAssets.length === 0 ? (
-            <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>No assets yet</div>
+            <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>{L.noAssetsYet}</div>
           ) : recentAssets.map(a => {
             const meta = AST_STATUS[a.status] || { label: a.status, color: TH.textMuted };
             return (
@@ -210,7 +212,7 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
 }
 
 // ═══ Inspection detail modal ═══
-function InspectionModal({ TH, isMobile, ins, propMap, areaMap, onZoom, onClose, onOpenModule }) {
+function InspectionModal({ TH, L, isMobile, ins, propMap, areaMap, onZoom, onClose, onOpenModule }) {
   const meta = INS_STATUS[ins.status] || { label: ins.status, color: '#8f8f8f' };
   const wh = propMap[ins.property_id];
   const area = ins.area_id ? areaMap[ins.area_id] : null;
@@ -231,26 +233,26 @@ function InspectionModal({ TH, isMobile, ins, propMap, areaMap, onZoom, onClose,
       )}
 
       <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14}}>
-        <MInfo TH={TH} label="Property">{wh?.name || '—'}</MInfo>
-        <MInfo TH={TH} label="Area">{area?.name || '—'}</MInfo>
-        <MInfo TH={TH} label="Severity">{['None','Low','Medium','High','Critical'][ins.severity] || '—'}</MInfo>
-        <MInfo TH={TH} label="Inspector">{ins.inspector_email || '—'}</MInfo>
-        <MInfo TH={TH} label="Reported">{fdt(ins.created_at)}</MInfo>
-        {ins.resolved_at && <MInfo TH={TH} label="Resolved">{fdt(ins.resolved_at)}</MInfo>}
+        <MInfo TH={TH} label={L.property.replace(" *","")}>{wh?.name || '—'}</MInfo>
+        <MInfo TH={TH} label={L.area}>{area?.name || '—'}</MInfo>
+        <MInfo TH={TH} label={L.severity}>{['None','Low','Medium','High','Critical'][ins.severity] || '—'}</MInfo>
+        <MInfo TH={TH} label={L.inspector}>{ins.inspector_email || '—'}</MInfo>
+        <MInfo TH={TH} label={L.reported}>{fdt(ins.created_at)}</MInfo>
+        {ins.resolved_at && <MInfo TH={TH} label={L.resolved}>{fdt(ins.resolved_at)}</MInfo>}
       </div>
 
-      {ins.location_note && <MBlock TH={TH} label="📍 Location">{ins.location_note}</MBlock>}
-      {ins.report && <MBlock TH={TH} label="Report" accent>{ins.report}</MBlock>}
-      {ins.action_required && <MBlock TH={TH} label="⚡ Action required" gold>{ins.action_required}</MBlock>}
-      {ins.resolution_note && <MBlock TH={TH} label="✓ Resolution" gold>{ins.resolution_note}</MBlock>}
+      {ins.location_note && <MBlock TH={TH} label={L.location}>{ins.location_note}</MBlock>}
+      {ins.report && <MBlock TH={TH} label={L.reportBlock} accent>{ins.report}</MBlock>}
+      {ins.action_required && <MBlock TH={TH} label={"⚡ "+L.actionRequired} gold>{ins.action_required}</MBlock>}
+      {ins.resolution_note && <MBlock TH={TH} label={L.resolution} gold>{ins.resolution_note}</MBlock>}
 
-      <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel="Open Inspections →" />
+      <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel={L.openInspections} closeLabel={L.close} />
     </div>
   );
 }
 
 // ═══ Asset detail modal ═══
-function AssetModal({ TH, isMobile, asset, whMap, onZoom, onClose, onOpenModule }) {
+function AssetModal({ TH, L, isMobile, asset, whMap, onZoom, onClose, onOpenModule }) {
   const meta = AST_STATUS[asset.status] || { label: asset.status, color: '#8f8f8f' };
   const wh = whMap[asset.warehouse_id];
   return (
@@ -265,17 +267,17 @@ function AssetModal({ TH, isMobile, asset, whMap, onZoom, onClose, onOpenModule 
       )}
 
       <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14}}>
-        {asset.brand && <MInfo TH={TH} label="Brand / Model">{asset.brand} {asset.model || ''}</MInfo>}
-        {asset.serial_number && <MInfo TH={TH} label="Serial">{asset.serial_number}</MInfo>}
-        {asset.plate_number && <MInfo TH={TH} label="Plate">{asset.plate_number}</MInfo>}
-        <MInfo TH={TH} label="Warehouse">{wh?.name || '—'}</MInfo>
-        {asset.purchase_price != null && <MInfo TH={TH} label="Value">{money(asset.purchase_price, asset.currency)}</MInfo>}
-        {asset.purchased_at && <MInfo TH={TH} label="Purchased">{fd(asset.purchased_at)}</MInfo>}
-        {asset.supplier_name && <MInfo TH={TH} label="Supplier">{asset.supplier_name}</MInfo>}
-        {asset.warranty_expires_at && <MInfo TH={TH} label="Warranty until">{fd(asset.warranty_expires_at)}</MInfo>}
-        {asset.last_service_date && <MInfo TH={TH} label="Last service">{fd(asset.last_service_date)}</MInfo>}
-        {asset.next_service_date && <MInfo TH={TH} label="Next service">{fd(asset.next_service_date)}</MInfo>}
-        <MInfo TH={TH} label="Registered">{fdt(asset.created_at)}</MInfo>
+        {asset.brand && <MInfo TH={TH} label={L.brandModel}>{asset.brand} {asset.model || ''}</MInfo>}
+        {asset.serial_number && <MInfo TH={TH} label={L.serial}>{asset.serial_number}</MInfo>}
+        {asset.plate_number && <MInfo TH={TH} label={L.plate}>{asset.plate_number}</MInfo>}
+        <MInfo TH={TH} label={L.warehouse}>{wh?.name || '—'}</MInfo>
+        {asset.purchase_price != null && <MInfo TH={TH} label={L.value}>{money(asset.purchase_price, asset.currency)}</MInfo>}
+        {asset.purchased_at && <MInfo TH={TH} label={L.purchased}>{fd(asset.purchased_at)}</MInfo>}
+        {asset.supplier_name && <MInfo TH={TH} label={L.supplier}>{asset.supplier_name}</MInfo>}
+        {asset.warranty_expires_at && <MInfo TH={TH} label={L.warrantyUntil}>{fd(asset.warranty_expires_at)}</MInfo>}
+        {asset.last_service_date && <MInfo TH={TH} label={L.lastService}>{fd(asset.last_service_date)}</MInfo>}
+        {asset.next_service_date && <MInfo TH={TH} label={L.nextService}>{fd(asset.next_service_date)}</MInfo>}
+        <MInfo TH={TH} label={L.reported}>{fdt(asset.created_at)}</MInfo>
       </div>
 
       {asset.status === 'checked_out' && asset.holder_name && (
@@ -284,10 +286,10 @@ function AssetModal({ TH, isMobile, asset, whMap, onZoom, onClose, onOpenModule 
           {asset.expected_return_at ? ` · Return: ${fd(asset.expected_return_at)}` : ''}
         </MBlock>
       )}
-      {asset.current_location && <MBlock TH={TH} label="📍 Location">{asset.current_location}</MBlock>}
-      {asset.notes && <MBlock TH={TH} label="Notes">{asset.notes}</MBlock>}
+      {asset.current_location && <MBlock TH={TH} label={L.location}>{asset.current_location}</MBlock>}
+      {asset.notes && <MBlock TH={TH} label={L.notes}>{asset.notes}</MBlock>}
 
-      <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel="Open Warehouse →" />
+      <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel={L.openWarehouse} closeLabel={L.close} />
     </div>
   );
 }
@@ -305,10 +307,10 @@ function ModalHeader({ TH, eyebrow, title, mono, onClose }) {
     </div>
   );
 }
-function ModalFooter({ TH, onClose, onOpenModule, moduleLabel }) {
+function ModalFooter({ TH, onClose, onOpenModule, moduleLabel, closeLabel = "Close" }) {
   return (
     <div style={{display:"flex", gap:8, marginTop:16}}>
-      <button onClick={onClose} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"12px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Close</button>
+      <button onClick={onClose} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"12px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{closeLabel}</button>
       <button onClick={onOpenModule} style={{flex:1, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{moduleLabel}</button>
     </div>
   );
@@ -353,12 +355,12 @@ function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
     </div>
   );
 }
-function FeedCard({ TH, title, children, onNavAll }) {
+function FeedCard({ TH, title, children, onNavAll, viewAllLabel = "View all →" }) {
   return (
     <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:18, boxShadow: TH.cardGlow || "0 4px 20px rgba(0,0,0,0.06)"}}>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10}}>
         <div style={{fontSize:14, fontWeight:700, color:TH.text}}>{title}</div>
-        {onNavAll && <button onClick={onNavAll} style={{background:"transparent", border:"none", color:TH.accent, cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit"}}>View all →</button>}
+        {onNavAll && <button onClick={onNavAll} style={{background:"transparent", border:"none", color:TH.accent, cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit"}}>{viewAllLabel}</button>}
       </div>
       <div>{children}</div>
     </div>
