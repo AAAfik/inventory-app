@@ -1,29 +1,71 @@
 // ═══════════════════════════════════════════════════════════════════
-// DashboardTab.jsx — clean dashboard for Caesar (gold/white/black)
+// DashboardTab.jsx — Caesar dashboard: KPIs + live feeds + detail modal
+// Click any feed item → full details with photos
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+const INS_STATUS = {
+  ok:            { label: 'OK',       color: '#C9A960' },
+  minor_issue:   { label: 'Minor',    color: '#D4B876' },
+  major_issue:   { label: 'Major',    color: '#8B7A44' },
+  critical:      { label: 'Critical', color: '#8f8f8f' },
+  needs_repair:  { label: 'Repair',   color: '#8B7A44' },
+  fixed:         { label: 'Fixed',    color: '#C9A960' },
+};
+const AST_STATUS = {
+  available:   { label: 'Available',   color: '#C9A960' },
+  checked_out: { label: 'Checked out', color: '#8B7A44' },
+  in_service:  { label: 'In service',  color: '#8f8f8f' },
+  damaged:     { label: 'Damaged',     color: '#8f8f8f' },
+  lost:        { label: 'Lost',        color: '#8f8f8f' },
+  retired:     { label: 'Retired',     color: '#5c5c5c' },
+};
+const KIND_ICON = { equipment: '🏭', tool: '🔧', vehicle: '🚗' };
+
+function fdt(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleString('en-GB', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+}
+function fd(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
+}
+function money(n, cur='EUR') {
+  if (n == null || n === '') return '—';
+  const sym = cur === 'EUR' ? '€' : cur === 'USD' ? '$' : cur === 'TRY' ? '₺' : cur+' ';
+  return sym + Number(n).toLocaleString('en-GB', { maximumFractionDigits: 2 });
+}
+
 export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
   const [stats, setStats] = useState(null);
   const [recentInspections, setRecentInspections] = useState([]);
   const [recentAssets, setRecentAssets] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Detail modal state
+  const [modal, setModal] = useState(null); // { type: 'inspection'|'asset', data }
+  const [photoZoom, setPhotoZoom] = useState(null);
 
   useEffect(() => { load(); }, []);
 
   async function load() {
     setLoading(true); setError(null);
     try {
-      const [rAssets, rWh, rIns, rReqs, rInsRecent, rAstRecent] = await Promise.all([
+      const [rAssets, rWh, rIns, rReqs, rInsRecent, rAstRecent, rProps, rAreas] = await Promise.all([
         supabase.from('assets').select('id, kind', { count: 'exact' }).eq('is_active', true),
-        supabase.from('warehouses').select('id', { count: 'exact' }).eq('is_active', true),
+        supabase.from('warehouses').select('id, code, name').eq('is_active', true),
         supabase.from('inspections').select('id, status, severity').in('status', ['minor_issue','major_issue','critical','needs_repair']),
         supabase.schema('procure').from('requisitions').select('id', { count: 'exact' }).in('status', ['submitted','dept_approved','in_procurement','pending_approval']),
-        supabase.from('inspections').select('*').order('created_at', { ascending: false }).limit(5),
-        supabase.from('assets').select('id, asset_no, name, kind, created_at').eq('is_active', true).order('created_at', { ascending: false }).limit(5),
+        supabase.from('inspections').select('*').order('created_at', { ascending: false }).limit(6),
+        supabase.from('assets').select('*').eq('is_active', true).order('created_at', { ascending: false }).limit(6),
+        supabase.from('wh_properties').select('id, code, name'),
+        supabase.from('inspection_areas').select('id, name'),
       ]);
 
       const assetsByKind = { equipment: 0, tool: 0, vehicle: 0 };
@@ -42,6 +84,9 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
       });
       setRecentInspections(rInsRecent.data || []);
       setRecentAssets(rAstRecent.data || []);
+      setProperties(rProps.data || []);
+      setAreas(rAreas.data || []);
+      setWarehouses(rWh.data || []);
     } catch (e) {
       setError(e.message || String(e));
     } finally {
@@ -52,9 +97,39 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
   if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>Loading dashboard...</div>;
 
   const s = stats || { totalAssets: 0, assetsByKind: {equipment:0,tool:0,vehicle:0}, warehouses: 0, openIssues: 0, criticalCount: 0, pendingRequisitions: 0 };
+  const propMap = Object.fromEntries(properties.map(p => [p.id, p]));
+  const areaMap = Object.fromEntries(areas.map(a => [a.id, a]));
+  const whMap = Object.fromEntries(warehouses.map(w => [w.id, w]));
 
   return (
     <div>
+      {/* ═══ Photo zoom (top layer) ═══ */}
+      {photoZoom && (
+        <div onClick={() => setPhotoZoom(null)} style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.96)", zIndex:10001, display:"flex", alignItems:"center", justifyContent:"center", padding:16, cursor:"pointer"}}>
+          <img src={photoZoom} alt="" style={{maxWidth:"100%", maxHeight:"100%", objectFit:"contain"}} />
+        </div>
+      )}
+
+      {/* ═══ Detail modal ═══ */}
+      {modal && (
+        <div onClick={() => setModal(null)} style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:10000, display:"flex", alignItems:isMobile?"flex-end":"center", justifyContent:"center", padding:isMobile?0:20}}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background:TH.bgCard, border:`1px solid ${TH.border}`,
+            borderRadius:isMobile?"16px 16px 0 0":16,
+            width:"100%", maxWidth:640, maxHeight:isMobile?"92vh":"88vh", overflowY:"auto",
+            padding:20, boxSizing:"border-box",
+          }}>
+            {modal.type === 'inspection' ? (
+              <InspectionModal TH={TH} isMobile={isMobile} ins={modal.data} propMap={propMap} areaMap={areaMap}
+                onZoom={setPhotoZoom} onClose={() => setModal(null)} onOpenModule={() => { setModal(null); onNav?.('inspection'); }} />
+            ) : (
+              <AssetModal TH={TH} isMobile={isMobile} asset={modal.data} whMap={whMap}
+                onZoom={setPhotoZoom} onClose={() => setModal(null)} onOpenModule={() => { setModal(null); onNav?.('warehouse'); }} />
+            )}
+          </div>
+        </div>
+      )}
+
       <div style={{marginBottom:20}}>
         <div style={{fontSize:isMobile?20:26, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>Dashboard</div>
         <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
@@ -67,63 +142,200 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
       {/* KPI grid */}
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4, 1fr)", gap:14, marginBottom:24}}>
         <KPI TH={TH} onClick={() => onNav?.("warehouse")}
-          label="Total Assets"
-          value={s.totalAssets}
-          sub={`${s.assetsByKind.equipment} equip · ${s.assetsByKind.tool} tools · ${s.assetsByKind.vehicle} vehicles`}
-          gradient
-        />
+          label="Total Assets" value={s.totalAssets}
+          sub={`${s.assetsByKind.equipment} equip · ${s.assetsByKind.tool} tools · ${s.assetsByKind.vehicle} vehicles`} gradient />
         <KPI TH={TH} onClick={() => onNav?.("warehouse")}
-          label="Warehouses"
-          value={s.warehouses}
-          sub="Across all properties"
-        />
+          label="Warehouses" value={s.warehouses} sub="Across all properties" />
         <KPI TH={TH} onClick={() => onNav?.("inspection")}
-          label="Open Issues"
-          value={s.openIssues}
-          sub={s.criticalCount > 0 ? `${s.criticalCount} critical` : "Under review"}
-          highlight={s.criticalCount > 0}
-        />
+          label="Open Issues" value={s.openIssues}
+          sub={s.criticalCount > 0 ? `${s.criticalCount} critical` : "Under review"} highlight={s.criticalCount > 0} />
         <KPI TH={TH} onClick={() => onNav?.("procure")}
-          label="Pending Requisitions"
-          value={s.pendingRequisitions}
-          sub={s.pendingRequisitions > 0 ? "Awaiting approval" : "Queue clear"}
-        />
+          label="Pending Requisitions" value={s.pendingRequisitions}
+          sub={s.pendingRequisitions > 0 ? "Awaiting approval" : "Queue clear"} />
       </div>
 
-      {/* Two-column feed */}
+      {/* Feeds */}
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:14}}>
         <FeedCard TH={TH} title="Recent Inspections" onNavAll={() => onNav?.("inspection")}>
           {recentInspections.length === 0 ? (
             <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>No inspections yet</div>
-          ) : recentInspections.map(i => (
-            <div key={i.id} style={{padding:"10px 0", borderBottom:`1px solid ${TH.border}`, display:"flex", justifyContent:"space-between", alignItems:"center", gap:12}}>
-              <div style={{flex:1, minWidth:0}}>
-                <div style={{fontSize:13, color:TH.text, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{i.title}</div>
-                <div style={{fontSize:11, color:TH.textDim, marginTop:2}}>{new Date(i.created_at).toLocaleString('en-GB', { month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' })}</div>
+          ) : recentInspections.map(i => {
+            const meta = INS_STATUS[i.status] || { label: i.status, color: TH.textMuted };
+            const cover = i.photos?.[0];
+            return (
+              <div key={i.id} onClick={() => setModal({ type: 'inspection', data: i })} style={feedRow(TH)}
+                onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                {cover ? (
+                  <img src={cover} alt="" style={{width:44, height:44, objectFit:"cover", borderRadius:8, flexShrink:0, background:"#000"}} loading="lazy" />
+                ) : (
+                  <div style={{width:44, height:44, borderRadius:8, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18}}>🔍</div>
+                )}
+                <div style={{flex:1, minWidth:0}}>
+                  <div style={{fontSize:13, color:TH.text, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{i.title}</div>
+                  <div style={{fontSize:11, color:TH.textDim, marginTop:2}}>{fdt(i.created_at)}</div>
+                </div>
+                <span style={{padding:"3px 8px", borderRadius:5, background:meta.color+"22", color:meta.color, fontSize:10, fontWeight:700, whiteSpace:"nowrap", flexShrink:0}}>{meta.label}</span>
               </div>
-              <StatusPill TH={TH} status={i.status} />
-            </div>
-          ))}
+            );
+          })}
         </FeedCard>
 
         <FeedCard TH={TH} title="Recently Registered Assets" onNavAll={() => onNav?.("warehouse")}>
           {recentAssets.length === 0 ? (
             <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>No assets yet</div>
-          ) : recentAssets.map(a => (
-            <div key={a.id} style={{padding:"10px 0", borderBottom:`1px solid ${TH.border}`, display:"flex", justifyContent:"space-between", alignItems:"center", gap:12}}>
-              <div style={{flex:1, minWidth:0}}>
-                <div style={{fontSize:13, color:TH.text, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
-                <div style={{fontSize:11, color:TH.textDim, marginTop:2, fontFamily:"monospace"}}>{a.asset_no}</div>
+          ) : recentAssets.map(a => {
+            const meta = AST_STATUS[a.status] || { label: a.status, color: TH.textMuted };
+            return (
+              <div key={a.id} onClick={() => setModal({ type: 'asset', data: a })} style={feedRow(TH)}
+                onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
+                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                {a.photo_url ? (
+                  <img src={a.photo_url} alt="" style={{width:44, height:44, objectFit:"cover", borderRadius:8, flexShrink:0, background:"#000"}} loading="lazy" />
+                ) : (
+                  <div style={{width:44, height:44, borderRadius:8, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18}}>{KIND_ICON[a.kind] || '📦'}</div>
+                )}
+                <div style={{flex:1, minWidth:0}}>
+                  <div style={{fontSize:13, color:TH.text, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
+                  <div style={{fontSize:10, color:TH.textDim, marginTop:2, fontFamily:"monospace"}}>{a.asset_no}</div>
+                </div>
+                <span style={{padding:"3px 8px", borderRadius:5, background:meta.color+"22", color:meta.color, fontSize:10, fontWeight:700, whiteSpace:"nowrap", flexShrink:0}}>{meta.label}</span>
               </div>
-              <div style={{fontSize:18}}>{a.kind === 'vehicle' ? '🚗' : a.kind === 'tool' ? '🔧' : '🏭'}</div>
-            </div>
-          ))}
+            );
+          })}
         </FeedCard>
       </div>
     </div>
   );
 }
 
+// ═══ Inspection detail modal ═══
+function InspectionModal({ TH, isMobile, ins, propMap, areaMap, onZoom, onClose, onOpenModule }) {
+  const meta = INS_STATUS[ins.status] || { label: ins.status, color: '#8f8f8f' };
+  const wh = propMap[ins.property_id];
+  const area = ins.area_id ? areaMap[ins.area_id] : null;
+  return (
+    <div>
+      <ModalHeader TH={TH} onClose={onClose}
+        eyebrow={<span style={{color:meta.color}}>● {meta.label}</span>}
+        title={ins.title} mono={ins.inspection_no} />
+
+      {/* Photos gallery */}
+      {ins.photos?.length > 0 && (
+        <div style={{display:"grid", gridTemplateColumns: ins.photos.length === 1 ? "1fr" : "repeat(2, 1fr)", gap:8, marginBottom:14}}>
+          {ins.photos.map((url, i) => (
+            <img key={i} src={url} alt="" onClick={() => onZoom(url)}
+              style={{width:"100%", height: ins.photos.length === 1 ? 260 : 150, objectFit:"cover", borderRadius:10, cursor:"pointer", background:"#000"}} />
+          ))}
+        </div>
+      )}
+
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14}}>
+        <MInfo TH={TH} label="Property">{wh?.name || '—'}</MInfo>
+        <MInfo TH={TH} label="Area">{area?.name || '—'}</MInfo>
+        <MInfo TH={TH} label="Severity">{['None','Low','Medium','High','Critical'][ins.severity] || '—'}</MInfo>
+        <MInfo TH={TH} label="Inspector">{ins.inspector_email || '—'}</MInfo>
+        <MInfo TH={TH} label="Reported">{fdt(ins.created_at)}</MInfo>
+        {ins.resolved_at && <MInfo TH={TH} label="Resolved">{fdt(ins.resolved_at)}</MInfo>}
+      </div>
+
+      {ins.location_note && <MBlock TH={TH} label="📍 Location">{ins.location_note}</MBlock>}
+      {ins.report && <MBlock TH={TH} label="Report" accent>{ins.report}</MBlock>}
+      {ins.action_required && <MBlock TH={TH} label="⚡ Action required" gold>{ins.action_required}</MBlock>}
+      {ins.resolution_note && <MBlock TH={TH} label="✓ Resolution" gold>{ins.resolution_note}</MBlock>}
+
+      <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel="Open Inspections →" />
+    </div>
+  );
+}
+
+// ═══ Asset detail modal ═══
+function AssetModal({ TH, isMobile, asset, whMap, onZoom, onClose, onOpenModule }) {
+  const meta = AST_STATUS[asset.status] || { label: asset.status, color: '#8f8f8f' };
+  const wh = whMap[asset.warehouse_id];
+  return (
+    <div>
+      <ModalHeader TH={TH} onClose={onClose}
+        eyebrow={<span style={{color:meta.color}}>● {meta.label} · {KIND_ICON[asset.kind] || '📦'} {asset.kind}</span>}
+        title={asset.name} mono={asset.asset_no} />
+
+      {asset.photo_url && (
+        <img src={asset.photo_url} alt="" onClick={() => onZoom(asset.photo_url)}
+          style={{width:"100%", height:240, objectFit:"cover", borderRadius:10, cursor:"pointer", background:"#000", marginBottom:14}} />
+      )}
+
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14}}>
+        {asset.brand && <MInfo TH={TH} label="Brand / Model">{asset.brand} {asset.model || ''}</MInfo>}
+        {asset.serial_number && <MInfo TH={TH} label="Serial">{asset.serial_number}</MInfo>}
+        {asset.plate_number && <MInfo TH={TH} label="Plate">{asset.plate_number}</MInfo>}
+        <MInfo TH={TH} label="Warehouse">{wh?.name || '—'}</MInfo>
+        {asset.purchase_price != null && <MInfo TH={TH} label="Value">{money(asset.purchase_price, asset.currency)}</MInfo>}
+        {asset.purchased_at && <MInfo TH={TH} label="Purchased">{fd(asset.purchased_at)}</MInfo>}
+        {asset.supplier_name && <MInfo TH={TH} label="Supplier">{asset.supplier_name}</MInfo>}
+        {asset.warranty_expires_at && <MInfo TH={TH} label="Warranty until">{fd(asset.warranty_expires_at)}</MInfo>}
+        {asset.last_service_date && <MInfo TH={TH} label="Last service">{fd(asset.last_service_date)}</MInfo>}
+        {asset.next_service_date && <MInfo TH={TH} label="Next service">{fd(asset.next_service_date)}</MInfo>}
+        <MInfo TH={TH} label="Registered">{fdt(asset.created_at)}</MInfo>
+      </div>
+
+      {asset.status === 'checked_out' && asset.holder_name && (
+        <MBlock TH={TH} label="👤 Currently with" gold>
+          {asset.holder_name}{asset.holder_phone ? ` · 📞 ${asset.holder_phone}` : ''}
+          {asset.expected_return_at ? ` · Return: ${fd(asset.expected_return_at)}` : ''}
+        </MBlock>
+      )}
+      {asset.current_location && <MBlock TH={TH} label="📍 Location">{asset.current_location}</MBlock>}
+      {asset.notes && <MBlock TH={TH} label="Notes">{asset.notes}</MBlock>}
+
+      <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel="Open Warehouse →" />
+    </div>
+  );
+}
+
+// ═══ Shared modal pieces ═══
+function ModalHeader({ TH, eyebrow, title, mono, onClose }) {
+  return (
+    <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:14}}>
+      <div style={{flex:1, minWidth:0}}>
+        <div style={{fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:4}}>{eyebrow}</div>
+        <div style={{fontSize:19, fontWeight:800, color:TH.text, lineHeight:1.25}}>{title}</div>
+        {mono && <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginTop:3}}>{mono}</div>}
+      </div>
+      <button onClick={onClose} style={{background:TH.bgInput, border:"none", borderRadius:16, width:32, height:32, color:TH.textMuted, cursor:"pointer", fontSize:15, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", padding:0}}>✕</button>
+    </div>
+  );
+}
+function ModalFooter({ TH, onClose, onOpenModule, moduleLabel }) {
+  return (
+    <div style={{display:"flex", gap:8, marginTop:16}}>
+      <button onClick={onClose} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"12px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Close</button>
+      <button onClick={onOpenModule} style={{flex:1, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{moduleLabel}</button>
+    </div>
+  );
+}
+function MInfo({ TH, label, children }) {
+  return (
+    <div>
+      <div style={{fontSize:9, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:2}}>{label}</div>
+      <div style={{fontSize:13, color:TH.text}}>{children}</div>
+    </div>
+  );
+}
+function MBlock({ TH, label, children, accent, gold }) {
+  return (
+    <div style={{
+      padding:12, borderRadius:10, marginBottom:10,
+      background: gold ? "rgba(201,169,96,0.08)" : TH.bgInput,
+      border: gold ? "1px solid rgba(201,169,96,0.3)" : "none",
+      borderLeft: accent ? `3px solid #C9A960` : undefined,
+    }}>
+      <div style={{fontSize:10, fontWeight:700, color: gold ? "#C9A960" : TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:5}}>{label}</div>
+      <div style={{fontSize:13, color:TH.text, whiteSpace:"pre-wrap", lineHeight:1.5}}>{children}</div>
+    </div>
+  );
+}
+
+// ═══ KPI + feed shells ═══
 function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
   return (
     <div onClick={onClick} style={{
@@ -141,7 +353,6 @@ function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
     </div>
   );
 }
-
 function FeedCard({ TH, title, children, onNavAll }) {
   return (
     <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16}}>
@@ -153,16 +364,10 @@ function FeedCard({ TH, title, children, onNavAll }) {
     </div>
   );
 }
-
-function StatusPill({ TH, status }) {
-  const map = {
-    ok:            { label: 'OK',       color: '#C9A960' },
-    minor_issue:   { label: 'Minor',    color: '#D4B876' },
-    major_issue:   { label: 'Major',    color: '#8B7A44' },
-    critical:      { label: 'Critical', color: '#8f8f8f' },
-    needs_repair:  { label: 'Repair',   color: '#8B7A44' },
-    fixed:         { label: 'Fixed',    color: '#C9A960' },
+function feedRow(TH) {
+  return {
+    padding:"9px 8px", margin:"0 -8px", borderRadius:10,
+    display:"flex", alignItems:"center", gap:10, cursor:"pointer",
+    borderBottom:`1px solid ${TH.border}`,
   };
-  const m = map[status] || { label: status, color: TH.textMuted };
-  return <span style={{padding:"3px 8px", borderRadius:5, background:m.color+"22", color:m.color, fontSize:10, fontWeight:700, whiteSpace:"nowrap"}}>{m.label}</span>;
 }
