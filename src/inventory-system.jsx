@@ -7,6 +7,7 @@ import ProcureHub from "./procurement/ProcureHub";
 import WarehouseHub from "./warehouse/WarehouseHub";
 import InspectionHub from "./inspection/InspectionHub";
 import DashboardTab from "./DashboardTab";
+import PWAInstall from "./PWAInstall";
 
 // ─── Feature flags ──────────────────────────────────────────────────
 // Set POOLS_ENABLED = true to bring the Pools module back.
@@ -558,6 +559,7 @@ export default function App() {
           <span style={{color:TH.accent,fontWeight:600}}>{timeStr}</span>
         </div>}
 
+        <PWAInstall TH={TH} isMobile={isMobile} />
         <button onClick={()=>setTheme(theme==="dark"?"light":"dark")} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:9,color:TH.text,padding:isMobile?"7px 9px":"7px 12px",cursor:"pointer",fontSize:14,fontFamily:"inherit",display:"flex",alignItems:"center",gap:6}}>
           {theme==="dark"?"\u2600":"\ud83c\udf19"}
           {!isMobile&&<span style={{fontSize:11,color:TH.textMuted}}>{theme==="dark"?"Light":"Dark"}</span>}
