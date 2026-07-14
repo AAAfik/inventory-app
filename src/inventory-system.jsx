@@ -21,22 +21,47 @@ const ADMIN_EMAILS = ["admin@inventory.com", "hezicaesar@gmail.com", "alireza.ar
 
 const THEMES = {
   dark: {
-    bg:"#000000", bgElev:"#0a0a0a", bgCard:"#0a0a0a", bgInput:"#111111", bgHover:"#1a1a1a",
-    text:"#f4efe4", textMuted:"#8f8f8f", textDim:"#5c5c5c", textHeading:"#ffffff",
-    border:"#1f1f1f", borderStrong:"#2a2a2a", divider:"#161616",
-    sidebar:"#000000", sidebarBorder:"#1f1f1f",
-    header:"#000000", headerBorder:"#1f1f1f",
+    bg:"#050505", bgElev:"#0d0d0c", bgCard:"#0f0e0c", bgInput:"#171613", bgHover:"#1d1c18",
+    text:"#f4efe4", textMuted:"#98917f", textDim:"#5c584d", textHeading:"#ffffff",
+    border:"#232119", borderStrong:"#33301f", divider:"#191813",
+    sidebar:"linear-gradient(180deg, #0a0a09 0%, #050505 100%)", sidebarBorder:"#232119",
+    header:"rgba(5,5,5,0.92)", headerBorder:"#232119",
     accent:"#C9A960", accentText:"#D4B876", accentBg:"rgba(201,169,96,.10)", accentBorder:"rgba(201,169,96,.30)",
+    shadow:"0 1px 3px rgba(0,0,0,.5)", shadowLg:"0 12px 40px rgba(0,0,0,.55)",
+    cardGlow:"0 0 0 1px rgba(201,169,96,.06), 0 8px 30px rgba(0,0,0,.35)",
   },
   light: {
-    bg:"#F4EFE4", bgElev:"#ffffff", bgCard:"#ffffff", bgInput:"#F4EFE4", bgHover:"#EDE6D5",
-    text:"#0a1f35", textMuted:"#6b7280", textDim:"#9ca3af", textHeading:"#0a1f35",
-    border:"#E5DFCE", borderStrong:"#D0C7B0", divider:"#EDE6D5",
-    sidebar:"#ffffff", sidebarBorder:"#E5DFCE",
-    header:"#ffffff", headerBorder:"#E5DFCE",
-    accent:"#8B7A44", accentText:"#8B7A44", accentBg:"rgba(139,122,68,.08)", accentBorder:"rgba(139,122,68,.30)",
+    bg:"#F6F2E9", bgElev:"#FFFDF8", bgCard:"#FFFDF8", bgInput:"#F1EBDD", bgHover:"#EDE6D5",
+    text:"#1c1a14", textMuted:"#7a7361", textDim:"#a8a08c", textHeading:"#141210",
+    border:"#E6DFCC", borderStrong:"#D5CBAE", divider:"#EDE6D5",
+    sidebar:"linear-gradient(180deg, #FFFDF8 0%, #FAF6EC 100%)", sidebarBorder:"#E6DFCC",
+    header:"rgba(255,253,248,0.92)", headerBorder:"#E6DFCC",
+    accent:"#8B7A44", accentText:"#8B7A44", accentBg:"rgba(139,122,68,.09)", accentBorder:"rgba(139,122,68,.30)",
+    shadow:"0 1px 3px rgba(139,122,68,.10)", shadowLg:"0 12px 40px rgba(139,122,68,.18)",
+    cardGlow:"0 1px 2px rgba(139,122,68,.06), 0 8px 28px rgba(139,122,68,.10)",
   },
 };
+
+// Global polish CSS (scrollbar, serif headings, transitions)
+if (typeof document !== 'undefined' && !document.getElementById('caesar-polish')) {
+  const st = document.createElement('style');
+  st.id = 'caesar-polish';
+  st.textContent = `
+    * { scrollbar-width: thin; scrollbar-color: rgba(201,169,96,.35) transparent; }
+    *::-webkit-scrollbar { width: 8px; height: 8px; }
+    *::-webkit-scrollbar-thumb { background: rgba(201,169,96,.30); border-radius: 8px; }
+    *::-webkit-scrollbar-thumb:hover { background: rgba(201,169,96,.55); }
+    *::-webkit-scrollbar-track { background: transparent; }
+    button { transition: background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease, box-shadow .15s ease; }
+    button:active { transform: scale(.985); }
+    input, select, textarea { transition: border-color .15s ease, box-shadow .15s ease; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(201,169,96,.55) !important; box-shadow: 0 0 0 3px rgba(201,169,96,.12); }
+    .caesar-serif { font-family: 'Playfair Display', Georgia, serif !important; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    main > * { animation: fadeUp .25s ease; }
+  `;
+  document.head.appendChild(st);
+}
 
 const KPI_COLORS = {
   blue:   { solid:"#C9A960", grad:"linear-gradient(135deg,#C9A960,#D4B876)" },
@@ -550,7 +575,7 @@ export default function App() {
 
   const card = {background:TH.bgCard,border:`1px solid ${TH.border}`,borderRadius:14,padding:18};
   const cardTitle = {color:TH.textHeading,fontWeight:700,fontSize:13,marginBottom:14,paddingBottom:12,borderBottom:`1px solid ${TH.divider}`,display:"flex",justifyContent:"space-between",alignItems:"center"};
-  const h1Style = {color:TH.textHeading,fontSize:isMobile?18:22,fontWeight:800,margin:"0 0 4px",letterSpacing:"-0.5px"};
+  const h1Style = {color:TH.textHeading,fontSize:isMobile?20:26,fontWeight:700,margin:"0 0 4px",letterSpacing:"-0.3px",fontFamily:"'Playfair Display', Georgia, serif"};
   const subStyle = {color:TH.textMuted,fontSize:isMobile?12:13,marginBottom:isMobile?16:24};
   const tableStyle = {width:"100%",borderCollapse:"collapse",fontSize:13,background:TH.bgCard,borderRadius:12,overflow:"hidden",border:`1px solid ${TH.border}`};
   const thStyle = {background:TH.bgInput,color:TH.textMuted,fontWeight:600,padding:"11px 12px",textAlign:"left",borderBottom:`1px solid ${TH.divider}`,fontSize:11,whiteSpace:"nowrap",textTransform:"uppercase",letterSpacing:"0.04em"};
@@ -568,10 +593,12 @@ export default function App() {
   return (
     <div dir={lang==="fa"||lang==="he"?"rtl":"ltr"} style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:TH.bg,color:TH.text,fontFamily:lang==="fa"?"'Vazirmatn','Tahoma',sans-serif":lang==="he"?"'Heebo','Arial',sans-serif":"'Inter','Segoe UI',system-ui,sans-serif"}}>
 
-      <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,borderBottom:`1px solid ${TH.headerBorder}`,height:isMobile?54:60,display:"flex",alignItems:"center",padding:isMobile?"0 12px":"0 24px",gap:isMobile?8:16,flexShrink:0}}>
+      <header style={{position:"sticky",top:0,zIndex:100,background:TH.header,backdropFilter:"blur(14px)",WebkitBackdropFilter:"blur(14px)",borderBottom:`1px solid ${TH.headerBorder}`,boxShadow:"0 1px 0 rgba(201,169,96,.15)",height:isMobile?54:62,display:"flex",alignItems:"center",padding:isMobile?"0 12px":"0 24px",gap:isMobile?8:16,flexShrink:0}}>
         {isMobile&&<button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:TH.bgInput,border:`1px solid ${TH.border}`,borderRadius:8,color:TH.text,padding:"7px 10px",cursor:"pointer",fontSize:16,fontFamily:"inherit",lineHeight:1}}>☰</button>}
         <div style={{display:"flex",alignItems:"center",gap:10,minWidth:isMobile?0:200}}>
-          <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:isMobile?44:56,width:"auto",display:"block",flexShrink:0}}/>
+          <div style={{background:theme==="light"?"#000":"transparent",borderRadius:12,padding:theme==="light"?"6px 10px":0,display:"flex",alignItems:"center",flexShrink:0}}>
+            <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:isMobile?40:52,width:"auto",display:"block"}}/>
+          </div>
           {!isMobile&&<div style={{borderLeft:`1px solid ${TH.border}`,paddingLeft:12,marginLeft:4}}>
             <div style={{color:TH.accent,fontSize:9,fontWeight:600,letterSpacing:"0.2em",textTransform:"uppercase"}}>● LIVE</div>
           </div>}
@@ -630,16 +657,28 @@ export default function App() {
           boxShadow: isMobile&&sidebarOpen?"0 10px 30px rgba(0,0,0,.4)":"none",
         }}>
           {NAV_GROUPS.filter(g=>g.items.some(k=>allTabs.includes(k))).map(group=>(
-            <div key={group.key} style={{marginBottom:14}}>
-              <div style={{padding:"0 22px 8px",color:TH.textDim,fontSize:10,fontWeight:700,letterSpacing:"0.12em"}}>{t[group.key]?.toUpperCase()||group.key.toUpperCase()}</div>
+            <div key={group.key} style={{marginBottom:16,padding:"0 12px"}}>
+              <div style={{padding:"0 12px 8px",color:TH.textDim,fontSize:9.5,fontWeight:800,letterSpacing:"0.16em"}}>{t[group.key]?.toUpperCase()||group.key.toUpperCase()}</div>
               {group.items.filter(k=>allTabs.includes(k)).map(k=>{
                 const isActive = tab===k;
                 return(
-                  <button key={k} onClick={()=>{setTab(k);setSearch("");setDeptFilter("All");if(isMobile)setSidebarOpen(false);}} style={{display:"flex",alignItems:"center",gap:11,width:"100%",padding:"9px 22px",background:isActive?TH.accentBg:"transparent",border:"none",borderLeft:`3px solid ${isActive?TH.accent:"transparent"}`,color:isActive?TH.accent:TH.textMuted,cursor:"pointer",fontSize:13,textAlign:"left",fontFamily:"inherit",fontWeight:isActive?600:500}}>
-                    <span style={{fontSize:14,width:18,textAlign:"center",flexShrink:0}}>{TAB_ICONS[k]}</span>
+                  <button key={k} onClick={()=>{setTab(k);setSearch("");setDeptFilter("All");if(isMobile)setSidebarOpen(false);}} style={{
+                    display:"flex",alignItems:"center",gap:11,width:"100%",
+                    padding:"10px 12px",marginBottom:2,
+                    background:isActive?"linear-gradient(135deg, rgba(201,169,96,.16), rgba(139,122,68,.08))":"transparent",
+                    border:isActive?"1px solid rgba(201,169,96,.35)":"1px solid transparent",
+                    borderRadius:11,
+                    color:isActive?TH.accent:TH.textMuted,cursor:"pointer",fontSize:13,textAlign:"left",fontFamily:"inherit",
+                    fontWeight:isActive?700:500,
+                    boxShadow:isActive?"0 2px 10px rgba(201,169,96,.10)":"none",
+                  }}
+                  onMouseEnter={e=>{if(!isActive)e.currentTarget.style.background=TH.bgHover;}}
+                  onMouseLeave={e=>{if(!isActive)e.currentTarget.style.background="transparent";}}>
+                    <span style={{fontSize:15,width:20,textAlign:"center",flexShrink:0,filter:isActive?"none":"grayscale(0.4)"}}>{TAB_ICONS[k]}</span>
                     <span style={{flex:1}}>{t[k]||k}</span>
-                    {k==="purchases"&&pendingCount>0&&isAdmin&&<span style={{background:"#f59e0b",color:"#fff",borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{pendingCount}</span>}
-                    {k==="inventory"&&lowStock.length>0&&isAdmin&&<span style={{background:"#ef4444",color:"#fff",borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{lowStock.length}</span>}
+                    {isActive&&<span style={{width:5,height:5,borderRadius:3,background:"#C9A960",flexShrink:0}}/>}
+                    {k==="purchases"&&pendingCount>0&&isAdmin&&<span style={{background:"#8B7A44",color:"#fff",borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{pendingCount}</span>}
+                    {k==="inventory"&&lowStock.length>0&&isAdmin&&<span style={{background:"#8B7A44",color:"#fff",borderRadius:10,padding:"1px 7px",fontSize:10,fontWeight:700}}>{lowStock.length}</span>}
                   </button>
                 );
               })}

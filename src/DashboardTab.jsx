@@ -131,7 +131,7 @@ export default function DashboardTab({ TH, isMobile, isAdmin, onNav }) {
       )}
 
       <div style={{marginBottom:20}}>
-        <div style={{fontSize:isMobile?20:26, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>Dashboard</div>
+        <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>Dashboard</div>
         <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
           Live overview of assets, inspections, and procurement across Caesar Projects
         </div>
@@ -343,7 +343,7 @@ function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
                             : highlight ? "linear-gradient(135deg, rgba(143,143,143,0.10), rgba(92,92,92,0.05))"
                                         : TH.bgCard,
       border:`1px solid ${highlight ? "rgba(143,143,143,0.3)" : gradient ? "rgba(201,169,96,0.3)" : TH.border}`,
-      borderRadius:12, padding:16, cursor: onClick ? "pointer" : "default", transition:"transform 0.15s",
+      borderRadius:14, padding:18, cursor: onClick ? "pointer" : "default", transition:"transform 0.15s, box-shadow 0.15s", boxShadow: TH.cardGlow || "0 4px 20px rgba(0,0,0,0.08)",
     }}
     onMouseEnter={e => onClick && (e.currentTarget.style.transform = "translateY(-2px)")}
     onMouseLeave={e => onClick && (e.currentTarget.style.transform = "translateY(0)")}>
@@ -355,7 +355,7 @@ function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
 }
 function FeedCard({ TH, title, children, onNavAll }) {
   return (
-    <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16}}>
+    <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:18, boxShadow: TH.cardGlow || "0 4px 20px rgba(0,0,0,0.06)"}}>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10}}>
         <div style={{fontSize:14, fontWeight:700, color:TH.text}}>{title}</div>
         {onNavAll && <button onClick={onNavAll} style={{background:"transparent", border:"none", color:TH.accent, cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit"}}>View all →</button>}

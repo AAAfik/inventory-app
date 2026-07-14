@@ -157,7 +157,7 @@ export default function UsersTab({ TH, isMobile }) {
     <div>
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20, flexWrap:"wrap", gap:12}}>
         <div>
-          <div style={{fontSize:isMobile?20:26, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>Team & Roles</div>
+          <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>Team & Roles</div>
           <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>Create users, assign roles, control access</div>
         </div>
         {!showAdd && (

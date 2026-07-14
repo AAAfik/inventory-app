@@ -98,8 +98,10 @@ export default function InspectionsListTab({ TH, isMobile, isAdmin, onlyOpenIssu
       {loading ? (
         <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>Loading...</div>
       ) : filt.length === 0 ? (
-        <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
-          {onlyOpenIssues ? "No open issues — all inspections resolved 🎉" : "No inspections yet. Use 'New Inspection' to start."}
+        <div style={{padding:"56px 24px", background:TH.bgCard, border:`1px dashed ${TH.border}`, borderRadius:16, color:TH.textMuted, textAlign:"center"}}>
+          <div style={{fontSize:44, marginBottom:12, opacity:0.6}}>{onlyOpenIssues ? "✓" : "🔍"}</div>
+          <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:4}}>{onlyOpenIssues ? "All clear" : "No inspections yet"}</div>
+          <div style={{fontSize:12.5}}>{onlyOpenIssues ? "Every reported issue has been resolved." : "Start a walk-around with 'New Inspection' — photos, status, report."}</div>
         </div>
       ) : (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill, minmax(320px, 1fr))", gap:14}}>

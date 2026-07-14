@@ -57,7 +57,7 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
   return (
     <div>
       <div style={{marginBottom:14}}>
-        <div style={{fontSize:isMobile?18:24, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>Warehouse Manager</div>
+        <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>Warehouse Manager</div>
         {!isMobile && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
           Equipment, tools, vehicles & consumables across all properties
         </div>}

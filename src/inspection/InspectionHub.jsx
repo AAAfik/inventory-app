@@ -21,7 +21,7 @@ export default function InspectionHub({ TH, lang = "en", isMobile = false, isAdm
   return (
     <div>
       <div style={{marginBottom:16}}>
-        <div style={{fontSize:isMobile?18:24, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>
+        <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>
           Inspections
         </div>
         {!isMobile && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
