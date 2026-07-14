@@ -27,6 +27,9 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
   const [fNote, setFNote] = useState("");
   const [fNextService, setFNextService] = useState("");
 
+  // Admin edit form state
+  const [edit, setEdit] = useState(null); // object copy of asset fields being edited
+
   useEffect(() => { load(); }, [assetId]);
 
   async function load() {
@@ -162,6 +165,65 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
     });
   }
 
+  function startEdit() {
+    setEdit({
+      name: asset.name || "", brand: asset.brand || "", model: asset.model || "",
+      serial_number: asset.serial_number || "", plate_number: asset.plate_number || "",
+      warehouse_id: asset.warehouse_id || "", status: asset.status || "available",
+      purchase_price: asset.purchase_price ?? "", currency: asset.currency || "EUR",
+      purchased_at: asset.purchased_at || "", supplier_name: asset.supplier_name || "",
+      warranty_expires_at: asset.warranty_expires_at || "",
+      next_service_date: asset.next_service_date || "", holder_name: asset.holder_name || "",
+      notes: asset.notes || "",
+    });
+    setAction('edit');
+  }
+
+  async function saveEdit() {
+    setBusy(true); setError(null);
+    try {
+      if (!edit.name.trim()) throw new Error("Name is required");
+      const { error: e } = await supabase.from('assets').update({
+        name: edit.name.trim(),
+        brand: edit.brand.trim() || null,
+        model: edit.model.trim() || null,
+        serial_number: edit.serial_number.trim() || null,
+        plate_number: edit.plate_number.trim() || null,
+        warehouse_id: edit.warehouse_id ? Number(edit.warehouse_id) : null,
+        status: edit.status,
+        purchase_price: edit.purchase_price === "" ? null : Number(edit.purchase_price),
+        currency: edit.currency,
+        purchased_at: edit.purchased_at || null,
+        supplier_name: edit.supplier_name.trim() || null,
+        warranty_expires_at: edit.warranty_expires_at || null,
+        next_service_date: edit.next_service_date || null,
+        holder_name: edit.holder_name.trim() || null,
+        notes: edit.notes.trim() || null,
+        updated_at: new Date().toISOString(),
+      }).eq('id', assetId);
+      if (e) throw e;
+      setAction(null); setEdit(null);
+      await load();
+    } catch (e) {
+      setError(e.message || String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteAsset() {
+    if (!confirm(`Delete asset ${asset.asset_no} (${asset.name})? This removes it from all lists.`)) return;
+    setBusy(true); setError(null);
+    try {
+      const { error: e } = await supabase.from('assets').update({ is_active: false, updated_at: new Date().toISOString() }).eq('id', assetId);
+      if (e) throw e;
+      onClose();
+    } catch (e) {
+      setError(e.message || String(e));
+      setBusy(false);
+    }
+  }
+
   if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>Loading...</div>;
   if (!asset) return null;
 
@@ -249,7 +311,45 @@ export default function AssetDetail({ TH, isMobile, isAdmin, assetId, warehouses
           <ActionBtn TH={TH} onClick={() => setAction('transfer')}>⇄ Transfer</ActionBtn>
           <ActionBtn TH={TH} onClick={() => { setFNextService(""); setAction('service'); }}>🔧 Log Service</ActionBtn>
           <ActionBtn TH={TH} onClick={showQR}>▦ QR Label</ActionBtn>
+          {isAdmin && <ActionBtn TH={TH} onClick={startEdit}>✏️ Edit</ActionBtn>}
+          {isAdmin && <ActionBtn TH={TH} onClick={deleteAsset} danger>🗑 Delete</ActionBtn>}
         </div>
+      )}
+
+      {/* Admin edit form */}
+      {action === 'edit' && edit && (
+        <FormCard TH={TH} title="✏️ Edit asset" onCancel={() => { setAction(null); setEdit(null); }} onSubmit={saveEdit} busy={busy} submitLabel="Save changes">
+          <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:10}}>
+            <Field TH={TH} label="Name *"><input value={edit.name} onChange={e => setEdit({...edit, name: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Status">
+              <select value={edit.status} onChange={e => setEdit({...edit, status: e.target.value})} style={inp(TH)}>
+                {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </Field>
+            <Field TH={TH} label="Brand"><input value={edit.brand} onChange={e => setEdit({...edit, brand: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Model"><input value={edit.model} onChange={e => setEdit({...edit, model: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Serial number"><input value={edit.serial_number} onChange={e => setEdit({...edit, serial_number: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Plate (vehicles)"><input value={edit.plate_number} onChange={e => setEdit({...edit, plate_number: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Warehouse">
+              <select value={edit.warehouse_id} onChange={e => setEdit({...edit, warehouse_id: e.target.value})} style={inp(TH)}>
+                <option value="">—</option>
+                {(warehouses || []).map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+              </select>
+            </Field>
+            <Field TH={TH} label="Holder name (if out)"><input value={edit.holder_name} onChange={e => setEdit({...edit, holder_name: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Purchase price"><input type="number" value={edit.purchase_price} onChange={e => setEdit({...edit, purchase_price: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Currency">
+              <select value={edit.currency} onChange={e => setEdit({...edit, currency: e.target.value})} style={inp(TH)}>
+                <option>EUR</option><option>USD</option><option>TRY</option><option>GBP</option>
+              </select>
+            </Field>
+            <Field TH={TH} label="Purchased date"><input type="date" value={edit.purchased_at} onChange={e => setEdit({...edit, purchased_at: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Supplier"><input value={edit.supplier_name} onChange={e => setEdit({...edit, supplier_name: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Warranty until"><input type="date" value={edit.warranty_expires_at} onChange={e => setEdit({...edit, warranty_expires_at: e.target.value})} style={inp(TH)} /></Field>
+            <Field TH={TH} label="Next service date"><input type="date" value={edit.next_service_date} onChange={e => setEdit({...edit, next_service_date: e.target.value})} style={inp(TH)} /></Field>
+          </div>
+          <Field TH={TH} label="Notes"><textarea value={edit.notes} onChange={e => setEdit({...edit, notes: e.target.value})} rows={3} style={{...inp(TH), resize:"vertical"}} /></Field>
+        </FormCard>
       )}
 
       {/* Action forms */}
@@ -329,11 +429,14 @@ function Info({ TH, label, children }) {
     </div>
   );
 }
-function ActionBtn({ TH, children, onClick, primary }) {
+function ActionBtn({ TH, children, onClick, primary, danger }) {
   return (
     <button onClick={onClick} style={primary ? {
       background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
       color:"#000", padding:"13px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit",
+    } : danger ? {
+      background:"transparent", border:`1px solid rgba(143,143,143,0.4)`, borderRadius:10,
+      color:"#8f8f8f", padding:"13px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit",
     } : {
       background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10,
       color:TH.text, padding:"13px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit",

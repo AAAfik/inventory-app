@@ -15,6 +15,55 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
   const [photoZoom, setPhotoZoom] = useState(null);
   const [resolveMode, setResolveMode] = useState(false);
   const [resolutionNote, setResolutionNote] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [edit, setEdit] = useState(null);
+
+  const STATUS_OPTIONS = ['ok','minor_issue','major_issue','critical','needs_repair','fixed'];
+
+  function startEdit() {
+    setEdit({
+      title: ins.title || "", report: ins.report || "",
+      status: ins.status, severity: ins.severity,
+      action_required: ins.action_required || "", location_note: ins.location_note || "",
+    });
+    setEditMode(true);
+  }
+
+  async function saveEdit() {
+    setBusy(true); setError(null);
+    try {
+      if (!edit.title.trim()) throw new Error("Title required");
+      const { error: e } = await supabase.from('inspections').update({
+        title: edit.title.trim(),
+        report: edit.report.trim() || null,
+        status: edit.status,
+        severity: Number(edit.severity) || 0,
+        action_required: edit.action_required.trim() || null,
+        location_note: edit.location_note.trim() || null,
+        updated_at: new Date().toISOString(),
+      }).eq('id', inspectionId);
+      if (e) throw e;
+      setEditMode(false); setEdit(null);
+      await load();
+    } catch (e) {
+      setError(e.message || String(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteInspection() {
+    if (!confirm(`Delete inspection ${ins.inspection_no}? This cannot be undone.`)) return;
+    setBusy(true); setError(null);
+    try {
+      const { error: e } = await supabase.from('inspections').delete().eq('id', inspectionId);
+      if (e) throw e;
+      onClose();
+    } catch (e) {
+      setError(e.message || String(e));
+      setBusy(false);
+    }
+  }
 
   useEffect(() => { load(); }, [inspectionId]);
 
@@ -90,8 +139,57 @@ export default function InspectionDetail({ TH, isMobile, isAdmin, inspectionId, 
 
       <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16, gap:12}}>
         <button onClick={onClose} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>← Back</button>
-        <div style={{fontSize:11, color:TH.textMuted, fontFamily:"monospace"}}>{ins.inspection_no}</div>
+        <div style={{display:"flex", gap:8, alignItems:"center"}}>
+          {isAdmin && !editMode && <button onClick={startEdit} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.text, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", fontWeight:600}}>✏️ Edit</button>}
+          {isAdmin && <button onClick={deleteInspection} style={{background:"transparent", border:"1px solid rgba(143,143,143,0.4)", borderRadius:8, color:"#8f8f8f", padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>🗑 Delete</button>}
+          <div style={{fontSize:11, color:TH.textMuted, fontFamily:"monospace"}}>{ins.inspection_no}</div>
+        </div>
       </div>
+
+      {/* Admin edit form */}
+      {editMode && edit && (
+        <div style={{background:TH.bgCard, border:`2px solid ${TH.accentBorder}`, borderRadius:14, padding:18, marginBottom:16}}>
+          <div style={{fontSize:15, fontWeight:800, color:TH.text, marginBottom:12}}>✏️ Edit inspection</div>
+          <div style={{marginBottom:10}}>
+            <label style={editLbl(TH)}>Title *</label>
+            <input value={edit.title} onChange={e => setEdit({...edit, title: e.target.value})} style={editInp(TH)} />
+          </div>
+          <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:10, marginBottom:10}}>
+            <div>
+              <label style={editLbl(TH)}>Status</label>
+              <select value={edit.status} onChange={e => {
+                const s = e.target.value;
+                const sevMap = { ok:0, minor_issue:1, major_issue:2, critical:3, needs_repair:2, fixed:0 };
+                setEdit({...edit, status: s, severity: sevMap[s] ?? edit.severity});
+              }} style={editInp(TH)}>
+                {STATUS_OPTIONS.map(k => <option key={k} value={k}>{INSPECTION_STATUS[k]?.label || k}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={editLbl(TH)}>Severity (0-4)</label>
+              <select value={edit.severity} onChange={e => setEdit({...edit, severity: e.target.value})} style={editInp(TH)}>
+                {[0,1,2,3,4].map(n => <option key={n} value={n}>{n} — {['None','Low','Medium','High','Critical'][n]}</option>)}
+              </select>
+            </div>
+          </div>
+          <div style={{marginBottom:10}}>
+            <label style={editLbl(TH)}>Report</label>
+            <textarea value={edit.report} onChange={e => setEdit({...edit, report: e.target.value})} rows={4} style={{...editInp(TH), resize:"vertical"}} />
+          </div>
+          <div style={{marginBottom:10}}>
+            <label style={editLbl(TH)}>Action required</label>
+            <input value={edit.action_required} onChange={e => setEdit({...edit, action_required: e.target.value})} style={editInp(TH)} />
+          </div>
+          <div style={{marginBottom:12}}>
+            <label style={editLbl(TH)}>Location note</label>
+            <input value={edit.location_note} onChange={e => setEdit({...edit, location_note: e.target.value})} style={editInp(TH)} />
+          </div>
+          <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
+            <button onClick={() => { setEditMode(false); setEdit(null); }} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
+            <button onClick={saveEdit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? "Saving..." : "Save changes"}</button>
+          </div>
+        </div>
+      )}
 
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
 
@@ -210,4 +308,11 @@ function Info({ TH, label, children }) {
       <div style={{fontSize:13, color:TH.text}}>{children}</div>
     </div>
   );
+}
+
+function editLbl(TH) {
+  return { display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px" };
+}
+function editInp(TH) {
+  return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:9, padding:"10px 12px", color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
 }
