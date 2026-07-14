@@ -120,7 +120,7 @@ export default function QuickAddTab({ TH, isMobile }) {
     return (
       <div style={{padding:"40px 20px", textAlign:"center", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12}}>
         <div style={{fontSize:60, marginBottom:16}}>✅</div>
-        <div style={{fontSize:20, fontWeight:800, color:"#10b981", marginBottom:8}}>Success!</div>
+        <div style={{fontSize:20, fontWeight:800, color:"#C9A960", marginBottom:8}}>Success!</div>
         <div style={{fontSize:14, color:TH.text}}>{success}</div>
         <div style={{fontSize:12, color:TH.textMuted, marginTop:12}}>Preparing for next asset...</div>
       </div>
@@ -303,7 +303,7 @@ function inputStyle(TH) {
 }
 function ErrorBox({ TH, children }) {
   return (
-    <div style={{background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.3)", borderRadius:10, padding:"12px 14px", color:"#ef4444", fontSize:13, marginBottom:14}}>
+    <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>
       {children}
     </div>
   );

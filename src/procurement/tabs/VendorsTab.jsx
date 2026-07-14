@@ -8,17 +8,17 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 
 const VENDOR_STATUS = {
-  pending_approval: { label: "Pending approval", color: "#f59e0b" },
-  active:           { label: "Active",           color: "#10b981" },
-  suspended:        { label: "Suspended",        color: "#8892b0" },
-  blacklisted:      { label: "Blacklisted",      color: "#ef4444" },
+  pending_approval: { label: "Pending approval", color: "#D4B876" },
+  active:           { label: "Active",           color: "#C9A960" },
+  suspended:        { label: "Suspended",        color: "#5c5c5c" },
+  blacklisted:      { label: "Blacklisted",      color: "#8f8f8f" },
 };
 
 function riskColor(score) {
   const s = Number(score) || 0;
-  if (s >= 70) return "#ef4444";  // high risk (red)
-  if (s >= 40) return "#f59e0b";  // medium (amber)
-  return "#10b981";               // low (green)
+  if (s >= 70) return "#8f8f8f";  // high risk (red)
+  if (s >= 40) return "#D4B876";  // medium (amber)
+  return "#C9A960";               // low (green)
 }
 
 export default function VendorsTab({ TH, isMobile }) {
@@ -242,7 +242,7 @@ export default function VendorsTab({ TH, isMobile }) {
       ) : (
         <div style={{display:"flex", flexDirection:"column", gap:10}}>
           {filt.map(v => {
-            const st = VENDOR_STATUS[v.status] || { label: v.status, color: "#8892b0" };
+            const st = VENDOR_STATUS[v.status] || { label: v.status, color: "#5c5c5c" };
             const isOpen = expanded === v.id;
             const vCats = (v.vendor_categories || []).map(vc => catMap[vc.category_id]).filter(Boolean);
             const vProps = (v.vendor_property_assignments || []).map(vp => propMap[vp.property_id]).filter(Boolean);
@@ -300,9 +300,9 @@ export default function VendorsTab({ TH, isMobile }) {
                       <div style={{fontSize:11, color:TH.textMuted, marginRight:8}}>Risk score:</div>
                       <input type="number" min="0" max="100" defaultValue={v.risk_score || 0} onBlur={e => updateRiskScore(v, e.target.value)} style={{width:70, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:6, padding:"5px 8px", color:TH.text, fontSize:12, fontFamily:"inherit", outline:"none"}} />
                       <div style={{flex:1}} />
-                      {v.status === 'pending_approval' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#10b981", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>✓ Approve</button>}
+                      {v.status === 'pending_approval' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#C9A960", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>✓ Approve</button>}
                       {v.status === 'active' && <button onClick={() => changeStatus(v, 'suspended')} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit"}}>Suspend</button>}
-                      {v.status === 'suspended' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#10b981", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Reactivate</button>}
+                      {v.status === 'suspended' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#C9A960", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Reactivate</button>}
                       {v.status !== 'blacklisted' && <button onClick={() => changeStatus(v, 'blacklisted')} style={{background:"rgba(239,68,68,.1)", border:"1px solid rgba(239,68,68,.3)", borderRadius:8, color:"#ef4444", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Blacklist</button>}
                     </div>
                   </div>

@@ -20,15 +20,15 @@ export const ROLES = {
 
 // ─── Status meta ───────────────────────────────────────────────────
 export const REQ_STATUS = {
-  draft:             { label: 'Draft',             color: '#8892b0' },
-  submitted:         { label: 'Submitted',         color: '#3b82f6' },
-  dept_approved:     { label: 'Dept approved',     color: '#a78bfa' },
-  in_procurement:    { label: 'In procurement',    color: '#22d3ee' },
-  pending_approval:  { label: 'Pending approval',  color: '#f59e0b' },
-  approved:          { label: 'Approved',          color: '#10b981' },
-  rejected:          { label: 'Rejected',          color: '#ef4444' },
-  cancelled:         { label: 'Cancelled',         color: '#6b7280' },
-  fulfilled:         { label: 'Fulfilled',         color: '#34d399' },
+  draft:             { label: 'Draft',             color: '#5c5c5c' },
+  submitted:         { label: 'Submitted',         color: '#D4B876' },
+  dept_approved:     { label: 'Dept approved',     color: '#C9A960' },
+  in_procurement:    { label: 'In procurement',    color: '#D4B876' },
+  pending_approval:  { label: 'Pending approval',  color: '#D4B876' },
+  approved:          { label: 'Approved',          color: '#C9A960' },
+  rejected:          { label: 'Rejected',          color: '#8f8f8f' },
+  cancelled:         { label: 'Cancelled',         color: '#5c5c5c' },
+  fulfilled:         { label: 'Fulfilled',         color: '#8B7A44' },
 };
 
 // ─── Role groups for tab visibility ────────────────────────────────

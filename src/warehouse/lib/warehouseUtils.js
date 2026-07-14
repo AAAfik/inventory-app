@@ -1,28 +1,36 @@
 // ═══════════════════════════════════════════════════════════════════
-// warehouseUtils.js — constants & helpers for warehouse module
+// warehouseUtils.js — constants & helpers (Caesar palette: gold/white/black)
 // ═══════════════════════════════════════════════════════════════════
 
+// Caesar palette — only gold shades + neutrals
+const GOLD       = '#C9A960';
+const GOLD_DARK  = '#8B7A44';
+const GOLD_LIGHT = '#D4B876';
+const CREAM      = '#F4EFE4';
+const GRAY       = '#8f8f8f';
+const GRAY_DIM   = '#5c5c5c';
+
 export const ASSET_KINDS = {
-  equipment: { label: 'Equipment',  icon: '🏭', color: '#C9A960', description: 'Industrial machines, generators, HVAC, pumps' },
-  tool:      { label: 'Tool',       icon: '🔧', color: '#0891B2', description: 'Drills, ladders, measuring tools, portable equipment' },
-  vehicle:   { label: 'Vehicle',    icon: '🚗', color: '#8B7A44', description: 'Cars, trucks, golf carts, buggies' },
+  equipment: { label: 'Equipment', icon: '🏭', color: GOLD,      description: 'Industrial machines, generators, HVAC, pumps' },
+  tool:      { label: 'Tool',      icon: '🔧', color: GOLD_LIGHT, description: 'Drills, ladders, measuring tools, portable equipment' },
+  vehicle:   { label: 'Vehicle',   icon: '🚗', color: GOLD_DARK,  description: 'Cars, trucks, golf carts, buggies' },
 };
 
 export const ASSET_STATUS = {
-  available:    { label: 'Available',    color: '#10b981' },
-  checked_out:  { label: 'Checked out',  color: '#f59e0b' },
-  in_service:   { label: 'In service',   color: '#3b82f6' },
-  retired:      { label: 'Retired',      color: '#6b7280' },
-  lost:         { label: 'Lost',         color: '#ef4444' },
+  available:    { label: 'Available',    color: GOLD },
+  checked_out:  { label: 'Checked out',  color: GOLD_LIGHT },
+  in_service:   { label: 'In service',   color: GOLD_DARK },
+  retired:      { label: 'Retired',      color: GRAY_DIM },
+  lost:         { label: 'Lost',         color: GRAY },
 };
 
 export const MOVEMENT_TYPES = {
-  checkout:      { label: 'Checked out',    icon: '↗', color: '#f59e0b' },
-  checkin:       { label: 'Returned',       icon: '↩', color: '#10b981' },
-  transfer:      { label: 'Transferred',    icon: '⇄', color: '#3b82f6' },
-  service_start: { label: 'Sent for service', icon: '🔧', color: '#3b82f6' },
-  service_end:   { label: 'Back from service', icon: '✓', color: '#10b981' },
-  retire:        { label: 'Retired',        icon: '⊗', color: '#6b7280' },
+  checkout:      { label: 'Checked out',       icon: '↗', color: GOLD_LIGHT },
+  checkin:       { label: 'Returned',          icon: '↩', color: GOLD },
+  transfer:      { label: 'Transferred',       icon: '⇄', color: GOLD_DARK },
+  service_start: { label: 'Sent for service',  icon: '🔧', color: GOLD_DARK },
+  service_end:   { label: 'Back from service', icon: '✓',  color: GOLD },
+  retire:        { label: 'Retired',           icon: '⊗',  color: GRAY_DIM },
 };
 
 export function formatDate(s) {
@@ -41,7 +49,6 @@ export function formatMoney(amt, currency = 'EUR') {
   return sym + (Number(amt) || 0).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
 }
 
-// Generate next asset_no: AST-YYYY-NNNNN
 export async function nextAssetNo(supabase, kind) {
   const prefix = kind === 'vehicle' ? 'VHC' : kind === 'tool' ? 'TOL' : 'EQP';
   const year = new Date().getFullYear();

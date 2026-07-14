@@ -35,11 +35,11 @@ const THEMES = {
 
 const KPI_COLORS = {
   blue:   { solid:"#C9A960", grad:"linear-gradient(135deg,#C9A960,#D4B876)" },
-  orange: { solid:"#D97706", grad:"linear-gradient(135deg,#B45309,#D97706)" },
+  orange: { solid:"#8B7A44", grad:"linear-gradient(135deg,#8B7A44,#C9A960)" },
   purple: { solid:"#8B7A44", grad:"linear-gradient(135deg,#8B7A44,#C9A960)" },
-  red:    { solid:"#DC2626", grad:"linear-gradient(135deg,#B91C1C,#DC2626)" },
-  green:  { solid:"#059669", grad:"linear-gradient(135deg,#047857,#059669)" },
-  cyan:   { solid:"#0891B2", grad:"linear-gradient(135deg,#0E7490,#0891B2)" },
+  red:    { solid:"#5c5c5c", grad:"linear-gradient(135deg,#3a3a3a,#5c5c5c)" },
+  green:  { solid:"#C9A960", grad:"linear-gradient(135deg,#8B7A44,#C9A960)" },
+  cyan:   { solid:"#D4B876", grad:"linear-gradient(135deg,#C9A960,#D4B876)" },
 };
 
 const T = {
@@ -76,21 +76,15 @@ const REPORT_TYPES = [
 ];
 
 const SUPPLIERS_LIST = ["Kalbo Materials","Garden Eden","Clean Supply","Pool Tech","Security Plus"];
-const CHART_COLORS = ["#6366f1","#22d3ee","#f59e0b","#f87171","#34d399","#a78bfa","#fb923c","#38bdf8"];
-const STATUS_META = {pending:{en:"Pending",fa:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631",color:"#f59e0b"},approved:{en:"Approved",fa:"\u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",color:"#10b981"},rejected:{en:"Rejected",fa:"\u0631\u062f \u0634\u062f\u0647",color:"#ef4444"},delivered:{en:"Delivered",fa:"\u062a\u062d\u0648\u06cc\u0644 \u0634\u062f\u0647",color:"#3b82f6"},confirmed:{en:"Confirmed",fa:"\u062a\u0623\u06cc\u06cc\u062f",color:"#6366f1"},cancelled:{en:"Cancelled",fa:"\u0644\u063a\u0648 \u0634\u062f\u0647",color:"#8892b0"}};
+const CHART_COLORS = ["#C9A960","#D4B876","#8B7A44","#f4efe4","#a89968","#7a6b3d","#e8d9a7","#5c5c5c"];
+const STATUS_META = {pending:{en:"Pending",fa:"\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631",color:"#D4B876"},approved:{en:"Approved",fa:"\u062a\u0623\u06cc\u06cc\u062f \u0634\u062f\u0647",color:"#C9A960"},rejected:{en:"Rejected",fa:"\u0631\u062f \u0634\u062f\u0647",color:"#8f8f8f"},delivered:{en:"Delivered",fa:"\u062a\u062d\u0648\u06cc\u0644 \u0634\u062f\u0647",color:"#8B7A44"},confirmed:{en:"Confirmed",fa:"\u062a\u0623\u06cc\u06cc\u062f",color:"#C9A960"},cancelled:{en:"Cancelled",fa:"\u0644\u063a\u0648 \u0634\u062f\u0647",color:"#5c5c5c"}};
 const NAV_GROUPS = [
-  {key:"overview",     items:["dashboard"]},
-  {key:"catalog",      items:["itemsMgmt","inventory"]},
-  {key:"transactions", items:["purchases","consumption","returns","orders"]},
-  {key:"database",     items:["caesarMap","syncMaps"]},
-  ...(POOLS_ENABLED ? [{key:"pools",        items:["pools"]}] : []),
   ...(WAREHOUSE_ENABLED ? [{key:"warehouseGroup", items:["warehouse"]}] : []),
   ...(PROCURE_ENABLED ? [{key:"procurement", items:["procure"]}] : []),
-  {key:"insights",     items:["reports","suppliers","activityLog"]},
 ];
 const TAB_ICONS = {reports:"\ud83d\udccb",dashboard:"\u25c8",itemsMgmt:"\u229e",inventory:"\u25a6",purchases:"\u2193",consumption:"\u2197",returns:"\u21a9",orders:"\u25ce",suppliers:"\u22a1",activityLog:"\ud83d\udccb",caesarMap:"\ud83d\uddfa",pools:"\ud83c\udfca",procure:"\ud83d\udcb3",warehouse:"\ud83c\udfec"};
 
-const CATEGORY_COLORS = {"building":"#6366f1","pool":"#22d3ee","office":"#f59e0b","f&b":"#ef4444","facility":"#10b981","garden":"#34d399","security":"#a78bfa","spa":"#ec4899","default":"#8b5cf6"};
+const CATEGORY_COLORS = {"building":"#C9A960","pool":"#D4B876","office":"#8B7A44","f&b":"#a89968","facility":"#C9A960","garden":"#D4B876","security":"#8B7A44","spa":"#e8d9a7","default":"#8B7A44"};
 const getCategoryColor = (cat) => CATEGORY_COLORS[(cat||"").toLowerCase()] || CATEGORY_COLORS.default;
 
 const fmt = n => Number(n||0).toLocaleString("en-US");
@@ -140,7 +134,7 @@ const Badge = ({ label, color }) => (
 export default function App() {
   const [theme, setTheme] = useState(() => localStorage.getItem("stocktrack-theme") || "dark");
   const [lang, setLang] = useState(() => localStorage.getItem("stocktrack-lang") || "en");
-  const [tab, setTab] = useState("dashboard");
+  const [tab, setTab] = useState("warehouse");
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [now, setNow] = useState(new Date());
@@ -203,7 +197,7 @@ export default function App() {
         setUser(user);
         const admin = user.app_metadata?.role === "admin" || ADMIN_EMAILS.includes(user.email) || user.user_metadata?.role === "admin";
         setIsAdmin(admin);
-        setTab(admin ? "dashboard" : "consumption");
+        setTab(admin ? "warehouse" : "warehouse");
       }
     });
   }, []);
@@ -519,7 +513,7 @@ export default function App() {
   const filtPur  = purchases.filter(p=>deptFilter==="All"||p.department===deptFilter);
   const filtCons = consumptions.filter(c=>search===""||items.find(i=>i.id===c.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
   const filtRet  = returns.filter(r=>search===""||items.find(i=>i.id===r.itemId)?.name.toLowerCase().includes(search.toLowerCase()));
-  const allTabs = isAdmin ? ["dashboard","itemsMgmt","inventory","purchases","consumption","returns","orders","caesarMap","syncMaps",...(POOLS_ENABLED?["pools"]:[]),...(WAREHOUSE_ENABLED?["warehouse"]:[]),...(PROCURE_ENABLED?["procure"]:[]),"reports","suppliers","activityLog"] : ["consumption",...(WAREHOUSE_ENABLED?["warehouse"]:[]),...(PROCURE_ENABLED?["procure"]:[])];
+  const allTabs = [...(WAREHOUSE_ENABLED?["warehouse"]:[]),...(PROCURE_ENABLED?["procure"]:[])];
 
   if(loading) return <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:TH.bg}}><div style={{color:TH.accent,fontSize:16}}>{t.loading}</div></div>;
 
@@ -578,7 +572,7 @@ export default function App() {
           </div>}
         </div>
 
-        <button onClick={()=>supabase.auth.signOut()} style={{background:"rgba(239,68,68,.1)",border:"1px solid rgba(239,68,68,.3)",borderRadius:9,color:"#ef4444",padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>↪{!isMobile&&" "+t.logout}</button>
+        <button onClick={()=>supabase.auth.signOut()} style={{background:"transparent",border:`1px solid ${TH.border}`,borderRadius:9,color:TH.textMuted,padding:isMobile?"7px 9px":"7px 14px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>↪{!isMobile&&" "+t.logout}</button>
       </header>
 
       <div style={{display:"flex",flex:1,minHeight:0,position:"relative"}}>

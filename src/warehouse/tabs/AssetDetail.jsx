@@ -86,7 +86,7 @@ export default function AssetDetail({ TH, isMobile, assetId, onClose, warehouses
   if (error && !asset) return (
     <div>
       <button onClick={onClose} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", marginBottom:16}}>← Back</button>
-      <div style={{background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.3)", borderRadius:9, padding:"10px 14px", color:"#ef4444"}}>{error}</div>
+      <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:9, padding:"10px 14px", color:"#8f8f8f"}}>{error}</div>
     </div>
   );
   if (!asset) return null;
@@ -104,7 +104,7 @@ export default function AssetDetail({ TH, isMobile, assetId, onClose, warehouses
         <div style={{fontSize:11, color:TH.textMuted, fontFamily:"monospace"}}>{asset.asset_no}</div>
       </div>
 
-      {error && <div style={{background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.3)", borderRadius:9, padding:"10px 14px", color:"#ef4444", fontSize:13, marginBottom:16}}>{error}</div>}
+      {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:9, padding:"10px 14px", color:"#8f8f8f", fontSize:13, marginBottom:16}}>{error}</div>}
 
       {/* Header card */}
       <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, borderLeft:`4px solid ${kindMeta.color || TH.accent}`, padding:20, marginBottom:16}}>
@@ -136,11 +136,11 @@ export default function AssetDetail({ TH, isMobile, assetId, onClose, warehouses
       {/* Action buttons */}
       {!actionType && (
         <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:16}}>
-          {asset.status === 'available' && <ActionBtn TH={TH} onClick={() => setActionType('checkout')} color="#f59e0b">↗ Check out</ActionBtn>}
-          {asset.status === 'checked_out' && <ActionBtn TH={TH} onClick={() => setActionType('checkin')} color="#10b981">↩ Check in / Return</ActionBtn>}
-          {asset.status === 'available' && <ActionBtn TH={TH} onClick={() => setActionType('transfer')} color="#3b82f6">⇄ Transfer</ActionBtn>}
-          {(asset.status === 'available' || asset.status === 'checked_out') && <ActionBtn TH={TH} onClick={() => setActionType('service_start')} color="#3b82f6">🔧 Send to service</ActionBtn>}
-          {asset.status === 'in_service' && <ActionBtn TH={TH} onClick={() => setActionType('service_end')} color="#10b981">✓ Back from service</ActionBtn>}
+          {asset.status === 'available' && <ActionBtn TH={TH} onClick={() => setActionType('checkout')} color="#D4B876">↗ Check out</ActionBtn>}
+          {asset.status === 'checked_out' && <ActionBtn TH={TH} onClick={() => setActionType('checkin')} color="#C9A960">↩ Check in / Return</ActionBtn>}
+          {asset.status === 'available' && <ActionBtn TH={TH} onClick={() => setActionType('transfer')} color="#8B7A44">⇄ Transfer</ActionBtn>}
+          {(asset.status === 'available' || asset.status === 'checked_out') && <ActionBtn TH={TH} onClick={() => setActionType('service_start')} color="#8B7A44">🔧 Send to service</ActionBtn>}
+          {asset.status === 'in_service' && <ActionBtn TH={TH} onClick={() => setActionType('service_end')} color="#C9A960">✓ Back from service</ActionBtn>}
           {asset.status !== 'retired' && <ActionBtn TH={TH} onClick={() => setActionType('retire')} color="#6b7280" outline>⊗ Retire</ActionBtn>}
         </div>
       )}

@@ -270,5 +270,5 @@ function inputStyle(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
 }
 function ErrorBox({ TH, children }) {
-  return <div style={{background:"rgba(239,68,68,.08)", border:"1px solid rgba(239,68,68,.3)", borderRadius:9, padding:"10px 14px", color:"#ef4444", fontSize:13, marginBottom:16}}>{children}</div>;
+  return <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:9, padding:"10px 14px", color:"#8f8f8f", fontSize:13, marginBottom:16}}>{children}</div>;
 }
