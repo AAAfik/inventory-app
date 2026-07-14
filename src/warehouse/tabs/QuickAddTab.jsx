@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { ASSET_KINDS, nextAssetNo } from "../lib/warehouseUtils";
 
-export default function QuickAddTab({ TH, isMobile }) {
+export default function QuickAddTab({ TH, isMobile, onSaved }) {
   const [warehouses, setWarehouses] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [error, setError]           = useState(null);
@@ -107,7 +107,7 @@ export default function QuickAddTab({ TH, isMobile }) {
       if (dbErr) throw dbErr;
 
       setSuccess(`✓ ${asset_no} registered!`);
-      setTimeout(() => resetForm(), 1500);
+      setTimeout(() => { resetForm(); if (onSaved) onSaved(); }, 1500);
     } catch (e) {
       setError(e.message || String(e));
     } finally {

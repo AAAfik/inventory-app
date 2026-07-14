@@ -1,63 +1,109 @@
 // ═══════════════════════════════════════════════════════════════════
-// warehouseUtils.js — constants & helpers (Caesar palette: gold/white/black)
+// warehouseUtils.js — Warehouse 2.0 shared constants + helpers
 // ═══════════════════════════════════════════════════════════════════
 
-// Caesar palette — only gold shades + neutrals
 const GOLD       = '#C9A960';
-const GOLD_DARK  = '#8B7A44';
 const GOLD_LIGHT = '#D4B876';
-const CREAM      = '#F4EFE4';
+const GOLD_DARK  = '#8B7A44';
 const GRAY       = '#8f8f8f';
-const GRAY_DIM   = '#5c5c5c';
 
 export const ASSET_KINDS = {
-  equipment: { label: 'Equipment', icon: '🏭', color: GOLD,      description: 'Industrial machines, generators, HVAC, pumps' },
-  tool:      { label: 'Tool',      icon: '🔧', color: GOLD_LIGHT, description: 'Drills, ladders, measuring tools, portable equipment' },
-  vehicle:   { label: 'Vehicle',   icon: '🚗', color: GOLD_DARK,  description: 'Cars, trucks, golf carts, buggies' },
+  equipment: { label: 'Equipment', icon: '🏭', prefix: 'EQP' },
+  tool:      { label: 'Tool',      icon: '🔧', prefix: 'TOL' },
+  vehicle:   { label: 'Vehicle',   icon: '🚗', prefix: 'VHC' },
 };
 
 export const ASSET_STATUS = {
-  available:    { label: 'Available',    color: GOLD },
-  checked_out:  { label: 'Checked out',  color: GOLD_LIGHT },
-  in_service:   { label: 'In service',   color: GOLD_DARK },
-  retired:      { label: 'Retired',      color: GRAY_DIM },
-  lost:         { label: 'Lost',         color: GRAY },
+  available:   { label: 'Available',    color: GOLD },
+  checked_out: { label: 'Checked out',  color: GOLD_DARK },
+  in_service:  { label: 'In service',   color: GRAY },
+  damaged:     { label: 'Damaged',      color: GRAY },
+  lost:        { label: 'Lost',         color: GRAY },
+  retired:     { label: 'Retired',      color: '#5c5c5c' },
 };
 
 export const MOVEMENT_TYPES = {
-  checkout:      { label: 'Checked out',       icon: '↗', color: GOLD_LIGHT },
-  checkin:       { label: 'Returned',          icon: '↩', color: GOLD },
-  transfer:      { label: 'Transferred',       icon: '⇄', color: GOLD_DARK },
-  service_start: { label: 'Sent for service',  icon: '🔧', color: GOLD_DARK },
-  service_end:   { label: 'Back from service', icon: '✓',  color: GOLD },
-  retire:        { label: 'Retired',           icon: '⊗',  color: GRAY_DIM },
+  register:  { label: 'Registered',  icon: '➕' },
+  checkout:  { label: 'Checked out', icon: '↗' },
+  checkin:   { label: 'Checked in',  icon: '↩' },
+  transfer:  { label: 'Transferred', icon: '⇄' },
+  service:   { label: 'Service',     icon: '🔧' },
+  damage:    { label: 'Damage',      icon: '⚠' },
+  found:     { label: 'Found',       icon: '✓' },
+  retire:    { label: 'Retired',     icon: '⏹' },
 };
 
-export function formatDate(s) {
-  if (!s) return '—';
-  return new Date(s).toLocaleString('en-GB', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
-}
-
-export function formatDateShort(s) {
+export function fmtDate(s) {
   if (!s) return '—';
   return new Date(s).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: '2-digit' });
 }
+export function fmtDateTime(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleString('en-GB', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+export function fmtMoney(n, cur = 'EUR') {
+  if (n == null || n === '') return '—';
+  const sym = cur === 'EUR' ? '€' : cur === 'USD' ? '$' : cur === 'TRY' ? '₺' : cur + ' ';
+  return sym + Number(n).toLocaleString('en-GB', { maximumFractionDigits: 2 });
+}
 
-export function formatMoney(amt, currency = 'EUR') {
-  const symbols = { EUR: '€', USD: '$', TRY: '₺', GBP: '£' };
-  const sym = symbols[currency] || currency + ' ';
-  return sym + (Number(amt) || 0).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+// Days until date (negative = overdue)
+export function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr); d.setHours(0,0,0,0);
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((d - now) / 86400000);
+}
+
+export function isOverdue(dateStr) {
+  const d = daysUntil(dateStr);
+  return d !== null && d < 0;
+}
+
+export function serviceStatus(asset) {
+  if (!asset.next_service_date) return null;
+  const d = daysUntil(asset.next_service_date);
+  if (d < 0)  return { label: `Service overdue ${-d}d`, color: GRAY, urgent: true };
+  if (d <= 7) return { label: `Service in ${d}d`, color: GOLD_DARK, urgent: true };
+  if (d <= 30) return { label: `Service in ${d}d`, color: GOLD_LIGHT, urgent: false };
+  return null;
 }
 
 export async function nextAssetNo(supabase, kind) {
-  const prefix = kind === 'vehicle' ? 'VHC' : kind === 'tool' ? 'TOL' : 'EQP';
+  const prefix = (ASSET_KINDS[kind]?.prefix || 'AST');
   const year = new Date().getFullYear();
   const search = `${prefix}-${year}-`;
   const { data } = await supabase.from('assets').select('asset_no').like('asset_no', `${search}%`).order('asset_no', { ascending: false }).limit(1);
   let next = 1;
-  if (data && data.length > 0) {
+  if (data?.length) {
     const n = parseInt(data[0].asset_no.slice(search.length), 10);
     if (!isNaN(n)) next = n + 1;
   }
   return search + String(next).padStart(5, '0');
+}
+
+// Compress an image File before upload (max 1600px, JPEG q0.82)
+export function compressImage(file, maxDim = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const scale = maxDim / Math.max(width, height);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => blob ? resolve(new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' })) : reject(new Error('compress failed')),
+        'image/jpeg', quality
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+    img.src = url;
+  });
 }
