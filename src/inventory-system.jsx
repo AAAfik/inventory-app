@@ -2,12 +2,12 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { supabase } from "./supabase";
 import * as XLSX from "xlsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import PoolsHub from "./components/Pools/PoolsHub";
+import PoolControlHub from "./pools/PoolControlHub";
 import ProcureHub from "./procurement/ProcureHub";
 
 // ─── Feature flags ──────────────────────────────────────────────────
 // Set POOLS_ENABLED = true to bring the Pools module back.
-const POOLS_ENABLED = false;
+const POOLS_ENABLED = true;
 const PROCURE_ENABLED = true;
 
 const ADMIN_EMAILS = ["admin@inventory.com", "hezicaesar@gmail.com", "alireza.ariyannekoo@afikgroup.com", "anzhelaklavdieva2@gmail.com"];
@@ -1074,7 +1074,7 @@ export default function App() {
 
           {tab==="syncMaps"&&isAdmin&&<SyncMapsPanel TH={TH} isMobile={isMobile} />}
 
-          {POOLS_ENABLED&&tab==="pools"&&<PoolsHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+          {POOLS_ENABLED&&tab==="pools"&&<PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
 
           {PROCURE_ENABLED&&tab==="procure"&&<ProcureHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
 
