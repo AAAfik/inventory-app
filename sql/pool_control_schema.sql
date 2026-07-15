@@ -1,15 +1,6 @@
 -- ═══════════════════════════════════════════════════════════════════════
--- POOL CONTROL — Complete schema integrated with warehouse
+-- POOL CONTROL — schema integrated with warehouse
 -- ═══════════════════════════════════════════════════════════════════════
--- Runs safely multiple times. Includes:
---   • pools table (with 22 Caesar Resort pools seeded)
---   • pool_chemicals catalog (7 chemicals seeded)
---   • pool_treatments audit log
---   • pool_treatment_lines (chemicals used)
---   • Trigger 1: auto-deduct chemicals from warehouse consumable_stock
---   • Trigger 2: rollup total_cost onto pool_treatments
--- ═══════════════════════════════════════════════════════════════════════
-
 BEGIN;
 
 -- ─── 1. Pools ────────────────────────────────────────────────────────
@@ -84,73 +75,50 @@ CREATE TABLE IF NOT EXISTS public.pool_treatment_lines (
 CREATE INDEX IF NOT EXISTS idx_ptl_treatment ON public.pool_treatment_lines(treatment_id);
 CREATE INDEX IF NOT EXISTS idx_ptl_chemical  ON public.pool_treatment_lines(chemical_id);
 
-
 -- ─── 5. TRIGGER — auto-deduct from warehouse ────────────────────────
 CREATE OR REPLACE FUNCTION public.pool_line_deducts_stock()
-RETURNS TRIGGER
-LANGUAGE plpgsql SECURITY DEFINER SET search_path = public
-AS $$
-DECLARE
-  v_item_id  INTEGER;
-  v_cost     NUMERIC;
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+DECLARE v_item_id INTEGER; v_cost NUMERIC;
 BEGIN
-  SELECT item_id, unit_cost INTO v_item_id, v_cost
-  FROM public.pool_chemicals WHERE id = NEW.chemical_id;
-
+  SELECT item_id, unit_cost INTO v_item_id, v_cost FROM public.pool_chemicals WHERE id = NEW.chemical_id;
   IF v_item_id IS NOT NULL AND NEW.warehouse_id IS NOT NULL AND NEW.qty > 0 THEN
-    INSERT INTO public.consumable_movements (
-      item_id, warehouse_id, qty, movement_type, notes, performed_by
-    ) VALUES (
-      v_item_id, NEW.warehouse_id, -ABS(NEW.qty), 'issue',
-      'Pool treatment ' || NEW.treatment_id::TEXT, auth.uid()
-    );
+    INSERT INTO public.consumable_movements (item_id, warehouse_id, qty, movement_type, notes, performed_by)
+    VALUES (v_item_id, NEW.warehouse_id, -ABS(NEW.qty), 'issue', 'Pool treatment ' || NEW.treatment_id::TEXT, auth.uid());
     NEW.auto_deducted := TRUE;
   END IF;
-
   IF NEW.unit_cost IS NULL THEN NEW.unit_cost := v_cost; END IF;
   IF NEW.unit_cost IS NOT NULL THEN NEW.total_cost := NEW.unit_cost * NEW.qty; END IF;
-
   RETURN NEW;
-END;
-$$;
+END $$;
 DROP TRIGGER IF EXISTS trg_pool_line_deducts_stock ON public.pool_treatment_lines;
-CREATE TRIGGER trg_pool_line_deducts_stock
-BEFORE INSERT ON public.pool_treatment_lines
+CREATE TRIGGER trg_pool_line_deducts_stock BEFORE INSERT ON public.pool_treatment_lines
 FOR EACH ROW EXECUTE FUNCTION public.pool_line_deducts_stock();
-
 
 -- ─── 6. TRIGGER — rollup total_cost ─────────────────────────────────
 CREATE OR REPLACE FUNCTION public.pool_treatment_recalc_total()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
-DECLARE v_total NUMERIC;
-DECLARE v_tid   UUID;
+DECLARE v_total NUMERIC; v_tid UUID;
 BEGIN
   v_tid := COALESCE(NEW.treatment_id, OLD.treatment_id);
-  SELECT COALESCE(SUM(total_cost), 0) INTO v_total
-  FROM public.pool_treatment_lines WHERE treatment_id = v_tid;
+  SELECT COALESCE(SUM(total_cost), 0) INTO v_total FROM public.pool_treatment_lines WHERE treatment_id = v_tid;
   UPDATE public.pool_treatments SET total_cost = v_total WHERE id = v_tid;
   RETURN COALESCE(NEW, OLD);
-END;
-$$;
+END $$;
 DROP TRIGGER IF EXISTS trg_pt_recalc ON public.pool_treatment_lines;
-CREATE TRIGGER trg_pt_recalc
-AFTER INSERT OR UPDATE OR DELETE ON public.pool_treatment_lines
+CREATE TRIGGER trg_pt_recalc AFTER INSERT OR UPDATE OR DELETE ON public.pool_treatment_lines
 FOR EACH ROW EXECUTE FUNCTION public.pool_treatment_recalc_total();
 
-
--- ─── 7. RLS policies ────────────────────────────────────────────────
-ALTER TABLE public.pools                 ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pool_chemicals        ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pool_treatments       ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.pool_treatment_lines  ENABLE ROW LEVEL SECURITY;
-
+-- ─── 7. RLS ──────────────────────────────────────────────────────────
+ALTER TABLE public.pools                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.pool_chemicals       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.pool_treatments      ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.pool_treatment_lines ENABLE ROW LEVEL SECURITY;
 DO $$ BEGIN CREATE POLICY p_pools_all ON public.pools FOR ALL TO authenticated USING (TRUE) WITH CHECK (TRUE); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE POLICY p_pchem_all ON public.pool_chemicals FOR ALL TO authenticated USING (TRUE) WITH CHECK (TRUE); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE POLICY p_ptrt_all ON public.pool_treatments FOR ALL TO authenticated USING (TRUE) WITH CHECK (TRUE); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 DO $$ BEGIN CREATE POLICY p_ptl_all ON public.pool_treatment_lines FOR ALL TO authenticated USING (TRUE) WITH CHECK (TRUE); EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-
--- ─── 8. Seed 7 standard chemicals ───────────────────────────────────
+-- ─── 8. Seed 7 standard chemicals (only if none exist) ──────────────
 INSERT INTO public.pool_chemicals (code, name, unit, dosage_per_m3, purpose, unit_cost, min_stock_alert) VALUES
   ('CHL-GRAN', 'Chlorine granules 65%',    'g',   10,    'sanitizer',  0.008, 5000),
   ('CHL-TAB',  'Chlorine tablets 200g',    'tab', 0.03,  'sanitizer',  0.30,  100),
@@ -161,21 +129,12 @@ INSERT INTO public.pool_chemicals (code, name, unit, dosage_per_m3, purpose, uni
   ('STAB',     'Stabilizer (cyanuric)',    'g',   25,    'stabilizer', 0.007, 5000)
 ON CONFLICT (code) DO NOTHING;
 
+-- Note: no seed for pools. Add real pools via the "+ New pool" button in the Pool Control UI.
+-- Or in SQL:
+-- INSERT INTO public.pools (code, name, property_id, volume_m3, pool_type) VALUES
+--   ('CR-P01', 'Main Pool 1', (SELECT id FROM public.wh_properties WHERE code = 'CR'), 800, 'main');
 
--- ─── 9. Seed 22 Caesar Resort pools (adjust volumes later) ──────────
-INSERT INTO public.pools (code, name, property_id, volume_m3, pool_type)
-SELECT
-  'CR-P' || LPAD(g::text, 2, '0'),
-  'Caesar Resort Pool ' || g,
-  (SELECT id FROM public.wh_properties WHERE code = 'CR' LIMIT 1),
-  CASE WHEN g <= 3 THEN 800 WHEN g <= 10 THEN 350 WHEN g <= 18 THEN 180 ELSE 45 END,
-  CASE WHEN g <= 18 THEN 'main' ELSE 'kids' END
-FROM generate_series(1, 22) g
-ON CONFLICT (code) DO NOTHING;
+-- To clear old seed data if you ran previous migrations:
+-- DELETE FROM public.pools WHERE code LIKE 'CR-P%';
 
 COMMIT;
-
--- Verify:
---   SELECT count(*) FROM public.pools;             -- should be 22
---   SELECT count(*) FROM public.pool_chemicals;    -- should be 7
---   SELECT code, name, volume_m3 FROM public.pools ORDER BY code LIMIT 5;
