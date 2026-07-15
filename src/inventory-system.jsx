@@ -7,7 +7,7 @@ import ProcureHub from "./procurement/ProcureHub";
 
 // ─── Feature flags ──────────────────────────────────────────────────
 // Set POOLS_ENABLED = true to bring the Pools module back.
-const POOLS_ENABLED = true;
+const POOLS_ENABLED = false;
 const PROCURE_ENABLED = true;
 
 const ADMIN_EMAILS = ["admin@inventory.com", "hezicaesar@gmail.com", "alireza.ariyannekoo@afikgroup.com", "anzhelaklavdieva2@gmail.com"];
