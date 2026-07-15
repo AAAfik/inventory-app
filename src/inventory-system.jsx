@@ -214,14 +214,11 @@ export default function InventorySystem() {
         )}
         <div style={{display:"flex", alignItems:"center", gap:12}}>
           <div style={{
-            width:isMobile?38:44, height:isMobile?38:44, borderRadius:"50%",
-            background: theme==="dark" ? "#1a1814" : "#FFFDF8",
-            border:`2px solid ${TH.accent}`,
+            height:isMobile?38:48,
             display:"flex", alignItems:"center", justifyContent:"center",
-            overflow:"hidden",
           }}>
-            <img src="/caesar-logo.png" alt="C" style={{width:"88%", height:"88%", objectFit:"contain"}}
-                 onError={(e)=>{ e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="color:#C9A960;font-weight:800;font-family:Georgia,serif;font-size:20px">C</span>'; }} />
+            <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:"100%", width:"auto", objectFit:"contain", display:"block"}}
+                 onError={(e)=>{ e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="color:'+TH.accent+';font-weight:800;font-family:Georgia,serif;font-size:20px">CAESAR</span>'; }} />
           </div>
           {!isMobile && <div style={{fontSize:11, color:"#C9A960", fontWeight:700, letterSpacing:"0.14em"}}>● LIVE</div>}
         </div>
