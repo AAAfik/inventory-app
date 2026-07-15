@@ -194,9 +194,9 @@ export function openInspectionPDF(inspection, ctx = {}, langCode = 'en') {
   const photos = inspection.photos || [];
   const inspectorName = inspection.inspector_display_name || inspection.inspector_email || '—';
   const companion = inspection.companion_name || null;
-  const dateStr = inspection.visit_date
-    ? new Date(inspection.visit_date).toLocaleDateString(lang === 'he' ? 'he-IL' : 'en-GB')
-    : new Date(inspection.created_at).toLocaleDateString(lang === 'he' ? 'he-IL' : 'en-GB');
+  const _visitDate = inspection.visit_at || inspection.visit_date || inspection.created_at;
+  const _locale = lang === 'he' ? 'he-IL' : 'en-GB';
+  const dateStr = new Date(_visitDate).toLocaleString(_locale, { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
 
   const html = `<!doctype html>
 <html lang="${lang}" dir="${L.dir}">

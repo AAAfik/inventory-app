@@ -154,6 +154,7 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
                     {wh && <span style={{fontSize:10, color:TH.textMuted, background:TH.bgInput, padding:"3px 8px", borderRadius:5}}>📍 {wh.code}</span>}
                     {area && <span style={{fontSize:10, color:TH.textMuted, background:TH.bgInput, padding:"3px 8px", borderRadius:5}}>{area.name}</span>}
                     {ins.photos?.length > 1 && <span style={{fontSize:10, color:TH.textMuted, background:TH.bgInput, padding:"3px 8px", borderRadius:5}}>📷 {ins.photos.length}</span>}
+                    {ins.visit_id && <span style={{fontSize:10, color:"#C9A960", background:"rgba(201,169,96,0.10)", padding:"3px 8px", borderRadius:5, fontWeight:600}}>◇ Visit</span>}
                   </div>
                   <div style={{fontSize:10, color:TH.textDim, paddingTop:8, borderTop:`1px solid ${TH.border}`}}>
                     {ins.inspector_display_name || ins.inspector_email || 'Unknown'}{ins.companion_name ? ` + ${ins.companion_name}` : ''} · {formatDate(ins.created_at)}

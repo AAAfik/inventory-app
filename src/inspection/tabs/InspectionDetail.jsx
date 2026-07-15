@@ -16,6 +16,7 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [busy, setBusy]   = useState(false);
+  const [siblings, setSiblings] = useState([]);
   const [photoZoom, setPhotoZoom] = useState(null);
   const [resolveMode, setResolveMode] = useState(false);
   const [resolutionNote, setResolutionNote] = useState("");
@@ -71,6 +72,11 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
 
   useEffect(() => { load(); }, [inspectionId]);
 
+  async function loadSiblings(visitId, currentId) {
+    if (!visitId) return [];
+    const { data } = await supabase.from('inspections').select('id, inspection_no, title, status, priority').eq('visit_id', visitId).neq('id', currentId).order('created_at');
+    return data || [];
+  }
   async function load() {
     setLoading(true); setError(null);
     try {
@@ -81,6 +87,12 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
       if (rI.error) throw rI.error;
       setIns(rI.data);
       setUpdates(rU.data || []);
+      if (rI.data?.visit_id) {
+        const sibs = await loadSiblings(rI.data.visit_id, rI.data.id);
+        setSiblings(sibs);
+      } else {
+        setSiblings([]);
+      }
     } catch (e) {
       setError(e.message || String(e));
     } finally {
@@ -291,6 +303,23 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
             <button onClick={markResolved} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:busy?0.6:1}}>
               {busy ? L.saving : L.confirm}
             </button>
+          </div>
+        </div>
+      )}
+
+            {/* Visit siblings — other problems from same visit */}
+      {siblings.length > 0 && (
+        <div style={{background:"rgba(201,169,96,0.06)", border:"1px solid rgba(201,169,96,0.25)", borderRadius:12, padding:14, marginBottom:16}}>
+          <div style={{fontSize:12, fontWeight:800, color:"#C9A960", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.5px"}}>
+            ◇ Part of a visit — {siblings.length + 1} problem{siblings.length + 1 > 1 ? 's' : ''} recorded together
+          </div>
+          <div style={{display:"flex", flexDirection:"column", gap:6}}>
+            {siblings.map(sib => (
+              <div key={sib.id} style={{fontSize:12, color:TH.text, padding:"6px 10px", background:TH.bgCard, borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                <span><span style={{fontFamily:"monospace", color:TH.textDim, fontSize:10}}>{sib.inspection_no}</span> · {sib.title}</span>
+                {sib.priority && PRIORITY[sib.priority] && <span style={{fontSize:10, color:PRIORITY[sib.priority].color, fontWeight:700}}>{PRIORITY[sib.priority].label}</span>}
+              </div>
+            ))}
           </div>
         </div>
       )}
