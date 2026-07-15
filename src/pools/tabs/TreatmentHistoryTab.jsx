@@ -1,10 +1,13 @@
-// ═══════════════════════════════════════════════════════════════════════
-// TreatmentHistoryTab.jsx — all past treatments with filters + detail view
-// ═══════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// TreatmentHistoryTab.jsx — all treatments with filters + detail view
+// ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
-import { POOL_TYPES, CHEMICAL_PURPOSES, CLARITY_OPTIONS, phStatus, chlorineStatus, fmtQty, fmtMoney, fmtDateTime } from "../lib/poolUtils";
+import {
+  POOL_TYPES, CHEMICAL_PURPOSES, CLARITY_OPTIONS,
+  fmtQty, fmtMoney, fmtDateTime,
+} from "../lib/poolUtils";
 
 export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
   const [treatments, setTreatments] = useState([]);
@@ -23,7 +26,7 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
     setLoading(true); setError(null);
     try {
       let cutoff = null;
-      if (rangeFilter === "7d") cutoff = new Date(Date.now() - 7*24*3600*1000);
+      if (rangeFilter === "7d")  cutoff = new Date(Date.now() - 7*24*3600*1000);
       else if (rangeFilter === "30d") cutoff = new Date(Date.now() - 30*24*3600*1000);
       else if (rangeFilter === "90d") cutoff = new Date(Date.now() - 90*24*3600*1000);
 
@@ -60,7 +63,9 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
   const totalCost = filt.reduce((s, t) => s + (Number(t.total_cost) || 0), 0);
 
   if (selected) {
-    return <TreatmentDetail TH={TH} isMobile={isMobile} isAdmin={isAdmin} treatment={selected} pool={poolMap[selected.pool_id]} onClose={() => { setSelected(null); loadAll(); }} />;
+    return <TreatmentDetail TH={TH} isMobile={isMobile} isAdmin={isAdmin}
+      treatment={selected} pool={poolMap[selected.pool_id]}
+      onClose={() => { setSelected(null); loadAll(); }} />;
   }
 
   return (
@@ -81,7 +86,6 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
 
       {error && <ErrBox TH={TH}>{error}</ErrBox>}
 
-      {/* Summary */}
       {filt.length > 0 && (
         <div style={{display:"grid", gridTemplateColumns:"repeat(3, 1fr)", gap:8, marginBottom:14}}>
           <MiniStat TH={TH} label="Treatments" value={filt.length} />
@@ -106,13 +110,14 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
               <div key={t.id} onClick={() => setSelected(t)} style={{
                 background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:10,
                 padding:12, cursor:"pointer", display:"flex", gap:12, alignItems:"center",
+                boxShadow: TH.cardGlow,
               }}
               onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
               onMouseLeave={e => e.currentTarget.style.background = TH.bgCard}>
                 {cover ? (
-                  <img src={cover} alt="" style={{width:50, height:50, objectFit:"cover", borderRadius:8, background:"#000", flexShrink:0}} loading="lazy" />
+                  <img src={cover} alt="" style={{width:52, height:52, objectFit:"cover", borderRadius:8, background:"#000", flexShrink:0}} loading="lazy" />
                 ) : (
-                  <div style={{width:50, height:50, background:TH.bgInput, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22, flexShrink:0}}>{type.icon}</div>
+                  <div style={{width:52, height:52, background:TH.bgInput, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:24, flexShrink:0}}>{type.icon}</div>
                 )}
                 <div style={{flex:1, minWidth:0}}>
                   <div style={{fontSize:14, fontWeight:700, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{pool?.name || 'Unknown pool'}</div>
@@ -120,7 +125,7 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
                   <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace"}}>{t.treatment_no}</div>
                 </div>
                 <div style={{textAlign:"right", flexShrink:0}}>
-                  <div style={{fontSize:15, fontWeight:800, color:TH.accent, fontFamily:"monospace"}}>{fmtMoney(t.total_cost)}</div>
+                  <div style={{fontSize:15, fontWeight:800, color:"#C9A960", fontFamily:"monospace"}}>{fmtMoney(t.total_cost)}</div>
                   {t.photos?.length > 1 && <div style={{fontSize:10, color:TH.textDim}}>📷 {t.photos.length}</div>}
                 </div>
               </div>
@@ -132,7 +137,7 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
 function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
   const [lines, setLines] = useState([]);
   const [chemicals, setChemicals] = useState([]);
@@ -157,7 +162,7 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
   }, [treatment.id]);
 
   async function deleteTreatment() {
-    if (!confirm(`Delete treatment ${treatment.treatment_no}? This will NOT restore chemicals back to warehouse.`)) return;
+    if (!confirm(`Delete treatment ${treatment.treatment_no}? This does NOT return chemicals to warehouse.`)) return;
     try {
       await supabase.from('pool_treatments').delete().eq('id', treatment.id);
       onClose();
@@ -185,20 +190,20 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
       {error && <ErrBox TH={TH}>{error}</ErrBox>}
 
       {/* Header */}
-      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, borderLeft:`4px solid ${type.color}`, padding:18, marginBottom:14}}>
+      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, borderLeft:`4px solid ${type.color}`, padding:18, marginBottom:14, boxShadow: TH.cardGlow}}>
         <div style={{display:"flex", gap:14, flexWrap:"wrap", alignItems:"flex-start"}}>
           <div style={{fontSize:52}}>{type.icon}</div>
           <div style={{flex:1, minWidth:180}}>
-            <div style={{fontSize:11, color:type.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px"}}>Pool Treatment</div>
-            <div style={{fontSize:isMobile?18:22, fontWeight:700, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>{pool?.name || 'Unknown pool'}</div>
+            <div style={{fontSize:11, color:type.color, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.5px"}}>Pool Treatment</div>
+            <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>{pool?.name || 'Unknown pool'}</div>
             <div style={{fontSize:12, color:TH.textMuted, marginBottom:12}}>👤 {treatment.operator_name || 'Unknown'} · {fmtDateTime(treatment.performed_at)}</div>
-            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(110px, 1fr))", gap:10}}>
+            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(110px, 1fr))", gap:12}}>
               <Info TH={TH} label="pH before">{treatment.ph_before || '—'}</Info>
               <Info TH={TH} label="pH after">{treatment.ph_after || '—'}</Info>
               <Info TH={TH} label="Chlorine">{treatment.chlorine_ppm ? `${treatment.chlorine_ppm} ppm` : '—'}</Info>
               <Info TH={TH} label="Water temp">{treatment.water_temp ? `${treatment.water_temp}°C` : '—'}</Info>
               <Info TH={TH} label="Clarity">{CLARITY_OPTIONS[treatment.clarity]?.label || '—'}</Info>
-              <Info TH={TH} label="Total cost"><strong style={{color:TH.accent, fontFamily:"monospace"}}>{fmtMoney(treatment.total_cost)}</strong></Info>
+              <Info TH={TH} label="Total cost"><strong style={{color:"#C9A960", fontFamily:"monospace"}}>{fmtMoney(treatment.total_cost)}</strong></Info>
             </div>
           </div>
         </div>
@@ -206,19 +211,20 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
 
       {/* Photos */}
       {treatment.photos?.length > 0 && (
-        <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:14, marginBottom:14}}>
-          <div style={{fontSize:12, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", marginBottom:10, letterSpacing:"0.5px"}}>📷 Evidence ({treatment.photos.length})</div>
-          <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2, 1fr)":"repeat(auto-fill, minmax(140px, 1fr))", gap:8}}>
+        <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:14, marginBottom:14, boxShadow: TH.cardGlow}}>
+          <div style={{fontSize:12, fontWeight:800, color:TH.textMuted, textTransform:"uppercase", marginBottom:10, letterSpacing:"0.6px"}}>📷 Evidence ({treatment.photos.length})</div>
+          <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2, 1fr)":"repeat(auto-fill, minmax(150px, 1fr))", gap:8}}>
             {treatment.photos.map((url, i) => (
-              <img key={i} src={url} alt="" onClick={() => setZoom(url)} style={{width:"100%", height:120, objectFit:"cover", borderRadius:8, cursor:"pointer", background:"#000"}} loading="lazy" />
+              <img key={i} src={url} alt="" onClick={() => setZoom(url)}
+                style={{width:"100%", height:120, objectFit:"cover", borderRadius:8, cursor:"pointer", background:"#000"}} loading="lazy" />
             ))}
           </div>
         </div>
       )}
 
       {/* Chemicals used */}
-      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:14, marginBottom:14}}>
-        <div style={{fontSize:12, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", marginBottom:10, letterSpacing:"0.5px"}}>🧪 Chemicals used</div>
+      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:14, marginBottom:14, boxShadow: TH.cardGlow}}>
+        <div style={{fontSize:12, fontWeight:800, color:TH.textMuted, textTransform:"uppercase", marginBottom:10, letterSpacing:"0.6px"}}>🧪 Chemicals used</div>
         {loading ? (
           <div style={{padding:20, textAlign:"center", color:TH.textDim}}>Loading...</div>
         ) : lines.length === 0 ? (
@@ -243,7 +249,7 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
                       <td style={td(TH)}>{purp.icon} {l.chemical_name || chem?.name || '—'}</td>
                       <td style={{...td(TH), textAlign:"right", fontFamily:"monospace"}}>{fmtQty(l.qty, l.unit)}</td>
                       <td style={{...td(TH), textAlign:"right", fontFamily:"monospace"}}>{fmtMoney(l.total_cost)}</td>
-                      <td style={{...td(TH), textAlign:"center"}}>{l.auto_deducted ? <span style={{color:"#C9A960", fontWeight:700}}>✓</span> : <span style={{color:TH.textDim}}>—</span>}</td>
+                      <td style={{...td(TH), textAlign:"center"}}>{l.auto_deducted ? <span style={{color:"#C9A960", fontWeight:800}}>✓</span> : <span style={{color:TH.textDim}}>—</span>}</td>
                     </tr>
                   );
                 })}
@@ -254,8 +260,8 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
       </div>
 
       {treatment.notes && (
-        <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:14}}>
-          <div style={{fontSize:12, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", marginBottom:8, letterSpacing:"0.5px"}}>Notes</div>
+        <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:14, boxShadow: TH.cardGlow}}>
+          <div style={{fontSize:12, fontWeight:800, color:TH.textMuted, textTransform:"uppercase", marginBottom:8, letterSpacing:"0.6px"}}>Notes</div>
           <div style={{fontSize:13, color:TH.text, whiteSpace:"pre-wrap", lineHeight:1.5}}>{treatment.notes}</div>
         </div>
       )}
@@ -263,10 +269,11 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
   );
 }
 
+// ─── helpers ────────────────────────────────────────────────────────
 function MiniStat({ TH, label, value }) {
   return (
-    <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:10, padding:"10px 12px"}}>
-      <div style={{fontSize:9, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:4}}>{label}</div>
+    <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:10, padding:"10px 12px", boxShadow: TH.cardGlow}}>
+      <div style={{fontSize:9, fontWeight:800, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.6px", marginBottom:4}}>{label}</div>
       <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"monospace"}}>{value}</div>
     </div>
   );
@@ -274,7 +281,7 @@ function MiniStat({ TH, label, value }) {
 function Info({ TH, label, children }) {
   return (
     <div>
-      <div style={{fontSize:9, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:2}}>{label}</div>
+      <div style={{fontSize:9, fontWeight:800, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.6px", marginBottom:2}}>{label}</div>
       <div style={{fontSize:13, color:TH.text}}>{children}</div>
     </div>
   );
@@ -288,5 +295,5 @@ function ghostBtn(TH) {
 function ErrBox({ TH, children }) {
   return <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{children}</div>;
 }
-function th(TH) { return { padding:"8px 10px", fontSize:10, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", fontWeight:700, textAlign:"left" }; }
+function th(TH) { return { padding:"8px 10px", fontSize:10, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.6px", fontWeight:700, textAlign:"left" }; }
 function td(TH) { return { padding:"10px", color:TH.text, verticalAlign:"middle" }; }

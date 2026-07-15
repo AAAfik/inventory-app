@@ -1,75 +1,71 @@
-// ═══════════════════════════════════════════════════════════════════════
-// poolUtils.js — Pool Control constants + dosage math + formatters
-// ═══════════════════════════════════════════════════════════════════════
-
-const GOLD       = '#C9A960';
-const GOLD_LIGHT = '#D4B876';
-const GOLD_DARK  = '#8B7A44';
-const BLUE       = '#7BB3D4';
-const GRAY       = '#8f8f8f';
+// ═══════════════════════════════════════════════════════════════════
+// poolUtils.js — Pool Control constants, formatters, dosage math
+// ═══════════════════════════════════════════════════════════════════
 
 export const POOL_TYPES = {
-  main:    { label: 'Main pool',   icon: '🏊', color: GOLD },
-  kids:    { label: 'Kids pool',   icon: '🩱', color: GOLD_LIGHT },
-  jacuzzi: { label: 'Jacuzzi',     icon: '🛁', color: GOLD_DARK },
-  spa:     { label: 'Spa',         icon: '💆', color: GOLD_DARK },
-  plunge:  { label: 'Plunge pool', icon: '💧', color: BLUE },
-  indoor:  { label: 'Indoor pool', icon: '🏛️', color: GRAY },
+  main:    { label: 'Main pool',    icon: '🏊', color: '#C9A960' },
+  kids:    { label: 'Kids pool',    icon: '🩱', color: '#D4B876' },
+  jacuzzi: { label: 'Jacuzzi',      icon: '🛁', color: '#8B7A44' },
+  spa:     { label: 'Spa',          icon: '💆', color: '#A89566' },
+  plunge:  { label: 'Plunge pool',  icon: '💧', color: '#7BB3D4' },
+  indoor:  { label: 'Indoor pool',  icon: '🏛️', color: '#8f8f8f' },
 };
 
 export const CHEMICAL_PURPOSES = {
-  sanitizer:  { label: 'Sanitizer',   icon: '🧪', color: '#C9A960' },
-  ph_up:      { label: 'pH raiser',   icon: '⬆️', color: '#D4B876' },
-  ph_down:    { label: 'pH lowerer',  icon: '⬇️', color: '#8B7A44' },
-  algaecide:  { label: 'Algaecide',   icon: '🌿', color: '#7BB3D4' },
-  clarifier:  { label: 'Clarifier',   icon: '💎', color: '#A89566' },
-  stabilizer: { label: 'Stabilizer',  icon: '⚖️', color: '#8f8f8f' },
-  shock:      { label: 'Shock',       icon: '⚡', color: '#B8862C' },
+  sanitizer:  { label: 'Sanitizer',  icon: '🧪', color: '#C9A960' },
+  ph_up:      { label: 'pH raiser',  icon: '⬆️', color: '#D4B876' },
+  ph_down:    { label: 'pH lowerer', icon: '⬇️', color: '#8B7A44' },
+  algaecide:  { label: 'Algaecide',  icon: '🌿', color: '#7BB3D4' },
+  clarifier:  { label: 'Clarifier',  icon: '💎', color: '#A89566' },
+  stabilizer: { label: 'Stabilizer', icon: '⚖️', color: '#8f8f8f' },
+  shock:      { label: 'Shock',      icon: '⚡', color: '#B8862C' },
 };
 
 export const CLARITY_OPTIONS = {
-  clear:   { label: 'Clear',   color: GOLD },
-  cloudy:  { label: 'Cloudy',  color: GOLD_LIGHT },
-  green:   { label: 'Green',   color: GOLD_DARK },
-  turbid:  { label: 'Turbid',  color: GRAY },
+  clear:  { label: 'Clear',  color: '#C9A960' },
+  cloudy: { label: 'Cloudy', color: '#D4B876' },
+  green:  { label: 'Green',  color: '#8B7A44' },
+  turbid: { label: 'Turbid', color: '#8f8f8f' },
 };
 
-// Recommended dose for a chemical given pool volume
+// Recommended dose for a chemical given pool volume (m³)
 export function recommendedDose(chemical, volumeM3) {
-  if (!chemical?.dosage_per_m3 || !volumeM3) return null;
-  return +(Number(chemical.dosage_per_m3) * Number(volumeM3)).toFixed(2);
+  if (!chemical?.dosage_per_m3 || !volumeM3) return 0;
+  return Math.round(Number(chemical.dosage_per_m3) * Number(volumeM3) * 100) / 100;
 }
 
-// Estimated cost for a chemical dose
 export function estimatedCost(chemical, qty) {
-  if (!chemical?.unit_cost || !qty) return null;
-  return +(Number(chemical.unit_cost) * Number(qty)).toFixed(2);
+  if (!chemical?.unit_cost || !qty) return 0;
+  return Math.round(Number(chemical.unit_cost) * Number(qty) * 100) / 100;
 }
 
-// pH range assessment
+// pH status assessment (7.2-7.6 ideal)
 export function phStatus(ph) {
-  if (ph == null) return null;
+  if (ph == null || ph === '') return null;
   const n = Number(ph);
-  if (n < 7.0)         return { label: 'Too low',  color: GRAY,       urgent: true };
-  if (n < 7.2)         return { label: 'Low',      color: GOLD_DARK,  urgent: true };
-  if (n <= 7.6)        return { label: 'Ideal',    color: GOLD,       urgent: false };
-  if (n <= 7.8)        return { label: 'High',     color: GOLD_LIGHT, urgent: false };
-  return                      { label: 'Too high', color: GRAY,       urgent: true };
+  if (isNaN(n))  return null;
+  if (n < 7.0)   return { label: 'Too low',  color: '#8f8f8f', urgent: true };
+  if (n < 7.2)   return { label: 'Low',      color: '#8B7A44', urgent: true };
+  if (n <= 7.6)  return { label: 'Ideal',    color: '#C9A960', urgent: false };
+  if (n <= 7.8)  return { label: 'High',     color: '#D4B876', urgent: false };
+  return              { label: 'Too high', color: '#8f8f8f', urgent: true };
 }
 
+// Chlorine status (1-3 ppm ideal)
 export function chlorineStatus(ppm) {
-  if (ppm == null) return null;
+  if (ppm == null || ppm === '') return null;
   const n = Number(ppm);
-  if (n < 0.5)  return { label: 'Too low',  color: GRAY,      urgent: true };
-  if (n < 1.0)  return { label: 'Low',      color: GOLD_DARK, urgent: true };
-  if (n <= 3.0) return { label: 'Ideal',    color: GOLD,      urgent: false };
-  if (n <= 5.0) return { label: 'High',     color: GOLD_LIGHT, urgent: false };
-  return               { label: 'Too high', color: GRAY,      urgent: true };
+  if (isNaN(n))  return null;
+  if (n < 0.5)   return { label: 'Too low',  color: '#8f8f8f', urgent: true };
+  if (n < 1.0)   return { label: 'Low',      color: '#8B7A44', urgent: true };
+  if (n <= 3.0)  return { label: 'Ideal',    color: '#C9A960', urgent: false };
+  if (n <= 5.0)  return { label: 'High',     color: '#D4B876', urgent: false };
+  return              { label: 'Too high', color: '#8f8f8f', urgent: true };
 }
 
 export function fmtQty(qty, unit) {
   if (qty == null) return '—';
-  return `${Number(qty).toLocaleString('en-GB', { maximumFractionDigits: 2 })} ${unit || ''}`;
+  return `${Number(qty).toLocaleString('en-GB', { maximumFractionDigits: 2 })} ${unit || ''}`.trim();
 }
 
 export function fmtMoney(n, cur = 'EUR') {
@@ -82,11 +78,16 @@ export function fmtDateTime(s) {
   if (!s) return '—';
   return new Date(s).toLocaleString('en-GB', { year:'numeric', month:'short', day:'2-digit', hour:'2-digit', minute:'2-digit' });
 }
+export function fmtDate(s) {
+  if (!s) return '—';
+  return new Date(s).toLocaleDateString('en-GB', { year:'numeric', month:'short', day:'2-digit' });
+}
 
 export async function nextTreatmentNo(supabase) {
   const year = new Date().getFullYear();
   const search = `PT-${year}-`;
-  const { data } = await supabase.from('pool_treatments').select('treatment_no').like('treatment_no', `${search}%`).order('treatment_no', { ascending: false }).limit(1);
+  const { data } = await supabase.from('pool_treatments').select('treatment_no')
+    .like('treatment_no', `${search}%`).order('treatment_no', { ascending: false }).limit(1);
   let next = 1;
   if (data?.length) {
     const n = parseInt(data[0].treatment_no.slice(search.length), 10);
