@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
-import { INSPECTION_STATUS, formatDate } from "../lib/inspectionUtils";
+import { INSPECTION_STATUS, CATEGORIES, PRIORITY, formatDate, openInspectionPDF } from "../lib/inspectionUtils";
 import { tr } from "../../i18n";
 
 export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, inspectionId, properties, areas, onClose }) {
@@ -141,9 +141,11 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
         </div>
       )}
 
-      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16, gap:12}}>
+      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:16, gap:12, flexWrap:"wrap"}}>
         <button onClick={onClose} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>{L.back}</button>
-        <div style={{display:"flex", gap:8, alignItems:"center"}}>
+        <div style={{display:"flex", gap:6, alignItems:"center", flexWrap:"wrap"}}>
+          <button onClick={() => openInspectionPDF(ins, { property: (properties||[]).find(p => p.id === ins.property_id), area: (areas||[]).find(a => a.id === ins.area_id) }, "en")} style={pdfBtn(TH, "en")}>📄 PDF · EN</button>
+          <button onClick={() => openInspectionPDF(ins, { property: (properties||[]).find(p => p.id === ins.property_id), area: (areas||[]).find(a => a.id === ins.area_id) }, "he")} style={pdfBtn(TH, "he")}>📄 PDF · HE</button>
           {isAdmin && !editMode && <button onClick={startEdit} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.text, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", fontWeight:600}}>{L.edit}</button>}
           {isAdmin && <button onClick={deleteInspection} style={{background:"transparent", border:"1px solid rgba(143,143,143,0.4)", borderRadius:8, color:"#8f8f8f", padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit"}}>{L.del}</button>}
           <div style={{fontSize:11, color:TH.textMuted, fontFamily:"monospace"}}>{ins.inspection_no}</div>
@@ -204,14 +206,20 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
             <div style={{fontSize:11, color:meta.color, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>{STATUS_LBL[ins.status] || meta.label}</div>
             <div style={{fontSize:isMobile?18:22, fontWeight:800, color:TH.text, letterSpacing:"-0.3px"}}>{ins.title}</div>
           </div>
-          <span style={{padding:"6px 14px", borderRadius:20, background:meta.color+"22", color:meta.color, fontSize:12, fontWeight:700, alignSelf:"flex-start"}}>● {STATUS_LBL[ins.status] || meta.label}</span>
+          <div style={{display:"flex", gap:6, flexWrap:"wrap", alignSelf:"flex-start"}}>
+            <span style={{padding:"5px 12px", borderRadius:20, background:meta.color+"22", color:meta.color, fontSize:11, fontWeight:700}}>● {STATUS_LBL[ins.status] || meta.label}</span>
+            {ins.priority && PRIORITY[ins.priority] && <span style={{padding:"5px 12px", borderRadius:20, background:PRIORITY[ins.priority].color+"22", color:PRIORITY[ins.priority].color, fontSize:11, fontWeight:700}}>{PRIORITY[ins.priority].label}</span>}
+            {ins.category && CATEGORIES[ins.category] && <span style={{padding:"5px 12px", borderRadius:20, background:CATEGORIES[ins.category].color+"22", color:CATEGORIES[ins.category].color, fontSize:11, fontWeight:700}}>{CATEGORIES[ins.category].icon} {CATEGORIES[ins.category].label}</span>}
+          </div>
         </div>
 
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(3, 1fr)", gap:14, marginBottom:14}}>
           <Info TH={TH} label={L.property.replace(" *","")}>{wh?.name || '—'}</Info>
           <Info TH={TH} label={L.area}>{area?.name || '—'}</Info>
           <Info TH={TH} label={L.severity}>{SEV_LBL[ins.severity] || "—"}</Info>
-          <Info TH={TH} label={L.inspector}>{ins.inspector_email || '—'}</Info>
+          <Info TH={TH} label={L.inspector}>{ins.inspector_display_name || ins.inspector_email || '—'}</Info>
+          {ins.companion_name && <Info TH={TH} label="Accompanied by">{ins.companion_name}</Info>}
+          {ins.category && <Info TH={TH} label={L.category}>{CATEGORIES[ins.category] ? `${CATEGORIES[ins.category].icon} ${CATEGORIES[ins.category].label}` : ins.category}{ins.subcategory && CATEGORIES[ins.category]?.subcategories?.[ins.subcategory] ? ` · ${CATEGORIES[ins.category].subcategories[ins.subcategory]}` : ''}</Info>}
           <Info TH={TH} label={L.reported}>{formatDate(ins.created_at)}</Info>
           {ins.resolved_at && <Info TH={TH} label={L.resolved}>{formatDate(ins.resolved_at)}</Info>}
         </div>
@@ -319,4 +327,10 @@ function editLbl(TH) {
 }
 function editInp(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:9, padding:"10px 12px", color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
+}
+
+
+function pdfBtn(TH, lang) {
+  const bg = lang === 'he' ? 'linear-gradient(135deg,#8B7A44,#C9A960)' : 'linear-gradient(135deg,#C9A960,#D4B876)';
+  return { background: bg, border: 'none', borderRadius: 8, color: '#000', padding: '7px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 800, fontFamily: 'inherit' };
 }

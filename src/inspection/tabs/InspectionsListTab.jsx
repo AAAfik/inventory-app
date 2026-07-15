@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
-import { INSPECTION_STATUS, formatDate, severityColor } from "../lib/inspectionUtils";
+import { INSPECTION_STATUS, CATEGORIES, PRIORITY, formatDate, severityColor } from "../lib/inspectionUtils";
 import { tr } from "../../i18n";
 import InspectionDetail from "./InspectionDetail";
 
@@ -20,6 +20,8 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
 
   const [statusFilter, setStatusFilter]     = useState("all");
   const [propertyFilter, setPropertyFilter] = useState("all");
+  const [priorityFilter, setPriorityFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [search, setSearch]                 = useState("");
 
   useEffect(() => { loadAll(); }, [onlyOpenIssues]);
@@ -62,6 +64,8 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
   const filt = inspections.filter(ins => {
     if (statusFilter !== "all" && ins.status !== statusFilter) return false;
     if (propertyFilter !== "all" && String(ins.property_id) !== propertyFilter) return false;
+    if (priorityFilter !== "all" && ins.priority !== priorityFilter) return false;
+    if (categoryFilter !== "all" && ins.category !== categoryFilter) return false;
     if (search) {
       const q = search.toLowerCase();
       if (!(ins.title || '').toLowerCase().includes(q)
@@ -84,15 +88,25 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
   return (
     <div>
       {/* Filters */}
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr 1fr", gap:8, marginBottom:16}}>
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(2,1fr)", gap:8, marginBottom:8}}>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchInsp} style={inputStyle(TH)} />
+        <select value={propertyFilter} onChange={e => setPropertyFilter(e.target.value)} style={inputStyle(TH)}>
+          <option value="all">{L.allProperties}</option>
+          {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+        </select>
+      </div>
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(3, 1fr)", gap:8, marginBottom:16}}>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
           <option value="all">{L.allStatuses} ({statusCounts.all})</option>
           {Object.entries(INSPECTION_STATUS).map(([k, v]) => <option key={k} value={k}>{STATUS_LBL[k] || v.label} ({statusCounts[k] || 0})</option>)}
         </select>
-        <select value={propertyFilter} onChange={e => setPropertyFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">{L.allProperties}</option>
-          {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+        <select value={priorityFilter} onChange={e => setPriorityFilter(e.target.value)} style={inputStyle(TH)}>
+          <option value="all">{L.priority ? L.priority : "Priority"} — All</option>
+          {Object.entries(PRIORITY).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+        </select>
+        <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} style={inputStyle(TH)}>
+          <option value="all">{L.category ? L.category : "Category"} — All</option>
+          {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k}>{v.icon} {v.label}</option>)}
         </select>
       </div>
 
@@ -135,12 +149,14 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
                   <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:6, lineHeight:1.3}}>{ins.title}</div>
                   {ins.report && <div style={{fontSize:12, color:TH.textMuted, marginBottom:10, lineHeight:1.4, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden"}}>{ins.report}</div>}
                   <div style={{display:"flex", flexWrap:"wrap", gap:6, marginBottom:8}}>
+                    {ins.priority && PRIORITY[ins.priority] && <span style={{fontSize:10, color:PRIORITY[ins.priority].color, background:PRIORITY[ins.priority].color+"22", padding:"3px 8px", borderRadius:5, fontWeight:700}}>{PRIORITY[ins.priority].label}</span>}
+                    {ins.category && CATEGORIES[ins.category] && <span style={{fontSize:10, color:CATEGORIES[ins.category].color, background:CATEGORIES[ins.category].color+"22", padding:"3px 8px", borderRadius:5, fontWeight:600}}>{CATEGORIES[ins.category].icon} {CATEGORIES[ins.category].label}</span>}
                     {wh && <span style={{fontSize:10, color:TH.textMuted, background:TH.bgInput, padding:"3px 8px", borderRadius:5}}>📍 {wh.code}</span>}
                     {area && <span style={{fontSize:10, color:TH.textMuted, background:TH.bgInput, padding:"3px 8px", borderRadius:5}}>{area.name}</span>}
                     {ins.photos?.length > 1 && <span style={{fontSize:10, color:TH.textMuted, background:TH.bgInput, padding:"3px 8px", borderRadius:5}}>📷 {ins.photos.length}</span>}
                   </div>
                   <div style={{fontSize:10, color:TH.textDim, paddingTop:8, borderTop:`1px solid ${TH.border}`}}>
-                    {ins.inspector_email || 'Unknown'} · {formatDate(ins.created_at)}
+                    {ins.inspector_display_name || ins.inspector_email || 'Unknown'}{ins.companion_name ? ` + ${ins.companion_name}` : ''} · {formatDate(ins.created_at)}
                   </div>
                 </div>
               </div>

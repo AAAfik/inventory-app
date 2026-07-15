@@ -76,6 +76,14 @@ const DICT = {
     currentTeam: "👥 Current team", noUsersYet: "No users with assigned roles yet.",
     noRoles: "No roles — no module access", addRole: "+ Add role...", accessMatrix: "📖 Access matrix",
     you: "YOU",
+    // v2 fields
+    priority: "Priority", category: "Category", subcategory: "Subcategory",
+    priorityLow: "Low", priorityMedium: "Medium", priorityHigh: "High", priorityCritical: "Critical",
+    accompaniedBy: "Accompanied by", inspectionHeader: "Inspection header",
+    savePDF: "Save as PDF", printReport: "Print / Save PDF",
+    catElectrical: "Electrical", catWater: "Water", catSewage: "Sewage",
+    catStructure: "Structure", catMechanical: "Mechanical", catHse: "HSE",
+    safetyRefs: "Safety references (applied to report)",
   },
 
   he: {
@@ -146,6 +154,13 @@ const DICT = {
     currentTeam: "👥 הצוות הנוכחי", noUsersYet: "אין משתמשים עם תפקידים עדיין.",
     noRoles: "אין תפקידים — אין גישה למודולים", addRole: "+ הוסף תפקיד...", accessMatrix: "📖 מטריצת גישה",
     you: "אתה",
+    priority: "עדיפות", category: "קטגוריה", subcategory: "תת-קטגוריה",
+    priorityLow: "נמוכה", priorityMedium: "בינונית", priorityHigh: "גבוהה", priorityCritical: "קריטית",
+    accompaniedBy: "ליווה אותו", inspectionHeader: "כותרת הביקורת",
+    savePDF: "שמור כ־PDF", printReport: "הדפס / שמור PDF",
+    catElectrical: "חשמל", catWater: "מים", catSewage: "ביוב",
+    catStructure: "מבנה", catMechanical: "מכניקה", catHse: "בטיחות וסביבה",
+    safetyRefs: "הפניות בטיחות (יצורפו לדוח)",
   },
 
   fa: {
@@ -216,6 +231,13 @@ const DICT = {
     currentTeam: "👥 تیم فعلی", noUsersYet: "هنوز کاربری با نقش نیست.",
     noRoles: "بدون نقش — بدون دسترسی", addRole: "+ افزودن نقش...", accessMatrix: "📖 جدول دسترسی",
     you: "شما",
+    priority: "اولویت", category: "دسته", subcategory: "زیردسته",
+    priorityLow: "کم", priorityMedium: "متوسط", priorityHigh: "زیاد", priorityCritical: "بحرانی",
+    accompaniedBy: "همراه بازرس", inspectionHeader: "سربرگ بازرسی",
+    savePDF: "ذخیره PDF", printReport: "چاپ / ذخیره PDF",
+    catElectrical: "برق", catWater: "آب", catSewage: "فاضلاب",
+    catStructure: "سازه", catMechanical: "مکانیک", catHse: "HSE",
+    safetyRefs: "الزامات ایمنی (پیوست گزارش می‌شود)",
   },
 };
 
