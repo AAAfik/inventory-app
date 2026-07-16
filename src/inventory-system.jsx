@@ -110,6 +110,7 @@ export default function InventorySystem() {
   const isOwner  = isAdmin;
 
   // Role-based access
+  const canSeeDashboard  = isOwner;
   const canSeeWarehouse  = isOwner || userRoles.includes("warehouse_keeper");
   const canSeeInspection = isOwner || userRoles.includes("inspector");
   const canSeePools      = isOwner || userRoles.includes("pool_operator");
@@ -120,7 +121,7 @@ export default function InventorySystem() {
   const canSeeUsers      = isOwner;
 
   const allTabs = [
-    "dashboard",
+    ...(canSeeDashboard                        ? ["dashboard"]  : []),
     ...(WAREHOUSE_ENABLED  && canSeeWarehouse  ? ["warehouse"]  : []),
     ...(INSPECTION_ENABLED && canSeeInspection ? ["inspection"] : []),
     ...(POOLS_ENABLED      && canSeePools      ? ["pools"]      : []),
@@ -170,6 +171,14 @@ export default function InventorySystem() {
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
   }, []);
+
+  // ─── Auto-pick first accessible tab if current one isn't allowed ─
+  useEffect(() => {
+    if (!rolesLoaded) return;
+    if (!allTabs.includes(tab)) {
+      setTab(allTabs[0] || "dashboard");
+    }
+  }, [rolesLoaded, allTabs.join(","), tab]);
 
   useEffect(() => localStorage.setItem("caesarTheme", theme), [theme]);
   useEffect(() => localStorage.setItem("caesarLang", lang), [lang]);
