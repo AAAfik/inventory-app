@@ -190,7 +190,7 @@ export default function InventorySystem() {
     </div>;
   }
   if (!session) return <LoginScreen TH={TH} onSignedIn={setSession} />;
-  if (!rolesLoaded) return <div style={{minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:TH.bg, color:TH.text}}>Loading roles...</div>;
+  if (!rolesLoaded) return <div style={{minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:TH.bg, color:TH.text}}>{t.loadingRoles}</div>;
 
   // ─── Layout ─────────────────────────────────────────────────────
   const dt = now;
@@ -333,9 +333,9 @@ export default function InventorySystem() {
           {allTabs.length === 0 && (
             <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}>
               <div style={{fontSize:44, marginBottom:12, color:TH.accent}}>🔒</div>
-              <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text, marginBottom:8}}>No access assigned</div>
+              <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div>
               <div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>
-                Your account has no roles yet. Please contact an admin to grant access to the modules you need.
+                {t.noAccessDesc}
               </div>
               <div style={{marginTop:16, fontSize:12, color:TH.textDim}}>{email}</div>
             </div>

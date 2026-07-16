@@ -1,39 +1,42 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "./supabase";
+import { tr } from "./i18n";
 
 // ─── Role catalog: DB key → display labels ─────────────────────────
 const ROLE_CATALOG = [
-  { key: "owner",               en: "Owner (full access)",     fa: "مدیر (دسترسی کامل)",           color: "#C9A960" },
-  { key: "auditor",             en: "Auditor (full access)",   fa: "بازرس ارشد (دسترسی کامل)",      color: "#C9A960" },
-  { key: "warehouse_keeper",    en: "Warehouse keeper",        fa: "انباردار",                     color: "#5DCAA5" },
-  { key: "pool_operator",       en: "Pool chemical operator",  fa: "مسئول مواد شیمیایی استخر",     color: "#4FA5D8" },
-  { key: "inspector",           en: "Inspector",               fa: "بازرس",                        color: "#B48ADE" },
-  { key: "procurement_officer", en: "Procurement officer",     fa: "کارشناس تدارکات",              color: "#EF9F27" },
-  { key: "deputy_officer",      en: "Deputy officer",          fa: "معاون تدارکات",                color: "#EF9F27" },
-  { key: "dept_head",           en: "Department head",         fa: "مدیر بخش",                     color: "#EF9F27" },
-  { key: "operator",            en: "Operator",                fa: "اپراتور",                      color: "#EF9F27" },
-  { key: "finance_officer",     en: "Finance officer",         fa: "کارشناس مالی",                 color: "#EF9F27" },
-  { key: "approver_mid",        en: "Approver (mid tier)",     fa: "تاییدکننده (سطح میانی)",       color: "#EF9F27" },
-  { key: "approver_high",       en: "Approver (high tier)",    fa: "تاییدکننده (سطح بالا)",        color: "#EF9F27" },
+  { key: "owner",               en: "Owner (full access)",     fa: "مدیر (دسترسی کامل)",           he: "מנהל (גישה מלאה)",           color: "#C9A960" },
+  { key: "auditor",             en: "Auditor (full access)",   fa: "بازرس ارشد (دسترسی کامل)",      he: "בקר (גישה מלאה)",            color: "#C9A960" },
+  { key: "warehouse_keeper",    en: "Warehouse keeper",        fa: "انباردار",                     he: "מנהל מחסן",                  color: "#5DCAA5" },
+  { key: "pool_operator",       en: "Pool chemical operator",  fa: "مسئول مواد شیمیایی استخر",     he: "מפעיל כימיקלים לבריכה",       color: "#4FA5D8" },
+  { key: "inspector",           en: "Inspector",               fa: "بازرس",                        he: "מבקר",                       color: "#B48ADE" },
+  { key: "procurement_officer", en: "Procurement officer",     fa: "کارشناس تدارکات",              he: "אחראי רכש",                  color: "#EF9F27" },
+  { key: "deputy_officer",      en: "Deputy officer",          fa: "معاون تدارکات",                he: "סגן אחראי רכש",              color: "#EF9F27" },
+  { key: "dept_head",           en: "Department head",         fa: "مدیر بخش",                     he: "ראש מחלקה",                  color: "#EF9F27" },
+  { key: "operator",            en: "Operator",                fa: "اپراتور",                      he: "מפעיל",                      color: "#EF9F27" },
+  { key: "finance_officer",     en: "Finance officer",         fa: "کارشناس مالی",                 he: "אחראי כספים",                color: "#EF9F27" },
+  { key: "approver_mid",        en: "Approver (mid tier)",     fa: "تاییدکننده (سطح میانی)",       he: "מאשר (רמה בינונית)",         color: "#EF9F27" },
+  { key: "approver_high",       en: "Approver (high tier)",    fa: "تاییدکننده (سطح بالا)",        he: "מאשר (רמה גבוהה)",           color: "#EF9F27" },
 ];
 
 function labelForRole(key, lang) {
   const r = ROLE_CATALOG.find(x => x.key === key);
   if (!r) return key;
-  return lang === "fa" ? `${r.fa} — ${r.en}` : r.en;
+  if (lang === "fa") return r.fa;
+  if (lang === "he") return r.he;
+  return r.en;
 }
 function colorForRole(key) {
   return ROLE_CATALOG.find(x => x.key === key)?.color || "#98917f";
 }
 
-function relativeTime(iso) {
-  if (!iso) return "Never";
+function relativeTime(iso, t) {
+  if (!iso) return t.neverStr;
   const diff = Date.now() - new Date(iso).getTime();
   const s = Math.floor(diff / 1000);
-  if (s < 60)   return "Just now";
-  if (s < 3600) return `${Math.floor(s/60)}m ago`;
-  if (s < 86400) return `${Math.floor(s/3600)}h ago`;
-  if (s < 2592000) return `${Math.floor(s/86400)}d ago`;
+  if (s < 60)      return t.justNow;
+  if (s < 3600)    return `${Math.floor(s/60)}${t.minAgo}`;
+  if (s < 86400)   return `${Math.floor(s/3600)}${t.hourAgo}`;
+  if (s < 2592000) return `${Math.floor(s/86400)}${t.dayAgo}`;
   return new Date(iso).toLocaleDateString();
 }
 
@@ -46,6 +49,7 @@ function initials(email) {
 }
 
 export default function UsersTab({ TH, lang = "en", isMobile }) {
+  const t = tr(lang);
   const [users, setUsers]         = useState([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState(null);
@@ -57,7 +61,6 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
 
   const isRTL = lang === "he" || lang === "fa";
 
-  // Load current user email
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setMyEmail(data?.user?.email || ""));
   }, []);
@@ -84,41 +87,37 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
       if (error) throw error;
       await loadUsers();
     } catch (e) {
-      alert("Add role failed: " + (e.message || e));
+      alert(t.addRoleFailed + (e.message || e));
     } finally {
       setBusyId(null);
     }
   }
 
   async function removeRole(userId, role) {
-    if (!confirm(`Remove role "${role}"?`)) return;
+    if (!confirm(t.confirmRemoveRole.replace("{role}", labelForRole(role, lang)))) return;
     setBusyId(userId);
     try {
       const { error } = await supabase.schema("procure").rpc("remove_user_role", { target_user: userId, old_role: role });
       if (error) throw error;
       await loadUsers();
     } catch (e) {
-      alert("Remove role failed: " + (e.message || e));
+      alert(t.removeRoleFailed + (e.message || e));
     } finally {
       setBusyId(null);
     }
   }
 
-  // Stats
   const stats = useMemo(() => {
-    const totalRoles = new Set();
     let owners = 0, pending = 0, activeToday = 0;
     const today = new Date(); today.setHours(0,0,0,0);
     for (const u of users) {
       if ((u.roles || []).includes("owner") || (u.roles || []).includes("auditor")) owners++;
       if (!u.last_sign_in_at) pending++;
       else if (new Date(u.last_sign_in_at) >= today) activeToday++;
-      (u.roles || []).forEach(r => totalRoles.add(r));
     }
     return { total: users.length, owners, pending, activeToday };
   }, [users]);
 
-  // Filter
   const visibleUsers = useMemo(() => {
     let list = users;
     if (filter !== "all") {
@@ -138,20 +137,20 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
       {/* ─── Header ─── */}
       <div style={s.headerRow}>
         <div>
-          <h1 style={s.h1}>Team &amp; access</h1>
-          <p style={s.sub}>Manage users, roles, and permissions</p>
+          <h1 style={s.h1}>{t.teamAccess}</h1>
+          <p style={s.sub}>{t.manageUsersDesc}</p>
         </div>
         <button onClick={() => setShowNew(true)} style={s.primaryBtn}>
-          + New user
+          {t.newUserBtn}
         </button>
       </div>
 
       {/* ─── Stats ─── */}
       <div style={s.statsGrid}>
-        <StatCard TH={TH} label="Total users" value={stats.total} accent="#C9A960" />
-        <StatCard TH={TH} label="Active today" value={stats.activeToday} accent="#5DCAA5" />
-        <StatCard TH={TH} label="Admins" value={stats.owners} accent="#C9A960" />
-        <StatCard TH={TH} label="Never signed in" value={stats.pending} accent="#EF9F27" />
+        <StatCard TH={TH} label={t.statTotalUsers}       value={stats.total}       accent="#C9A960" />
+        <StatCard TH={TH} label={t.statActiveToday}      value={stats.activeToday} accent="#5DCAA5" />
+        <StatCard TH={TH} label={t.statAdmins}           value={stats.owners}      accent="#C9A960" />
+        <StatCard TH={TH} label={t.statNeverSignedIn}    value={stats.pending}     accent="#EF9F27" />
       </div>
 
       {/* ─── Toolbar ─── */}
@@ -159,7 +158,7 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
         <div style={s.searchBox}>
           <span style={{fontSize:14, color:TH.textDim}}>🔍</span>
           <input
-            placeholder="Search by email or role…"
+            placeholder={t.searchByEmailRole}
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={s.searchInput}
@@ -167,11 +166,11 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
         </div>
         <div style={s.filterChips}>
           {[
-            { k: "all",              lbl: "All" },
-            { k: "owner",            lbl: "Owners" },
-            { k: "warehouse_keeper", lbl: "Warehouse" },
-            { k: "pool_operator",    lbl: "Pool" },
-            { k: "inspector",        lbl: "Inspector" },
+            { k: "all",              lbl: t.filterAll },
+            { k: "owner",            lbl: t.filterOwners },
+            { k: "warehouse_keeper", lbl: t.filterWarehouse },
+            { k: "pool_operator",    lbl: t.filterPool },
+            { k: "inspector",        lbl: t.filterInspector },
           ].map(f => (
             <button
               key={f.k}
@@ -183,13 +182,13 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
       </div>
 
       {/* ─── Body ─── */}
-      {loading && <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>Loading users…</div>}
-      {error && <div style={s.errorBox}>Error: {error}<br/><br/><b>Did you run the users_admin_rpc.sql migration?</b></div>}
+      {loading && <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>{t.loadingUsers}</div>}
+      {error && <div style={s.errorBox}>Error: {error}<br/><br/><b>{t.didYouRunMigration}</b></div>}
 
       {!loading && !error && (
         <div>
           {visibleUsers.length === 0 && (
-            <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>No users match.</div>
+            <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>{t.noUsersMatch}</div>
           )}
           {visibleUsers.map(u => (
             <UserRow
@@ -197,6 +196,7 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
               user={u}
               isMe={u.email === myEmail}
               lang={lang}
+              t={t}
               TH={TH}
               busy={busyUserId === u.id}
               onAddRole={role => addRole(u.id, role)}
@@ -207,11 +207,11 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
       )}
 
       {/* ─── Access matrix ─── */}
-      <AccessMatrix TH={TH} lang={lang} />
+      <AccessMatrix TH={TH} t={t} />
 
       {/* ─── New user modal ─── */}
       {showNew && (
-        <NewUserModal TH={TH} onClose={() => setShowNew(false)} onCreated={loadUsers} />
+        <NewUserModal TH={TH} t={t} lang={lang} onClose={() => setShowNew(false)} onCreated={loadUsers} />
       )}
     </div>
   );
@@ -232,14 +232,14 @@ function StatCard({ TH, label, value, accent }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-function UserRow({ user, isMe, lang, TH, busy, onAddRole, onRemoveRole }) {
+function UserRow({ user, isMe, lang, t, TH, busy, onAddRole, onRemoveRole }) {
   const [addPickerOpen, setAddPickerOpen] = useState(false);
   const roles = user.roles || [];
   const availableToAdd = ROLE_CATALOG.filter(r => !roles.includes(r.key));
 
-  const status = !user.last_sign_in_at ? { txt: "Invite pending", color: "#EF9F27" }
-    : (Date.now() - new Date(user.last_sign_in_at).getTime() < 24*3600*1000) ? { txt: "Active", color: "#5DCAA5" }
-    : { txt: "Idle", color: "#98917f" };
+  const status = !user.last_sign_in_at ? { txt: t.statusInvitePending, color: "#EF9F27" }
+    : (Date.now() - new Date(user.last_sign_in_at).getTime() < 24*3600*1000) ? { txt: t.statusActive, color: "#5DCAA5" }
+    : { txt: t.statusIdle, color: "#98917f" };
 
   return (
     <div style={{
@@ -260,16 +260,16 @@ function UserRow({ user, isMe, lang, TH, busy, onAddRole, onRemoveRole }) {
         <div style={{flex:1, minWidth:0}}>
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:2, flexWrap:"wrap"}}>
             <span style={{fontSize:14, fontWeight:600, color:TH.text}}>{user.email || user.id.slice(0,8)+"…"}</span>
-            {isMe && <span style={{background:"#C9A960", color:"#000", fontSize:10, padding:"2px 6px", borderRadius:4, fontWeight:700}}>YOU</span>}
+            {isMe && <span style={{background:"#C9A960", color:"#000", fontSize:10, padding:"2px 6px", borderRadius:4, fontWeight:700}}>{t.you}</span>}
             <span style={{background:status.color+"22", color:status.color, fontSize:10, padding:"2px 6px", borderRadius:4, fontWeight:600}}>{status.txt}</span>
           </div>
-          <div style={{fontSize:11, color:TH.textMuted}}>Last active: {relativeTime(user.last_sign_in_at)}</div>
+          <div style={{fontSize:11, color:TH.textMuted}}>{t.lastActive}: {relativeTime(user.last_sign_in_at, t)}</div>
         </div>
       </div>
 
       <div style={{display:"flex", gap:6, flexWrap:"wrap", alignItems:"center"}}>
         {roles.length === 0 && (
-          <span style={{fontSize:12, color:TH.textDim, fontStyle:"italic"}}>No roles assigned</span>
+          <span style={{fontSize:12, color:TH.textDim, fontStyle:"italic"}}>{t.noRolesAssigned}</span>
         )}
         {roles.map(r => {
           const c = colorForRole(r);
@@ -294,7 +294,7 @@ function UserRow({ user, isMe, lang, TH, busy, onAddRole, onRemoveRole }) {
               background: "transparent", border: `1px dashed ${TH.border}`,
               color: TH.textMuted, padding:"4px 10px", borderRadius:6,
               fontSize:12, cursor:"pointer", fontFamily:"inherit",
-            }}>+ Add role</button>
+            }}>{t.addRoleBtn}</button>
             {addPickerOpen && (
               <div style={{
                 position:"absolute", top:"calc(100% + 6px)", left:0, zIndex:20,
@@ -325,15 +325,15 @@ function UserRow({ user, isMe, lang, TH, busy, onAddRole, onRemoveRole }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-function AccessMatrix({ TH, lang }) {
+function AccessMatrix({ TH, t }) {
   const [open, setOpen] = useState(false);
   const rows = [
-    { role: "Owner / Auditor",   access: "Full access to everything" },
-    { role: "Warehouse keeper",  access: "Warehouse module only" },
-    { role: "Pool operator",     access: "Pool Control only (auto-deducts from warehouse)" },
-    { role: "Inspector",         access: "Inspections module only" },
-    { role: "Procurement roles", access: "Caesar Procure only" },
-    { role: "No roles",          access: "No access — must be granted a role" },
+    { role: t.amOwner,        access: t.amOwnerDesc },
+    { role: t.amWarehouse,    access: t.amWarehouseDesc },
+    { role: t.amPool,         access: t.amPoolDesc },
+    { role: t.amInspector,    access: t.amInspectorDesc },
+    { role: t.amProcurement,  access: t.amProcurementDesc },
+    { role: t.amNoRoles,      access: t.amNoRolesDesc },
   ];
   return (
     <div style={{
@@ -343,16 +343,16 @@ function AccessMatrix({ TH, lang }) {
       <div onClick={()=>setOpen(v=>!v)} style={{display:"flex", justifyContent:"space-between", cursor:"pointer"}}>
         <div style={{display:"flex", alignItems:"center", gap:8}}>
           <span style={{color:"#C9A960"}}>🛡</span>
-          <span style={{fontSize:13, fontWeight:600, color:TH.text}}>Access matrix</span>
-          <span style={{fontSize:11, color:TH.textMuted}}>{rows.length} roles</span>
+          <span style={{fontSize:13, fontWeight:600, color:TH.text}}>{t.accessMatrixTitle}</span>
+          <span style={{fontSize:11, color:TH.textMuted}}>{rows.length} {t.rolesCount}</span>
         </div>
         <span style={{color:TH.textMuted, fontSize:14}}>{open ? "▲" : "▼"}</span>
       </div>
       {open && (
         <div style={{marginTop:12, borderTop:`1px solid ${TH.border}`, paddingTop:12}}>
           {rows.map(r => (
-            <div key={r.role} style={{display:"flex", padding:"6px 0", fontSize:12}}>
-              <div style={{width:180, fontWeight:700, color:"#C9A960"}}>{r.role}</div>
+            <div key={r.role} style={{display:"flex", padding:"6px 0", fontSize:12, gap:16}}>
+              <div style={{width:200, fontWeight:700, color:"#C9A960", flexShrink:0}}>{r.role}</div>
               <div style={{flex:1, color:TH.textMuted}}>{r.access}</div>
             </div>
           ))}
@@ -363,7 +363,7 @@ function AccessMatrix({ TH, lang }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-function NewUserModal({ TH, onClose, onCreated }) {
+function NewUserModal({ TH, t, lang, onClose, onCreated }) {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole]         = useState("warehouse_keeper");
@@ -374,7 +374,6 @@ function NewUserModal({ TH, onClose, onCreated }) {
     e.preventDefault();
     setBusy(true); setErr(null);
     try {
-      // Try Edge Function first (from handover: "real user creation via Edge Function")
       const { data, error } = await supabase.functions.invoke("create-user", {
         body: { email: email.trim(), password, role },
       });
@@ -383,10 +382,7 @@ function NewUserModal({ TH, onClose, onCreated }) {
       onCreated();
       onClose();
     } catch (e) {
-      setErr(
-        (e.message || String(e)) +
-        "\n\nIf the Edge Function isn't deployed, create the user manually in Supabase → Authentication → Users, then assign a role here."
-      );
+      setErr((e.message || String(e)) + t.edgeFnHint);
     } finally {
       setBusy(false);
     }
@@ -402,17 +398,17 @@ function NewUserModal({ TH, onClose, onCreated }) {
         background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14,
         padding:28, width:"100%", maxWidth:440, boxShadow:TH.shadowLg,
       }}>
-        <h2 style={{margin:"0 0 16px", fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text}}>New user</h2>
+        <h2 style={{margin:"0 0 16px", fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text}}>{t.newUserModalTitle}</h2>
 
-        <label style={lbl(TH)}>Email</label>
+        <label style={lbl(TH)}>{t.email}</label>
         <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required style={inp(TH)} />
 
-        <label style={lbl(TH)}>Temporary password</label>
+        <label style={lbl(TH)}>{t.tempPassword}</label>
         <input type="text" value={password} onChange={e=>setPassword(e.target.value)} required minLength={8} style={inp(TH)} />
 
-        <label style={lbl(TH)}>Initial role</label>
+        <label style={lbl(TH)}>{t.initialRole}</label>
         <select value={role} onChange={e=>setRole(e.target.value)} style={inp(TH)}>
-          {ROLE_CATALOG.map(r => <option key={r.key} value={r.key}>{r.en}</option>)}
+          {ROLE_CATALOG.map(r => <option key={r.key} value={r.key}>{labelForRole(r.key, lang)}</option>)}
         </select>
 
         {err && (
@@ -426,14 +422,14 @@ function NewUserModal({ TH, onClose, onCreated }) {
             flex:1, padding:"12px", background:"transparent",
             border:`1px solid ${TH.border}`, borderRadius:10, color:TH.text,
             cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit",
-          }}>Cancel</button>
+          }}>{t.cancel}</button>
           <button type="submit" disabled={busy} style={{
             flex:1, padding:"12px",
             background:"linear-gradient(135deg,#C9A960,#8B7A44)",
             border:"none", borderRadius:10, color:"#000",
             cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit",
             opacity: busy ? 0.6 : 1,
-          }}>{busy ? "Creating…" : "Create user"}</button>
+          }}>{busy ? t.creatingUser : t.createUserBtn}</button>
         </div>
       </form>
     </div>
