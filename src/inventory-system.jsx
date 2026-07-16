@@ -361,50 +361,60 @@ function LoginScreen({ TH, onSignedIn }) {
       minHeight:"100vh", background:TH.bg, color:TH.text,
       display:"flex", alignItems:"center", justifyContent:"center",
       padding:20, fontFamily:"'Inter',system-ui,sans-serif",
+      backgroundImage: `radial-gradient(ellipse 800px 500px at 50% -10%, rgba(201,169,96,0.10), transparent 60%)`,
     }}>
       <form onSubmit={submit} style={{
         background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16,
-        padding:32, maxWidth:400, width:"100%",
+        padding:36, maxWidth:420, width:"100%",
         boxShadow: TH.shadowLg,
       }}>
-        <div style={{textAlign:"center", marginBottom:24}}>
+        <div style={{textAlign:"center", marginBottom:28}}>
           <div style={{
-            width:64, height:64, margin:"0 auto 12px", borderRadius:"50%",
-            background: "#1a1814",
-            border:`2px solid ${TH.accent}`,
+            width:72, height:72, margin:"0 auto 16px", borderRadius:18,
+            background: "linear-gradient(135deg, #1a1814 0%, #0d0c0a 100%)",
+            border:`1px solid ${TH.accentBorder}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontFamily:"Georgia,serif", fontSize:28, color:TH.accent, fontWeight:800,
-          }}>C</div>
-          <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text}}>Caesar Projects</div>
-          <div style={{fontSize:11, color:TH.textMuted, letterSpacing:"0.14em", marginTop:2}}>INTERNAL SYSTEM</div>
+            fontFamily:"'Playfair Display',Georgia,serif", fontSize:38, color:TH.accent, fontWeight:700,
+            boxShadow: `0 0 0 1px rgba(201,169,96,.15) inset, 0 8px 24px rgba(201,169,96,.15)`,
+            lineHeight:1,
+          }}>Ω</div>
+          <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:26, fontWeight:700, color:TH.text, letterSpacing:"-0.01em"}}>Omega Control System</div>
+          <div style={{fontSize:11, color:TH.textMuted, letterSpacing:"0.18em", marginTop:6, textTransform:"uppercase"}}>Caesar Projects · Internal</div>
         </div>
 
-        <label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px"}}>Email</label>
+        <label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Email</label>
         <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required style={{
-          width:"100%", padding:"11px 12px", marginBottom:14,
-          background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:9,
+          width:"100%", padding:"12px 14px", marginBottom:16,
+          background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10,
           color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box",
         }} />
 
-        <label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:5, textTransform:"uppercase", letterSpacing:"0.5px"}}>Password</label>
+        <label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Password</label>
         <input type="password" value={password} onChange={e=>setPass(e.target.value)} required style={{
-          width:"100%", padding:"11px 12px", marginBottom:14,
-          background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:9,
+          width:"100%", padding:"12px 14px", marginBottom:16,
+          background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10,
           color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box",
         }} />
 
         {error && (
-          <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:8, padding:"10px 12px", color:"#8f8f8f", fontSize:12, marginBottom:12}}>
+          <div style={{background:"rgba(201,80,80,.08)", border:"1px solid rgba(201,80,80,.3)", borderRadius:8, padding:"10px 12px", color:"#d67373", fontSize:12, marginBottom:14}}>
             {error}
           </div>
         )}
 
         <button type="submit" disabled={busy} style={{
-          width:"100%", padding:"13px",
+          width:"100%", padding:"14px",
           background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
           color:"#000", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
+          letterSpacing:"0.02em",
           opacity: busy ? 0.6 : 1,
-        }}>{busy ? "Signing in..." : "Sign in"}</button>
+          boxShadow: "0 4px 14px rgba(201,169,96,.25)",
+        }}>{busy ? "Signing in…" : "Sign in"}</button>
+
+        <div style={{marginTop:20, padding:"12px 14px", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, textAlign:"center"}}>
+          <div style={{fontSize:11, color:TH.textMuted, marginBottom:2}}>To add new users, go to</div>
+          <div style={{fontSize:12, color:TH.accent, fontWeight:600}}>Team &amp; Roles · Admin only</div>
+        </div>
       </form>
     </div>
   );
