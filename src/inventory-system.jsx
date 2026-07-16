@@ -330,7 +330,17 @@ export default function InventorySystem() {
 
         {/* ═══ MAIN ═══ */}
         <main style={{flex:1, minWidth:0, padding: isMobile?"14px 12px":"22px 26px", overflow:"auto"}}>
-          {tab==="dashboard" && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
+          {allTabs.length === 0 && (
+            <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}>
+              <div style={{fontSize:44, marginBottom:12, color:TH.accent}}>🔒</div>
+              <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text, marginBottom:8}}>No access assigned</div>
+              <div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>
+                Your account has no roles yet. Please contact an admin to grant access to the modules you need.
+              </div>
+              <div style={{marginTop:16, fontSize:12, color:TH.textDim}}>{email}</div>
+            </div>
+          )}
+          {tab==="dashboard"  && canSeeDashboard   && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
           {tab==="warehouse"  && WAREHOUSE_ENABLED  && canSeeWarehouse  && <WarehouseHub  TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="inspection" && INSPECTION_ENABLED && canSeeInspection && <InspectionHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="pools"      && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
