@@ -57,62 +57,93 @@ export default function App() {
   }
 
   const isDark = theme === "dark"
-  const bg = isDark ? "#0e1220" : "#f6f7fb"
-  const cardBg = isDark ? "#161b2c" : "#ffffff"
-  const border = isDark ? "#252f4a" : "#e6e9f2"
-  const text = isDark ? "#f0f4ff" : "#0d1530"
-  const muted = isDark ? "#8892b0" : "#6b7592"
-  const inputBg = isDark ? "#0e1220" : "#f6f7fb"
+
+  // ─── Caesar / Omega palette ────────────────────────────────────────
+  const bg           = isDark ? "#050505" : "#F6F2E9"
+  const cardBg       = isDark ? "#0f0e0c" : "#FFFDF8"
+  const border       = isDark ? "#232119" : "#E6DFCC"
+  const text         = isDark ? "#F4EFE4" : "#1c1a14"
+  const muted        = isDark ? "#98917f" : "#7a7361"
+  const inputBg      = isDark ? "#171613" : "#F1EBDD"
+  const accent       = "#C9A960"
+  const accentDark   = "#8B7A44"
+  const accentBg     = isDark ? "rgba(201,169,96,.08)" : "rgba(139,122,68,.06)"
+  const accentBorder = isDark ? "rgba(201,169,96,.30)" : "rgba(139,122,68,.30)"
 
   if (loading) return (
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:bg}}>
-      <div style={{color:"#6366f1",fontSize:18}}>Loading...</div>
+      <div style={{color:accent,fontSize:16,fontFamily:"'Inter',system-ui,sans-serif"}}>Loading…</div>
     </div>
   )
 
   if (!session) return (
-    <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:bg,fontFamily:"'Inter','Tahoma',sans-serif",padding:20}}>
-      <div style={{background:cardBg,border:`1px solid ${border}`,borderRadius:20,padding:"40px 36px",width:"100%",maxWidth:420,boxShadow:isDark?"none":"0 10px 40px rgba(0,0,0,0.06)"}}>
+    <div style={{
+      display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",
+      background:bg,
+      backgroundImage: isDark
+        ? `radial-gradient(ellipse 900px 500px at 50% -10%, rgba(201,169,96,0.10), transparent 60%)`
+        : `radial-gradient(ellipse 900px 500px at 50% -10%, rgba(139,122,68,0.10), transparent 60%)`,
+      fontFamily:"'Inter','Tahoma',sans-serif",padding:20,position:"relative"
+    }}>
 
-        <div style={{position:"absolute",top:20,right:20}}>
-          <button onClick={()=>{const newT=isDark?"light":"dark";setTheme(newT);localStorage.setItem("stocktrack-theme",newT);}} style={{background:inputBg,border:`1px solid ${border}`,borderRadius:9,color:text,padding:"7px 14px",cursor:"pointer",fontSize:13,fontFamily:"inherit"}}>
-            {isDark?"☀ Light":"🌙 Dark"}
-          </button>
-        </div>
+      <div style={{position:"absolute",top:20,right:20}}>
+        <button onClick={()=>{const newT=isDark?"light":"dark";setTheme(newT);localStorage.setItem("stocktrack-theme",newT);}} style={{background:cardBg,border:`1px solid ${border}`,borderRadius:20,color:text,padding:"7px 16px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>
+          {isDark?"☀ Light":"🌙 Dark"}
+        </button>
+      </div>
+
+      <div style={{background:cardBg,border:`1px solid ${border}`,borderRadius:18,padding:"40px 36px",width:"100%",maxWidth:420,boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.55)" : "0 12px 40px rgba(139,122,68,0.18)"}}>
 
         <div style={{textAlign:"center",marginBottom:32}}>
-          <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:64,height:64,borderRadius:16,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",fontSize:30,color:"#fff",marginBottom:14,boxShadow:"0 8px 24px rgba(99,102,241,0.3)"}}>▦</div>
-          <div style={{color:text,fontSize:26,fontWeight:800,letterSpacing:"-0.5px"}}>StockTrack</div>
-          <div style={{color:muted,fontSize:13,marginTop:4}}>Inventory Management System</div>
+          <div style={{
+            display:"inline-flex",alignItems:"center",justifyContent:"center",
+            width:72,height:72,borderRadius:18,
+            background: isDark ? "linear-gradient(135deg,#1a1814 0%,#0d0c0a 100%)" : "linear-gradient(135deg,#FFFDF8 0%,#F1EBDD 100%)",
+            border:`1px solid ${accentBorder}`,
+            fontFamily:"'Playfair Display',Georgia,serif",
+            fontSize:40,color:accent,fontWeight:700,lineHeight:1,
+            marginBottom:16,
+            boxShadow: `0 0 0 1px ${accentBorder} inset, 0 8px 24px rgba(201,169,96,0.20)`
+          }}>Ω</div>
+          <div style={{color:text,fontSize:26,fontWeight:700,letterSpacing:"-0.01em",fontFamily:"'Playfair Display',Georgia,serif"}}>Omega Control System</div>
+          <div style={{color:muted,fontSize:11,marginTop:6,letterSpacing:"0.18em",textTransform:"uppercase",fontWeight:600}}>Caesar Projects · Internal</div>
         </div>
 
         <form onSubmit={handleLogin}>
           <div style={{marginBottom:16}}>
-            <label style={{display:"block",color:muted,fontSize:12,marginBottom:6,fontWeight:600}}>Email</label>
-            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="example@email.com" required
+            <label style={{display:"block",color:muted,fontSize:11,marginBottom:6,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.5px"}}>Email</label>
+            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@afikgroup.com" required
               style={{width:"100%",background:inputBg,border:`1px solid ${border}`,borderRadius:10,padding:"12px 14px",color:text,fontSize:14,outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
           </div>
-          <div style={{marginBottom:24}}>
-            <label style={{display:"block",color:muted,fontSize:12,marginBottom:6,fontWeight:600}}>Password</label>
+          <div style={{marginBottom:22}}>
+            <label style={{display:"block",color:muted,fontSize:11,marginBottom:6,fontWeight:600,textTransform:"uppercase",letterSpacing:"0.5px"}}>Password</label>
             <input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••" required
               style={{width:"100%",background:inputBg,border:`1px solid ${border}`,borderRadius:10,padding:"12px 14px",color:text,fontSize:14,outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
           </div>
 
           {error && (
-            <div style={{background:"rgba(248,113,113,.1)",border:"1px solid rgba(248,113,113,.3)",borderRadius:9,padding:"10px 14px",color:"#ef4444",fontSize:13,marginBottom:16,textAlign:"center"}}>
+            <div style={{background:"rgba(201,80,80,.10)",border:"1px solid rgba(201,80,80,.35)",borderRadius:9,padding:"10px 14px",color:"#d67373",fontSize:13,marginBottom:16,textAlign:"center"}}>
               {error}
             </div>
           )}
 
-          <button type="submit" disabled={isLogging} style={{width:"100%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:11,color:"#fff",padding:"13px",cursor:"pointer",fontSize:15,fontWeight:700,fontFamily:"inherit",opacity:isLogging?0.7:1,boxShadow:"0 6px 16px rgba(99,102,241,0.3)"}}>
-            {isLogging ? "Signing in..." : "Sign In"}
+          <button type="submit" disabled={isLogging} style={{
+            width:"100%",
+            background:`linear-gradient(135deg,${accent},${accentDark})`,
+            border:"none",borderRadius:11,color:"#000",
+            padding:"14px",cursor:"pointer",fontSize:14,fontWeight:800,fontFamily:"inherit",
+            letterSpacing:"0.02em",
+            opacity:isLogging?0.6:1,
+            boxShadow:"0 6px 18px rgba(201,169,96,0.30)"
+          }}>
+            {isLogging ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <div style={{marginTop:24,padding:"14px",background:isDark?"rgba(99,102,241,.08)":"rgba(99,102,241,.05)",borderRadius:10,border:"1px solid rgba(99,102,241,.2)"}}>
+        <div style={{marginTop:22,padding:"14px",background:accentBg,borderRadius:10,border:`1px solid ${accentBorder}`}}>
           <div style={{color:muted,fontSize:11,textAlign:"center",lineHeight:1.7}}>
-            To add new users go to<br/>
-            <span style={{color:"#a5b4fc"}}>Supabase → Authentication → Users</span>
+            To add new users, go to<br/>
+            <span style={{color:accent,fontWeight:600}}>Team &amp; Roles · Admin only</span>
           </div>
         </div>
       </div>
@@ -126,17 +157,17 @@ export default function App() {
 
   if (showOperator) {
     const TH = isDark ? {
-      bg:"#0e1220", bgCard:"#161b2c", bgInput:"#0e1220", bgElev:"#1a2035",
-      header:"#111827", headerBorder:"#1a2035",
-      text:"#f0f4ff", textHeading:"#ffffff", textMuted:"#8892b0", textDim:"#4a5568",
-      border:"#252f4a", divider:"#1a2035", accentBorder:"#4338ca",
-      accent:"#818cf8", accentBg:"rgba(99,102,241,0.12)", accentText:"#818cf8",
+      bg:"#050505", bgCard:"#0f0e0c", bgInput:"#171613", bgElev:"#0d0d0c",
+      header:"#050505", headerBorder:"#232119",
+      text:"#F4EFE4", textHeading:"#ffffff", textMuted:"#98917f", textDim:"#5c584d",
+      border:"#232119", divider:"#191813", accentBorder:"rgba(201,169,96,.30)",
+      accent:"#C9A960", accentBg:"rgba(201,169,96,.10)", accentText:"#D4B876",
     } : {
-      bg:"#f6f7fb", bgCard:"#ffffff", bgInput:"#f6f7fb", bgElev:"#f0f2f8",
-      header:"#ffffff", headerBorder:"#e6e9f2",
-      text:"#0d1530", textHeading:"#050d24", textMuted:"#6b7592", textDim:"#9ca3af",
-      border:"#e6e9f2", divider:"#f0f2f8", accentBorder:"#6366f1",
-      accent:"#6366f1", accentBg:"rgba(99,102,241,0.08)", accentText:"#6366f1",
+      bg:"#F6F2E9", bgCard:"#FFFDF8", bgInput:"#F1EBDD", bgElev:"#FFFDF8",
+      header:"#FFFDF8", headerBorder:"#E6DFCC",
+      text:"#1c1a14", textHeading:"#141210", textMuted:"#7a7361", textDim:"#a8a08c",
+      border:"#E6DFCC", divider:"#EDE6D5", accentBorder:"rgba(139,122,68,.30)",
+      accent:"#8B7A44", accentBg:"rgba(139,122,68,.09)", accentText:"#8B7A44",
     }
     const isMobile = window.innerWidth < 900
     return <OperatorApp TH={TH} lang="en" isMobile={isMobile} user={session.user} />
