@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
-import { INSPECTION_STATUS, CATEGORIES, PRIORITY, formatDate, severityColor } from "../lib/inspectionUtils";
+import { INSPECTION_STATUS, CATEGORIES, PRIORITY, formatDate, severityColor, openLocationPDF } from "../lib/inspectionUtils";
 import { tr } from "../../i18n";
 import InspectionDetail from "./InspectionDetail";
 
@@ -127,7 +127,7 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
           {groups.map(group => (
             <LocationCard
               key={group.key}
-              TH={TH} L={L} STATUS_LBL={STATUS_LBL} isMobile={isMobile}
+              TH={TH} L={L} STATUS_LBL={STATUS_LBL} isMobile={isMobile} lang={lang}
               group={group}
               propMap={propMap} areaMap={areaMap}
               onOpen={id => setSelected(id)}
@@ -140,7 +140,7 @@ export default function InspectionsListTab({ TH, lang = "en", isMobile, isAdmin,
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-function LocationCard({ TH, L, STATUS_LBL, isMobile, group, propMap, areaMap, onOpen }) {
+function LocationCard({ TH, L, STATUS_LBL, isMobile, lang, group, propMap, areaMap, onOpen }) {
   const wh = propMap[group.property_id];
   const area = group.area_id ? areaMap[group.area_id] : null;
   const dateStr = new Date(group.visit_at || group.created_at).toLocaleString('en-GB', {
@@ -155,6 +155,11 @@ function LocationCard({ TH, L, STATUS_LBL, isMobile, group, propMap, areaMap, on
     }
   });
   const accentColor = PRIORITY[topPriority]?.color || TH.accent;
+
+  function handlePrintAll(e, langCode) {
+    e.stopPropagation();
+    openLocationPDF(group.items, { property: wh, area }, langCode);
+  }
 
   return (
     <div style={{
@@ -202,8 +207,42 @@ function LocationCard({ TH, L, STATUS_LBL, isMobile, group, propMap, areaMap, on
               background: accentColor + "22", color: accentColor,
               padding: "5px 12px", borderRadius: 20,
               fontSize: 12, fontWeight: 800,
+              marginBottom: 8,
             }}>
               {group.items.length} problem{group.items.length > 1 ? 's' : ''}
+            </div>
+            <div style={{display:"flex", gap:6, flexWrap:"wrap", justifyContent: isMobile ? "flex-start" : "flex-end"}}>
+              <button
+                onClick={e => handlePrintAll(e, "en")}
+                title={`Print all ${group.items.length} findings for this location`}
+                style={{
+                  background: "linear-gradient(135deg,#C9A960,#8B7A44)",
+                  color: "#000", border: "none",
+                  padding: "6px 12px", borderRadius: 6,
+                  fontSize: 11, fontWeight: 800, cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >📄 Full report · EN</button>
+              <button
+                onClick={e => handlePrintAll(e, "he")}
+                style={{
+                  background: "transparent", color: TH.accent,
+                  border: `1px solid ${TH.accent}66`,
+                  padding: "6px 12px", borderRadius: 6,
+                  fontSize: 11, fontWeight: 700, cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >📄 HE</button>
+              <button
+                onClick={e => handlePrintAll(e, "fa")}
+                style={{
+                  background: "transparent", color: TH.accent,
+                  border: `1px solid ${TH.accent}66`,
+                  padding: "6px 12px", borderRadius: 6,
+                  fontSize: 11, fontWeight: 700, cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >📄 FA</button>
             </div>
           </div>
         </div>
