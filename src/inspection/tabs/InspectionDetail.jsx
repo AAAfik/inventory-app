@@ -1,11 +1,14 @@
 // ═══════════════════════════════════════════════════════════════════
 // InspectionDetail.jsx — full inspection card with photo gallery + resolve
+// Edit mode now supports adding/removing photos (admin only)
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { INSPECTION_STATUS, CATEGORIES, PRIORITY, formatDate, openInspectionPDF } from "../lib/inspectionUtils";
 import { tr } from "../../i18n";
+
+const MAX_PHOTO_MB = 15;
 
 export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, inspectionId, properties, areas, onClose }) {
   const L = tr(lang);
@@ -22,6 +25,7 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
   const [resolutionNote, setResolutionNote] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [edit, setEdit] = useState(null);
+  const editFileRef = useRef(null);
 
   const STATUS_OPTIONS = ['ok','minor_issue','major_issue','critical','needs_repair','fixed'];
 
@@ -30,24 +34,104 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
       title: ins.title || "", report: ins.report || "",
       status: ins.status, severity: ins.severity,
       action_required: ins.action_required || "", location_note: ins.location_note || "",
+      keptPhotos: [...(ins.photos || [])],   // existing photo URLs still kept
+      newFiles: [],                           // new File objects to upload
+      newPreviews: [],                        // blob URLs for preview
     });
     setEditMode(true);
+  }
+
+  function cancelEdit() {
+    // revoke blob URLs to free memory
+    if (edit?.newPreviews) edit.newPreviews.forEach(url => URL.revokeObjectURL(url));
+    setEditMode(false);
+    setEdit(null);
+  }
+
+  function onEditFilesSelected(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    const valid = files.filter(f => f.size <= MAX_PHOTO_MB * 1024 * 1024);
+    if (valid.length !== files.length) setError(`Some photos skipped (over ${MAX_PHOTO_MB}MB)`);
+    setEdit(prev => ({
+      ...prev,
+      newFiles:    [...prev.newFiles, ...valid],
+      newPreviews: [...prev.newPreviews, ...valid.map(f => URL.createObjectURL(f))],
+    }));
+    if (editFileRef.current) editFileRef.current.value = "";
+  }
+
+  function removeKeptPhoto(i) {
+    setEdit(prev => ({ ...prev, keptPhotos: prev.keptPhotos.filter((_, x) => x !== i) }));
+  }
+
+  function removeNewPhoto(i) {
+    URL.revokeObjectURL(edit.newPreviews[i]);
+    setEdit(prev => ({
+      ...prev,
+      newFiles:    prev.newFiles.filter((_, x) => x !== i),
+      newPreviews: prev.newPreviews.filter((_, x) => x !== i),
+    }));
+  }
+
+  // Extract storage-relative path from a public URL
+  // e.g. https://xxx.supabase.co/storage/v1/object/public/inspection-photos/HSE-POOLS-02A/photo-001.jpg
+  //   → HSE-POOLS-02A/photo-001.jpg
+  function pathFromUrl(url) {
+    const marker = "/inspection-photos/";
+    const idx = url.indexOf(marker);
+    if (idx === -1) return null;
+    return url.substring(idx + marker.length);
   }
 
   async function saveEdit() {
     setBusy(true); setError(null);
     try {
       if (!edit.title.trim()) throw new Error("Title required");
+
+      // 1. Upload new files
+      const uploadedUrls = [];
+      const now = Date.now();
+      for (let i = 0; i < edit.newFiles.length; i++) {
+        const file = edit.newFiles[i];
+        const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+        const path = `${ins.inspection_no}/photo-${now}-${String(i + 1).padStart(3, '0')}.${ext}`;
+        const { error: upErr } = await supabase.storage.from('inspection-photos').upload(path, file, {
+          upsert: true, contentType: file.type,
+        });
+        if (upErr) throw new Error(`Photo ${i + 1}: ${upErr.message}`);
+        const { data: urlData } = supabase.storage.from('inspection-photos').getPublicUrl(path);
+        if (urlData?.publicUrl) uploadedUrls.push(urlData.publicUrl);
+      }
+
+      // 2. Detect removed photos (in original but not in kept) and delete from storage
+      const originalPhotos = ins.photos || [];
+      const removedUrls = originalPhotos.filter(u => !edit.keptPhotos.includes(u));
+      const removedPaths = removedUrls.map(pathFromUrl).filter(Boolean);
+      if (removedPaths.length > 0) {
+        const { error: rmErr } = await supabase.storage.from('inspection-photos').remove(removedPaths);
+        if (rmErr) console.warn("Some photos could not be removed from storage:", rmErr.message);
+      }
+
+      // 3. Final photos array: kept + newly uploaded
+      const finalPhotos = [...edit.keptPhotos, ...uploadedUrls];
+
+      // 4. Update DB
       const { error: e } = await supabase.from('inspections').update({
-        title: edit.title.trim(),
-        report: edit.report.trim() || null,
-        status: edit.status,
-        severity: Number(edit.severity) || 0,
+        title:           edit.title.trim(),
+        report:          edit.report.trim() || null,
+        status:          edit.status,
+        severity:        Number(edit.severity) || 0,
         action_required: edit.action_required.trim() || null,
-        location_note: edit.location_note.trim() || null,
-        updated_at: new Date().toISOString(),
+        location_note:   edit.location_note.trim() || null,
+        photos:          finalPhotos,
+        updated_at:      new Date().toISOString(),
       }).eq('id', inspectionId);
       if (e) throw e;
+
+      // revoke blob URLs
+      edit.newPreviews.forEach(url => URL.revokeObjectURL(url));
+
       setEditMode(false); setEdit(null);
       await load();
     } catch (e) {
@@ -202,8 +286,61 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
             <label style={editLbl(TH)}>{L.location}</label>
             <input value={edit.location_note} onChange={e => setEdit({...edit, location_note: e.target.value})} style={editInp(TH)} />
           </div>
+
+          {/* Photos editor */}
+          <div style={{marginBottom:14, padding:12, background:TH.bgInput, borderRadius:10, border:`1px solid ${TH.border}`}}>
+            <label style={{...editLbl(TH), marginBottom:8}}>
+              {L.photos} ({edit.keptPhotos.length + edit.newFiles.length})
+            </label>
+            <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
+              {/* Existing kept photos */}
+              {edit.keptPhotos.map((url, i) => (
+                <div key={"k"+i} style={{position:"relative", flexShrink:0, borderRadius:10, overflow:"hidden", border:`1px solid ${TH.border}`, background:"#000"}}>
+                  <img src={url} alt="" style={{width:80, height:80, objectFit:"cover", display:"block", cursor:"pointer"}} onClick={() => setPhotoZoom(url)} loading="lazy" />
+                  <button
+                    onClick={() => removeKeptPhoto(i)}
+                    title="Remove"
+                    style={{position:"absolute", top:3, right:3, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:12, width:20, height:20, color:"#fff", cursor:"pointer", fontSize:11, padding:0, lineHeight:1}}
+                  >✕</button>
+                </div>
+              ))}
+              {/* New file previews (pending upload) */}
+              {edit.newPreviews.map((src, i) => (
+                <div key={"n"+i} style={{position:"relative", flexShrink:0, borderRadius:10, overflow:"hidden", border:`2px solid ${TH.accent}`, background:"#000"}}>
+                  <img src={src} alt="" style={{width:80, height:80, objectFit:"cover", display:"block"}} />
+                  <button
+                    onClick={() => removeNewPhoto(i)}
+                    title="Remove"
+                    style={{position:"absolute", top:3, right:3, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:12, width:20, height:20, color:"#fff", cursor:"pointer", fontSize:11, padding:0, lineHeight:1}}
+                  >✕</button>
+                  <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(201,169,96,0.85)", color:"#000", fontSize:9, fontWeight:800, textAlign:"center", padding:"2px 0", letterSpacing:"0.3px"}}>NEW</div>
+                </div>
+              ))}
+              {/* Add button */}
+              <button
+                onClick={() => editFileRef.current?.click()}
+                style={{flexShrink:0, width:80, height:80, background:"transparent", border:`2px dashed ${TH.border}`, borderRadius:10, color:TH.textMuted, cursor:"pointer", fontSize:24, fontFamily:"inherit"}}
+                title="Add photos"
+              >+</button>
+              <input
+                ref={editFileRef} type="file" accept="image/*" multiple
+                onChange={onEditFilesSelected} style={{display:"none"}}
+              />
+            </div>
+            {edit.newFiles.length > 0 && (
+              <div style={{fontSize:11, color:TH.accent, marginTop:8, fontWeight:600}}>
+                📤 {edit.newFiles.length} new photo{edit.newFiles.length > 1 ? 's' : ''} will be uploaded on save
+              </div>
+            )}
+            {(ins.photos?.length || 0) > edit.keptPhotos.length && (
+              <div style={{fontSize:11, color:"#e08080", marginTop:6, fontWeight:600}}>
+                🗑 {(ins.photos.length - edit.keptPhotos.length)} existing photo{(ins.photos.length - edit.keptPhotos.length) > 1 ? 's' : ''} will be deleted on save
+              </div>
+            )}
+          </div>
+
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-            <button onClick={() => { setEditMode(false); setEdit(null); }} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
+            <button onClick={cancelEdit} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
             <button onClick={saveEdit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? L.saving : L.saveChanges}</button>
           </div>
         </div>
