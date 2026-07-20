@@ -26,3 +26,4 @@ dist-ssr
 .env 
 .env.* 
 notepad.env.txt 
+upload_pkg/
