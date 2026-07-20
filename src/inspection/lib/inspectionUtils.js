@@ -396,94 +396,115 @@ function severityLabel(inspection, L) {
 }
 
 // Shared CSS used by both single & multi PDF outputs
+// Shared CSS: A4-sized "paper" pages that look right on-screen AND print perfect
 function afikStyles(rtl) {
   return `
-  @page { size: A4; margin: 20mm 16mm 22mm; }
-  @page :first { margin: 0; }
+  @page { size: A4; margin: 0; }
+
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: ${rtl ? "'Heebo', 'Vazirmatn', 'Arial Hebrew', Tahoma, sans-serif" : "'Inter', 'Helvetica Neue', Arial, sans-serif"};
-    color: #1a1a1a; background: #fff; font-size: 10.5pt; line-height: 1.55;
+    font-family: ${rtl ? "'Vazirmatn', 'Heebo', 'Arial Hebrew', Tahoma, sans-serif" : "'Inter', 'Helvetica Neue', Arial, sans-serif"};
+    color: #1a1a1a; background: #d5d5d5; font-size: 10.5pt; line-height: 1.55;
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; color: #0f2544; font-weight: 700; }
+  h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; color: #0f2544; font-weight: 700; margin: 0; }
 
-  /* Running header ribbon on every non-cover page */
-  .page-ribbon {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #0f2544; color: #fff; padding: 6px 14px;
-    font-size: 8.5pt; letter-spacing: 0.03em;
-    margin: -20mm -16mm 12mm; /* extend to edge */
+  /* A4 sheet — width 210mm, min-height 297mm. Padded inside so ribbon flows. */
+  .sheet {
+    width: 210mm; min-height: 297mm; background: #fff;
+    margin: 20px auto; padding: 18mm 16mm 20mm;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25); position: relative;
+    page-break-after: always; break-after: page;
+    display: flex; flex-direction: column;
   }
-  .page-ribbon .ribbon-left  { font-weight: 600; }
-  .page-ribbon .ribbon-right { opacity: 0.85; }
+  .sheet:last-child { page-break-after: auto; }
+  .sheet.cover { padding: 0; overflow: hidden; }
 
-  /* Cover page (fills first page fully) */
-  .cover { page-break-after: always; break-after: page; height: 297mm; padding: 26mm 20mm 20mm; position: relative; background: #fff; }
-  .cover-topband { border-top: 4px solid #C9A960; border-bottom: 1px solid #C9A960; padding: 12px 0; margin-bottom: 30mm; }
-  .cover-hse { font-family: 'Playfair Display', Georgia, serif; font-size: 42pt; font-weight: 800; letter-spacing: 0.35em; color: #0f2544; line-height: 1; }
-  .cover-afik { font-family: 'Inter', Arial, sans-serif; font-size: 13pt; color: #8B7A44; letter-spacing: 0.15em; font-weight: 700; margin-top: 6px; }
-  .cover-program { font-family: 'Playfair Display', Georgia, serif; font-size: 14pt; color: #0f2544; font-style: italic; margin-top: 18px; }
+  /* Ribbon INSIDE the sheet — no negative margins */
+  .ribbon {
+    background: #0f2544; color: #fff; padding: 7px 14px;
+    font-size: 8.5pt; letter-spacing: 0.03em;
+    display: flex; justify-content: space-between; align-items: center;
+    margin: -12mm -16mm 12mm; /* pull to sheet edges */
+  }
+  .ribbon .ribbon-left  { font-weight: 600; }
+  .ribbon .ribbon-right { opacity: 0.85; text-transform: uppercase; font-size: 8pt; }
 
-  .cover-project-name { font-family: 'Playfair Display', Georgia, serif; font-size: 34pt; font-weight: 800; color: #0f2544; letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 8px; }
+  .footer-bar {
+    margin-top: auto; padding-top: 8px;
+    border-top: 1px solid #ddd; display: flex; justify-content: space-between;
+    font-size: 8pt; color: #666;
+  }
+
+  /* Cover — full sheet, no padding, own layout */
+  .cover-inner { padding: 26mm 20mm 20mm; height: 297mm; display: flex; flex-direction: column; }
+  .cover-topband { border-top: 4px solid #C9A960; border-bottom: 1px solid #C9A960; padding: 14px 0 18px; margin-bottom: 22mm; }
+  .cover-hse   { font-family: 'Playfair Display', Georgia, serif; font-size: 44pt; font-weight: 800; letter-spacing: 0.35em; color: #0f2544; line-height: 1; }
+  .cover-afik  { font-family: 'Inter', Arial, sans-serif; font-size: 13pt; color: #8B7A44; letter-spacing: 0.15em; font-weight: 700; margin-top: 6px; }
+  .cover-program { font-family: 'Playfair Display', Georgia, serif; font-size: 14pt; color: #0f2544; font-style: italic; margin-top: 16px; }
+
+  .cover-project-name { font-family: 'Playfair Display', Georgia, serif; font-size: 30pt; font-weight: 800; color: #0f2544; letter-spacing: 0.02em; line-height: 1.15; margin-bottom: 10px; }
   .cover-project-sub  { font-size: 12pt; color: #333; margin-bottom: 4px; }
-  .cover-project-disc { font-size: 10pt; color: #8B7A44; letter-spacing: 0.05em; margin-bottom: 24mm; }
+  .cover-project-disc { font-size: 10pt; color: #8B7A44; letter-spacing: 0.05em; margin-bottom: 18mm; text-transform: uppercase; }
 
-  .cover-report-title { font-family: 'Playfair Display', Georgia, serif; font-size: 16pt; color: #0f2544; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #C9A960; }
+  .cover-report-title { font-family: 'Playfair Display', Georgia, serif; font-size: 15pt; color: #0f2544; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #C9A960; }
 
-  .cover-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; }
+  .cover-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
   .cover-table th { background: #0f2544; color: #fff; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px; text-align: ${rtl ? 'right' : 'left'}; font-weight: 700; }
-  .cover-table td { padding: 8px 12px; border-bottom: 1px solid #E6DFCC; font-size: 10pt; vertical-align: top; }
+  .cover-table td { padding: 7px 12px; border-bottom: 1px solid #E6DFCC; font-size: 10pt; vertical-align: top; }
   .cover-table td:first-child { background: #FAF6EC; color: #0f2544; font-weight: 700; width: 38%; }
 
-  .cover-footer { position: absolute; bottom: 20mm; left: 20mm; right: 20mm; padding-top: 10px; border-top: 1px solid #C9A960; font-size: 8.5pt; color: #666; display: flex; justify-content: space-between; }
+  .cover-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid #C9A960; font-size: 8.5pt; color: #666; display: flex; justify-content: space-between; }
 
   /* Section headings */
-  h1.doc-h1 { font-size: 18pt; color: #0f2544; margin: 4px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #0f2544; }
-  h2.doc-h2 { font-size: 14pt; color: #0f2544; margin: 22px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #C9A960; }
-  h3.doc-h3 { font-size: 12.5pt; color: #0f2544; margin: 16px 0 8px; }
+  h1.doc-h1 { font-size: 18pt; margin: 4px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #0f2544; }
+  h2.doc-h2 { font-size: 14pt; margin: 20px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #C9A960; }
+  h3.doc-h3 { font-size: 12.5pt; margin: 14px 0 8px; }
 
-  /* Severity/category strip under finding title */
-  .sev-strip { display: flex; gap: 18px; align-items: center; margin: 4px 0 12px; font-size: 10pt; }
+  /* Severity strip under finding title */
+  .sev-strip { display: flex; gap: 16px; align-items: center; margin: 4px 0 12px; font-size: 10pt; flex-wrap: wrap; }
   .sev-label { font-weight: 700; letter-spacing: 0.04em; }
   .sev-pill  { display: inline-block; padding: 2px 9px; border-radius: 3px; font-size: 9.5pt; font-weight: 800; letter-spacing: 0.05em; }
   .cat-text  { color: #555; }
+  .code-mono { font-family: 'Courier New', monospace; font-size: 9pt; color: #666; margin-${rtl ? 'right' : 'left'}: auto; }
 
   /* Element / Detail table */
-  .ed-table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 10pt; page-break-inside: auto; }
+  .ed-table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 10pt; }
   .ed-table th { background: #E9EEF5; color: #0f2544; font-weight: 700; padding: 8px 12px; text-align: ${rtl ? 'right' : 'left'}; font-size: 9.5pt; border: 1px solid #D5DEE9; }
   .ed-table td { padding: 9px 12px; border: 1px solid #D5DEE9; vertical-align: top; }
   .ed-table td.ed-key { background: #E9EEF5; color: #0f2544; font-weight: 700; width: 30%; font-size: 9.5pt; }
-  .ed-table td.ed-val { white-space: pre-wrap; }
+  .ed-table td.ed-val { white-space: pre-wrap; word-wrap: break-word; }
   .ed-table tr { page-break-inside: avoid; }
 
   /* Executive dashboard */
-  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0 16px; }
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0 16px; }
   .dash-panel { border: 1px solid #E6DFCC; border-radius: 4px; overflow: hidden; }
-  .dash-panel h4 { margin: 0; background: #FAF6EC; color: #0f2544; font-family: 'Playfair Display', Georgia, serif; font-size: 11pt; padding: 8px 12px; border-bottom: 1px solid #E6DFCC; }
+  .dash-panel h4 { background: #FAF6EC; color: #0f2544; font-family: 'Playfair Display', Georgia, serif; font-size: 11pt; padding: 8px 12px; border-bottom: 1px solid #E6DFCC; }
   .sev-counts { display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; }
-  .sev-counts > div { padding: 12px 6px; border-${rtl ? 'left' : 'right'}: 1px solid #E6DFCC; }
-  .sev-counts > div:last-child { border-${rtl ? 'left' : 'right'}: none; background: #FAF6EC; }
+  .sev-counts > div { padding: 12px 4px; border-${rtl ? 'left' : 'right'}: 1px solid #E6DFCC; }
+  .sev-counts > div:last-child { border: none; background: #FAF6EC; }
   .sev-counts .count-num { font-family: 'Playfair Display', Georgia, serif; font-size: 22pt; font-weight: 700; line-height: 1; }
-  .sev-counts .count-lbl { font-size: 8.5pt; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+  .sev-counts .count-lbl { font-size: 8pt; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
   .disc-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
   .disc-table td { padding: 6px 12px; border-bottom: 1px solid #F3EFE3; }
   .disc-table td:last-child { text-align: ${rtl ? 'left' : 'right'}; font-weight: 700; }
 
   .headline-box { background: #FAF6EC; border-${rtl ? 'right' : 'left'}: 4px solid #0f2544; padding: 12px 16px; margin: 10px 0 16px; font-size: 10.5pt; line-height: 1.6; }
 
-  /* Photos grid */
-  .photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; page-break-inside: auto; }
+  /* Photos grid — 3 cols, uniform size */
+  .photos-section { margin-top: 12px; page-break-inside: auto; }
+  .photos-header { font-size: 9.5pt; font-weight: 700; color: #0f2544; margin-bottom: 6px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .photo-item  { page-break-inside: avoid; break-inside: avoid; text-align: center; }
-  .photo-item img { width: 100%; height: 55mm; object-fit: cover; border: 1px solid #ddd; border-radius: 2px; }
-  .photo-caption { font-size: 8.5pt; color: #444; margin-top: 3px; font-style: italic; padding: 0 3px; line-height: 1.35; }
+  .photo-item img { width: 100%; height: 52mm; object-fit: cover; border: 1px solid #d5d5d5; border-radius: 2px; display: block; }
+  .photo-caption { font-size: 8pt; color: #444; margin-top: 3px; font-style: italic; line-height: 1.3; }
 
   /* Risk matrix */
   .risk-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin: 10px 0; }
   .risk-table th { background: #0f2544; color: #fff; padding: 8px 10px; text-align: ${rtl ? 'right' : 'left'}; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.04em; }
   .risk-table td { padding: 7px 10px; border-bottom: 1px solid #E6DFCC; vertical-align: top; }
-  .risk-table td.ref-cell { font-family: monospace; color: #666; font-size: 9pt; font-weight: 700; width: 60px; }
+  .risk-table td.ref-cell { font-family: 'Courier New', monospace; color: #666; font-size: 8.5pt; font-weight: 700; }
   .risk-table td.overall-cell { text-align: center; font-weight: 800; letter-spacing: 0.05em; }
 
   /* Action plan */
@@ -492,7 +513,7 @@ function afikStyles(rtl) {
   .plan-table td { padding: 10px 12px; border-bottom: 1px solid #E6DFCC; vertical-align: top; }
   .plan-priority { font-weight: 800; color: #0f2544; letter-spacing: 0.03em; }
 
-  /* Summary + misc */
+  /* Summary */
   .summary-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 9.5pt; }
   .summary-table th { background: #0f2544; color: #fff; padding: 8px 10px; text-align: ${rtl ? 'right' : 'left'}; font-size: 9pt; }
   .summary-table td { padding: 7px 10px; border-bottom: 1px solid #E6DFCC; vertical-align: top; }
@@ -504,36 +525,53 @@ function afikStyles(rtl) {
   .safety-item { margin-bottom: 6px; }
   .safety-src  { font-size: 8.5pt; color: #666; }
 
-  .finding-block { page-break-before: always; break-before: page; }
-  .no-break { page-break-inside: avoid; break-inside: avoid; }
-
-  .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; page-break-inside: avoid; }
+  .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; page-break-inside: avoid; }
   .sig-block { border-top: 1px solid #999; padding-top: 6px; }
   .sig-label { font-size: 9pt; color: #666; }
   .sig-name  { font-size: 11pt; font-weight: 600; margin-top: 2px; }
 
-  .print-toolbar {
-    position: fixed; top: 10px; ${rtl ? 'left' : 'right'}: 10px;
-    background: #0f2544; color: #fff; padding: 8px 14px; border-radius: 6px;
-    font-family: sans-serif; font-size: 11pt; font-weight: 700; z-index: 999;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  .prose { white-space: pre-wrap; line-height: 1.65; color: #222; font-size: 10.5pt; }
+
+  /* Toolbar — fixed, two buttons */
+  .toolbar {
+    position: fixed; top: 12px; ${rtl ? 'left' : 'right'}: 12px;
+    display: flex; gap: 8px; z-index: 9999;
+    background: rgba(255,255,255,0.95); padding: 8px; border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
   }
-  .print-toolbar button { background: #C9A960; color: #000; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: 700; margin-${rtl ? 'right' : 'left'}: 8px; }
-  @media print { .print-toolbar { display: none; } }
+  .toolbar button {
+    border: none; padding: 10px 16px; border-radius: 6px;
+    font-family: inherit; font-size: 12pt; font-weight: 700;
+    cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: transform 0.1s;
+  }
+  .toolbar button:hover { transform: translateY(-1px); }
+  .toolbar button:active { transform: translateY(0); }
+  .toolbar .btn-download { background: #0f2544; color: #fff; }
+  .toolbar .btn-print    { background: #C9A960; color: #000; }
+  .toolbar .btn-close    { background: #eee; color: #333; padding: 10px 12px; }
+  .toolbar .toolbar-status { font-size: 10pt; color: #666; padding: 8px 4px 0; }
+
+  @media print {
+    body { background: #fff; }
+    .sheet { margin: 0; box-shadow: none; padding: 18mm 16mm 20mm; }
+    .sheet.cover { padding: 0; }
+    .toolbar { display: none !important; }
+  }
   `;
 }
 
-// Photo grid with numbered captions ("Photo 02A-01 — …")
+// Photo grid with numbered captions
 function renderPhotosBlock(photos, L, insCode) {
   if (!photos || !photos.length) return '';
   const codePrefix = insCode ? insCode.replace(/^HSE-POOLS-/, '').replace(/^POOL-/, '').replace(/^PROP-/, '').replace(/^REF-/, '') : '';
   return `
-    <div class="no-break" style="margin-top:10px;">
-      <div style="font-size:9.5pt;font-weight:700;color:#0f2544;margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase;">${esc(L.evidence)} · ${esc(L.photos)} (${photos.length})</div>
+    <div class="photos-section">
+      <div class="photos-header">${esc(L.evidence)} · ${esc(L.photos)} (${photos.length})</div>
       <div class="photos-grid">
         ${photos.map((url, i) => `
           <div class="photo-item">
-            <img src="${esc(url)}" alt="${esc(L.photo)} ${i+1}" />
+            <img src="${esc(url)}" alt="${esc(L.photo)} ${i+1}" crossorigin="anonymous" />
             <div class="photo-caption"><b>${esc(L.photo)} ${codePrefix ? codePrefix + '-' : ''}${String(i+1).padStart(2,'0')}</b></div>
           </div>
         `).join('')}
@@ -552,16 +590,11 @@ function renderFindingTable(inspection, L) {
     { key: L.elemConfirmed, val: parsed.confirmed },
     { key: L.elemAction,    val: inspection.action_required || '' },
   ].filter(r => r.val && r.val.trim());
-
   if (!rows.length) return '';
-
   return `
     <table class="ed-table">
       <thead>
-        <tr>
-          <th style="width:30%;">${esc(L.elemLbl)}</th>
-          <th>${esc(L.detailLbl)}</th>
-        </tr>
+        <tr><th style="width:30%;">${esc(L.elemLbl)}</th><th>${esc(L.detailLbl)}</th></tr>
       </thead>
       <tbody>
         ${rows.map(r => `
@@ -574,9 +607,9 @@ function renderFindingTable(inspection, L) {
     </table>`;
 }
 
-// ─── Finding-section renderer (used by both single & multi) ─────
+// Finding section (used inside a sheet, or as its own sheet)
 function renderFindingSection(inspection, L, opts = {}) {
-  const { withPageBreak = false, index = null, total = null } = opts;
+  const { index = null, total = null } = opts;
   const categoryMeta = CATEGORIES[inspection.category] || null;
   const catLabel = categoryMeta?.label || inspection.category || '';
   const subLabel = categoryMeta?.subcategories?.[inspection.subcategory] || inspection.subcategory || '';
@@ -586,37 +619,84 @@ function renderFindingSection(inspection, L, opts = {}) {
   const catText = [catLabel, subLabel].filter(Boolean).join(' / ');
 
   return `
-    <div class="${withPageBreak ? 'finding-block' : ''}">
-      <h3 class="doc-h3">${esc(indexStr)}${esc(title)}</h3>
-      <div class="sev-strip">
-        <span><span class="sev-label">${esc(L.severity)}:</span>
-          <span class="sev-pill" style="background:${sev.bg};color:${sev.color};">${esc(sev.label)}</span>
-        </span>
-        ${catText ? `<span class="cat-text"><b>${esc(L.category)}:</b> ${esc(catText)}</span>` : ''}
-        <span class="cat-text" style="margin-${L.dir==='rtl'?'right':'left'}:auto;font-family:monospace;font-size:9pt;">${esc(inspection.inspection_no || '')}</span>
+    <h3 class="doc-h3">${esc(indexStr)}${esc(title)}</h3>
+    <div class="sev-strip">
+      <span><span class="sev-label">${esc(L.severity)}:</span>
+        <span class="sev-pill" style="background:${sev.bg};color:${sev.color};">${esc(sev.label)}</span>
+      </span>
+      ${catText ? `<span class="cat-text"><b>${esc(L.category)}:</b> ${esc(catText)}</span>` : ''}
+      <span class="code-mono">${esc(inspection.inspection_no || '')}</span>
+    </div>
+
+    ${renderFindingTable(inspection, L)}
+
+    ${inspection.resolution_note ? `
+      <div class="resolution-box"><b>${esc(L.resolution)}${inspection.resolved_at ? ' — ' + esc(new Date(inspection.resolved_at).toLocaleDateString(L.dir==='rtl'?'he-IL':'en-GB')) : ''}:</b> ${esc(inspection.resolution_note)}</div>
+    ` : ''}
+
+    ${categoryMeta?.warnings?.length ? `
+      <div class="safety-box">
+        <div style="font-size:9pt;font-weight:800;color:#8B5A00;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${esc(L.safety)}</div>
+        ${categoryMeta.warnings.map(w => `
+          <div class="safety-item">⚠ ${esc(w.text)}<div class="safety-src">— ${esc(w.source)}</div></div>
+        `).join('')}
       </div>
+    ` : ''}
 
-      ${renderFindingTable(inspection, L)}
+    ${renderPhotosBlock(inspection.photos, L, inspection.inspection_no)}
+  `;
+}
 
-      ${inspection.action_required && !parseStructuredReport(inspection.report).observed ? `
-        <div class="action-box"><b>${esc(L.actionRequired)}:</b> ${esc(inspection.action_required)}</div>
-      ` : ''}
-
-      ${inspection.resolution_note ? `
-        <div class="resolution-box"><b>${esc(L.resolution)}${inspection.resolved_at ? ' — ' + esc(new Date(inspection.resolved_at).toLocaleDateString(L.dir==='rtl'?'he-IL':'en-GB')) : ''}:</b> ${esc(inspection.resolution_note)}</div>
-      ` : ''}
-
-      ${categoryMeta?.warnings?.length ? `
-        <div class="safety-box">
-          <div style="font-size:9pt;font-weight:800;color:#8B5A00;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${esc(L.safety)}</div>
-          ${categoryMeta.warnings.map(w => `
-            <div class="safety-item">⚠ ${esc(w.text)}<div class="safety-src">— ${esc(w.source)}</div></div>
-          `).join('')}
-        </div>
-      ` : ''}
-
-      ${renderPhotosBlock(inspection.photos, L, inspection.inspection_no)}
-    </div>`;
+// Toolbar HTML — Download PDF + Print
+function toolbarHtml(langCode, filename) {
+  const dl = langCode === 'he' ? 'הורדת PDF' : langCode === 'fa' ? 'دانلود PDF' : 'Download PDF';
+  const pr = langCode === 'he' ? 'הדפסה' : langCode === 'fa' ? 'چاپ' : 'Print';
+  const cl = langCode === 'he' ? 'סגור' : langCode === 'fa' ? 'بستن' : 'Close';
+  return `
+    <div class="toolbar" id="pdf-toolbar">
+      <button class="btn-download" onclick="downloadPDF()">📥 ${dl}</button>
+      <button class="btn-print" onclick="window.print()">🖨️ ${pr}</button>
+      <button class="btn-close" onclick="window.close()" title="${cl}">✕</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      async function downloadPDF() {
+        const btn = document.querySelector('.btn-download');
+        const originalText = btn.textContent;
+        btn.textContent = '⏳ ${langCode === 'he' ? 'מכין...' : langCode === 'fa' ? 'در حال آماده‌سازی...' : 'Preparing...'}';
+        btn.disabled = true;
+        // Hide toolbar during capture
+        document.getElementById('pdf-toolbar').style.display = 'none';
+        try {
+          const el = document.getElementById('doc-root');
+          await html2pdf().set({
+            margin: 0,
+            filename: ${JSON.stringify(filename)},
+            image: { type: 'jpeg', quality: 0.95 },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true, backgroundColor: '#fff' },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'] }
+          }).from(el).save();
+        } catch (e) {
+          alert('Download failed: ' + e.message);
+        }
+        document.getElementById('pdf-toolbar').style.display = '';
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+      // Preload images before letting user act
+      (function() {
+        const imgs = document.images;
+        if (imgs.length === 0) return;
+        let loaded = 0;
+        for (const img of imgs) {
+          if (img.complete) loaded++;
+          else img.addEventListener('load', () => loaded++);
+          img.addEventListener('error', () => loaded++);
+        }
+      })();
+    </script>
+  `;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -634,10 +714,17 @@ export function openInspectionPDF(inspection, ctx = {}, langCode = 'en') {
   const dateStr = visitDate ? new Date(visitDate).toLocaleDateString(locale, { year:'numeric', month:'long', day:'2-digit' }) : '—';
   const docRef = inspection.inspection_no || '—';
   const reportTitle = inspection.title || '—';
+  const filename = `${docRef}.pdf`.replace(/[^\w.-]/g, '_');
 
-  const ribbon = `<div class="page-ribbon">
+  const ribbonHtml = `<div class="ribbon">
     <span class="ribbon-left">HSE · ${esc(L.afikGroup)} — ${esc(reportTitle)}</span>
     <span class="ribbon-right">${esc(L.footerClassification)}</span>
+  </div>`;
+
+  const footerHtml = `<div class="footer-bar">
+    <span>${esc(docRef)}</span>
+    <span>${esc(L.footerBrand)}</span>
+    <span>${esc(L.footerClassification)}</span>
   </div>`;
 
   const html = `<!doctype html>
@@ -651,80 +738,68 @@ export function openInspectionPDF(inspection, ctx = {}, langCode = 'en') {
 <style>${afikStyles(rtl)}</style>
 </head>
 <body>
-  <div class="print-toolbar">
-    ${langCode === 'he' ? 'שמור כ־PDF' : langCode === 'fa' ? 'ذخیره PDF' : 'Save as PDF'}
-    <button onclick="window.print()">${langCode === 'he' ? 'הדפס' : langCode === 'fa' ? 'چاپ' : 'Print / PDF'}</button>
-  </div>
+  ${toolbarHtml(langCode, filename)}
 
-  <!-- ═════════ COVER ═════════ -->
-  <div class="cover">
-    <div class="cover-topband">
-      <div class="cover-hse">H S E</div>
-      <div class="cover-afik">${esc(L.afikGroup)}</div>
-      <div class="cover-program">${esc(L.programTitle)}</div>
+  <div id="doc-root">
+    <!-- COVER SHEET -->
+    <div class="sheet cover">
+      <div class="cover-inner">
+        <div class="cover-topband">
+          <div class="cover-hse">H S E</div>
+          <div class="cover-afik">${esc(L.afikGroup)}</div>
+          <div class="cover-program">${esc(L.programTitle)}</div>
+        </div>
+
+        <div class="cover-project-name">${esc(property).toUpperCase()}</div>
+        <div class="cover-project-sub">${esc(area)}${inspection.location_note ? ' — ' + esc(inspection.location_note) : ''}</div>
+        <div class="cover-project-disc">${esc(L.disciplines)}</div>
+
+        <div class="cover-report-title">${esc(L.reportType)}</div>
+        <table class="cover-table">
+          <thead><tr><th style="width:38%;">${esc(L.coverFieldLbl)}</th><th>${esc(L.coverDetailLbl)}</th></tr></thead>
+          <tbody>
+            <tr><td>${esc(L.coverProjectLbl)}</td><td>${esc(reportTitle)}</td></tr>
+            <tr><td>${esc(L.coverPreparedForLbl)}</td><td>${esc(companion || L.afikGroup)}</td></tr>
+            <tr><td>${esc(L.coverDocRefLbl)}</td><td style="font-family:'Courier New',monospace;">${esc(docRef)}</td></tr>
+            <tr><td>${esc(L.coverDateLbl)}</td><td>${esc(dateStr)}</td></tr>
+            <tr><td>${esc(L.coverClassificationLbl)}</td><td>${esc(L.coverClassificationVal)}</td></tr>
+            <tr><td>${esc(L.coverReportTypeLbl)}</td><td>${esc(L.reportType)}</td></tr>
+            <tr><td>${esc(L.inspector)}</td><td>${esc(inspectorName)}</td></tr>
+          </tbody>
+        </table>
+
+        <div class="cover-footer">
+          <span>${esc(docRef)}</span>
+          <span>${esc(L.footerBrand)}</span>
+          <span>${esc(L.footerClassification)}</span>
+        </div>
+      </div>
     </div>
 
-    <div class="cover-project-name">${esc(property).toUpperCase()}</div>
-    <div class="cover-project-sub">${esc(area)}${inspection.location_note ? ' — ' + esc(inspection.location_note) : ''}</div>
-    <div class="cover-project-disc">${esc(L.disciplines)}</div>
+    <!-- FINDING SHEET -->
+    <div class="sheet">
+      ${ribbonHtml}
+      <h1 class="doc-h1">${esc(L.sectionFindings)}</h1>
+      ${renderFindingSection(inspection, L)}
 
-    <div class="cover-report-title">${esc(L.reportType)}</div>
-    <table class="cover-table">
-      <thead>
-        <tr><th style="width:38%;">${esc(L.coverFieldLbl)}</th><th>${esc(L.coverDetailLbl)}</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>${esc(L.coverProjectLbl)}</td><td>${esc(reportTitle)}</td></tr>
-        <tr><td>${esc(L.coverPreparedForLbl)}</td><td>${esc(companion || L.afikGroup)}</td></tr>
-        <tr><td>${esc(L.coverDocRefLbl)}</td><td style="font-family:monospace;">${esc(docRef)}</td></tr>
-        <tr><td>${esc(L.coverDateLbl)}</td><td>${esc(dateStr)}</td></tr>
-        <tr><td>${esc(L.coverClassificationLbl)}</td><td>${esc(L.coverClassificationVal)}</td></tr>
-        <tr><td>${esc(L.coverReportTypeLbl)}</td><td>${esc(L.reportType)}</td></tr>
-        <tr><td>${esc(L.inspector)}</td><td>${esc(inspectorName)}</td></tr>
-      </tbody>
-    </table>
+      <div class="signatures">
+        <div class="sig-block">
+          <div class="sig-label">${esc(L.signature)}</div>
+          <div class="sig-name">${esc(inspectorName)}</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-label">${esc(L.chief)}${companion ? ' / ' + esc(L.companion) : ''}</div>
+          <div class="sig-name">${companion ? esc(companion) : '&nbsp;'}</div>
+        </div>
+      </div>
 
-    <div class="cover-footer">
-      <span>${esc(docRef)}</span>
-      <span>${esc(L.footerBrand)}</span>
-      <span>${esc(L.footerClassification)}</span>
+      ${footerHtml}
     </div>
   </div>
-
-  <!-- ═════════ BODY ═════════ -->
-  ${ribbon}
-  <h1 class="doc-h1">${esc(L.sectionFindings)}</h1>
-  ${renderFindingSection(inspection, L, { withPageBreak: false })}
-
-  <div class="signatures">
-    <div class="sig-block">
-      <div class="sig-label">${esc(L.signature)}</div>
-      <div class="sig-name">${esc(inspectorName)}</div>
-    </div>
-    <div class="sig-block">
-      <div class="sig-label">${esc(L.chief)}${companion ? ' / ' + esc(L.companion) : ''}</div>
-      <div class="sig-name">${companion ? esc(companion) : '&nbsp;'}</div>
-    </div>
-  </div>
-
-  <div style="margin-top:30px;text-align:center;font-size:8pt;color:#999;border-top:1px solid #eee;padding-top:8px;">
-    ${esc(L.footerBrand)} · ${esc(docRef)}
-  </div>
-
-  <script>
-    (function() {
-      let imgs = document.images, count = imgs.length, loaded = 0;
-      if (count === 0) return;
-      for (let i = 0; i < count; i++) {
-        if (imgs[i].complete) loaded++;
-        else imgs[i].onload = imgs[i].onerror = () => { loaded++; };
-      }
-    })();
-  </script>
 </body>
 </html>`;
 
-  const w = window.open('', '_blank', 'width=900,height=1100');
+  const w = window.open('', '_blank', 'width=1100,height=1200');
   if (!w) {
     alert(langCode === 'he' ? 'הדפדפן חסם את החלון. אנא אפשר חלונות קופצים.' :
           langCode === 'fa' ? 'مرورگر پنجره را مسدود کرد. لطفاً پاپ‌آپ‌ها را مجاز کنید.' :
@@ -737,9 +812,7 @@ export function openInspectionPDF(inspection, ctx = {}, langCode = 'en') {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// openLocationPDF — full corporate report of ALL inspections in one
-// visit/location: cover + executive dashboard + summary + one section
-// per finding + risk matrix + priority action plan + conclusion
+// openLocationPDF — full corporate report of ALL inspections
 // ═══════════════════════════════════════════════════════════════════
 export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
   if (!inspections || inspections.length === 0) return;
@@ -754,7 +827,6 @@ export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
   const area = ctx.area?.name || '—';
   const locNote = first.location_note || '';
 
-  // Inspectors & companions
   const inspectorSet = new Set();
   const companionSet = new Set();
   inspections.forEach(i => {
@@ -765,7 +837,6 @@ export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
   const inspectorsStr = [...inspectorSet].join(', ') || '—';
   const companionsStr = [...companionSet].join(', ');
 
-  // Date range
   const dates = inspections.map(i => new Date(i.visit_at || i.visit_date || i.created_at));
   const minD = new Date(Math.min(...dates));
   const maxD = new Date(Math.max(...dates));
@@ -773,19 +844,17 @@ export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
     ? minD.toLocaleDateString(locale, { year:'numeric', month:'long', day:'2-digit' })
     : `${minD.toLocaleDateString(locale)} — ${maxD.toLocaleDateString(locale)}`;
 
-  // Reference code from first inspection prefix
   const docRefBase = (first.inspection_no || 'INS').replace(/-?\d+[A-Z]?$/i, '') || 'INS';
   const docRef = `${docRefBase}-REPORT`;
   const reportTitle = `${property}${area && area !== '—' ? ' — ' + area : ''}${locNote ? ' — ' + locNote : ''}`;
+  const filename = `${docRef}.pdf`.replace(/[^\w.-]/g, '_');
 
-  // Severity counts
   const sevCounts = { critical: 0, high: 0, medium: 0, low: 0 };
   inspections.forEach(i => {
     const p = i.priority || 'medium';
     if (sevCounts[p] != null) sevCounts[p]++;
   });
 
-  // Discipline (category) counts
   const discMap = new Map();
   inspections.forEach(i => {
     const cat = i.category || '—';
@@ -797,19 +866,21 @@ export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
   });
   const worstToLabel = (n) => n >= 4 ? L.priorityCritical : n >= 3 ? L.priorityHigh : n >= 2 ? L.priorityMedium : L.priorityLow;
 
-  // Ribbon
-  const ribbon = `<div class="page-ribbon">
+  const ribbonHtml = `<div class="ribbon">
     <span class="ribbon-left">HSE · ${esc(L.afikGroup)} — ${esc(property)} ${esc(L.sectionFindings)}</span>
     <span class="ribbon-right">${esc(L.footerClassification)}</span>
   </div>`;
 
-  // Priority-group breakdown for the action plan
   const priorityGroups = {
     p1: inspections.filter(i => i.priority === 'critical'),
     p2: inspections.filter(i => i.priority === 'high'),
     p3: inspections.filter(i => i.priority === 'medium'),
     p4: inspections.filter(i => i.priority === 'low' || !i.priority),
   };
+
+  const conclusionText = sevCounts.critical > 0
+    ? `The assessment identified ${inspections.length} findings across ${discMap.size} disciplines at ${property}${area && area !== '—' ? ' — ' + area : ''}. Of these, ${sevCounts.critical} are Critical, warranting immediate action ahead of the normal capital-planning cycle. Delivering the phased action plan — immediate make-safe measures, then standardization and preventive controls — will materially reduce the identified life-safety, operational, financial and asset risks, and provide management with a defensible basis for capital planning.`
+    : `The assessment identified ${inspections.length} findings across ${discMap.size} disciplines at ${property}${area && area !== '—' ? ' — ' + area : ''}. Address items within the phased plan to reduce risk and support sound capital planning.`;
 
   const html = `<!doctype html>
 <html lang="${langCode}" dir="${L.dir}">
@@ -822,142 +893,142 @@ export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
 <style>${afikStyles(rtl)}</style>
 </head>
 <body>
-  <div class="print-toolbar">
-    ${langCode === 'he' ? 'שמור כ־PDF' : langCode === 'fa' ? 'ذخیره PDF' : 'Save as PDF'}
-    <button onclick="window.print()">${langCode === 'he' ? 'הדפס' : langCode === 'fa' ? 'چاپ' : 'Print / PDF'}</button>
-  </div>
+  ${toolbarHtml(langCode, filename)}
 
-  <!-- ═════════ COVER PAGE ═════════ -->
-  <div class="cover">
-    <div class="cover-topband">
-      <div class="cover-hse">H S E</div>
-      <div class="cover-afik">${esc(L.afikGroup)}</div>
-      <div class="cover-program">${esc(L.programTitle)}</div>
-    </div>
+  <div id="doc-root">
+    <!-- COVER -->
+    <div class="sheet cover">
+      <div class="cover-inner">
+        <div class="cover-topband">
+          <div class="cover-hse">H S E</div>
+          <div class="cover-afik">${esc(L.afikGroup)}</div>
+          <div class="cover-program">${esc(L.programTitle)}</div>
+        </div>
+        <div class="cover-project-name">${esc(property).toUpperCase()}</div>
+        <div class="cover-project-sub">${esc(area)}${locNote ? ' — ' + esc(locNote) : ''}</div>
+        <div class="cover-project-disc">${esc(L.disciplines)}</div>
 
-    <div class="cover-project-name">${esc(property).toUpperCase()}</div>
-    <div class="cover-project-sub">${esc(area)}${locNote ? ' — ' + esc(locNote) : ''}</div>
-    <div class="cover-project-disc">${esc(L.disciplines)}</div>
-
-    <div class="cover-report-title">${esc(L.reportType)}</div>
-    <table class="cover-table">
-      <thead>
-        <tr><th style="width:38%;">${esc(L.coverFieldLbl)}</th><th>${esc(L.coverDetailLbl)}</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>${esc(L.coverProjectLbl)}</td><td>${esc(reportTitle)}</td></tr>
-        <tr><td>${esc(L.coverPreparedForLbl)}</td><td>${esc(companionsStr || L.afikGroup)}</td></tr>
-        <tr><td>${esc(L.coverDocRefLbl)}</td><td style="font-family:monospace;">${esc(docRef)}</td></tr>
-        <tr><td>${esc(L.coverDateLbl)}</td><td>${esc(dateStr)}</td></tr>
-        <tr><td>${esc(L.coverClassificationLbl)}</td><td>${esc(L.coverClassificationVal)}</td></tr>
-        <tr><td>${esc(L.coverReportTypeLbl)}</td><td>${esc(L.reportType)}</td></tr>
-        <tr><td>${esc(L.inspector)}</td><td>${esc(inspectorsStr)}</td></tr>
-      </tbody>
-    </table>
-
-    <div class="cover-footer">
-      <span>${esc(docRef)}</span>
-      <span>${esc(L.footerBrand)}</span>
-      <span>${esc(L.footerClassification)}</span>
-    </div>
-  </div>
-
-  <!-- ═════════ EXECUTIVE DASHBOARD ═════════ -->
-  ${ribbon}
-  <h1 class="doc-h1">${esc(L.dashTitle)}</h1>
-
-  <div class="dash-grid">
-    <div class="dash-panel">
-      <h4>${esc(L.dashBySeverity)}</h4>
-      <div class="sev-counts">
-        <div><div class="count-num" style="color:#C43D3D;">${sevCounts.critical}</div><div class="count-lbl">${esc(L.priorityCritical)}</div></div>
-        <div><div class="count-num" style="color:#E67A2C;">${sevCounts.high}</div><div class="count-lbl">${esc(L.priorityHigh)}</div></div>
-        <div><div class="count-num" style="color:#B8862C;">${sevCounts.medium}</div><div class="count-lbl">${esc(L.priorityMedium)}</div></div>
-        <div><div class="count-num" style="color:#7A9A5B;">${sevCounts.low}</div><div class="count-lbl">${esc(L.priorityLow)}</div></div>
-        <div><div class="count-num" style="color:#0f2544;">${inspections.length}</div><div class="count-lbl">${esc(L.total)}</div></div>
+        <div class="cover-report-title">${esc(L.reportType)}</div>
+        <table class="cover-table">
+          <thead><tr><th style="width:38%;">${esc(L.coverFieldLbl)}</th><th>${esc(L.coverDetailLbl)}</th></tr></thead>
+          <tbody>
+            <tr><td>${esc(L.coverProjectLbl)}</td><td>${esc(reportTitle)}</td></tr>
+            <tr><td>${esc(L.coverPreparedForLbl)}</td><td>${esc(companionsStr || L.afikGroup)}</td></tr>
+            <tr><td>${esc(L.coverDocRefLbl)}</td><td style="font-family:'Courier New',monospace;">${esc(docRef)}</td></tr>
+            <tr><td>${esc(L.coverDateLbl)}</td><td>${esc(dateStr)}</td></tr>
+            <tr><td>${esc(L.coverClassificationLbl)}</td><td>${esc(L.coverClassificationVal)}</td></tr>
+            <tr><td>${esc(L.coverReportTypeLbl)}</td><td>${esc(L.reportType)}</td></tr>
+            <tr><td>${esc(L.inspector)}</td><td>${esc(inspectorsStr)}</td></tr>
+          </tbody>
+        </table>
+        <div class="cover-footer">
+          <span>${esc(docRef)}</span>
+          <span>${esc(L.footerBrand)}</span>
+          <span>${esc(L.footerClassification)}</span>
+        </div>
       </div>
     </div>
-    <div class="dash-panel">
-      <h4>${esc(L.dashByDiscipline)}</h4>
-      <table class="disc-table">
+
+    <!-- EXECUTIVE DASHBOARD SHEET -->
+    <div class="sheet">
+      ${ribbonHtml}
+      <h1 class="doc-h1">${esc(L.dashTitle)}</h1>
+      <div class="dash-grid">
+        <div class="dash-panel">
+          <h4>${esc(L.dashBySeverity)}</h4>
+          <div class="sev-counts">
+            <div><div class="count-num" style="color:#C43D3D;">${sevCounts.critical}</div><div class="count-lbl">${esc(L.priorityCritical)}</div></div>
+            <div><div class="count-num" style="color:#E67A2C;">${sevCounts.high}</div><div class="count-lbl">${esc(L.priorityHigh)}</div></div>
+            <div><div class="count-num" style="color:#B8862C;">${sevCounts.medium}</div><div class="count-lbl">${esc(L.priorityMedium)}</div></div>
+            <div><div class="count-num" style="color:#7A9A5B;">${sevCounts.low}</div><div class="count-lbl">${esc(L.priorityLow)}</div></div>
+            <div><div class="count-num" style="color:#0f2544;">${inspections.length}</div><div class="count-lbl">${esc(L.total)}</div></div>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <h4>${esc(L.dashByDiscipline)}</h4>
+          <table class="disc-table">
+            <tbody>
+              ${[...discMap.entries()].map(([cat, rec]) => {
+                const cm = CATEGORIES[cat];
+                const label = cm?.label || cat;
+                const icon = cm?.icon || '•';
+                return `<tr>
+                  <td>${esc(icon)} ${esc(label)}</td>
+                  <td>${rec.count}</td>
+                  <td>${esc(worstToLabel(rec.worst))}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <h2 class="doc-h2">${esc(L.dashHeadline)}</h2>
+      <div class="headline-box">
+        ${sevCounts.critical > 0
+          ? `${sevCounts.critical} ${sevCounts.critical > 1 ? 'critical findings' : 'critical finding'} require immediate action ahead of the normal planning cycle. Together with ${sevCounts.high} high-severity ${sevCounts.high === 1 ? 'finding' : 'findings'}, this indicates a credible and present risk warranting urgent, structured intervention.`
+          : sevCounts.high > 0
+            ? `${sevCounts.high} high-severity ${sevCounts.high === 1 ? 'finding' : 'findings'} identified. Prioritized action within the near-term programme is recommended.`
+            : 'No critical or high-severity findings identified. Address items within the standardization and maintenance programme.'}
+      </div>
+
+      <h2 class="doc-h2">${esc(L.sectionSummaryTable)}</h2>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th style="width:40px;">#</th>
+            <th style="width:110px;">${esc(L.inspectionNo)}</th>
+            <th>${esc(L.finding)}</th>
+            <th style="width:110px;">${esc(L.category)}</th>
+            <th style="width:80px;">${esc(L.priority)}</th>
+          </tr>
+        </thead>
         <tbody>
-          ${[...discMap.entries()].map(([cat, rec]) => {
-            const cm = CATEGORIES[cat];
-            const label = cm?.label || cat;
-            const icon = cm?.icon || '•';
+          ${inspections.map((ins, idx) => {
+            const sev = severityLabel(ins, L);
+            const cm = CATEGORIES[ins.category];
             return `<tr>
-              <td>${esc(icon)} ${esc(label)}</td>
-              <td>${rec.count}</td>
-              <td>${esc(worstToLabel(rec.worst))}</td>
+              <td style="font-weight:700;color:#0f2544;">${idx + 1}</td>
+              <td style="font-family:'Courier New',monospace;font-size:9pt;color:#666;">${esc(ins.inspection_no || '')}</td>
+              <td>${esc(ins.title || '—')}</td>
+              <td>${cm ? esc(cm.icon + ' ' + cm.label) : esc(ins.category || '—')}</td>
+              <td><span class="sev-pill" style="background:${sev.bg};color:${sev.color};font-size:8.5pt;">${esc(sev.label)}</span></td>
             </tr>`;
           }).join('')}
         </tbody>
       </table>
+
+      ${footerFor(L, docRef)}
     </div>
-  </div>
 
-  <h2 class="doc-h2">${esc(L.dashHeadline)}</h2>
-  <div class="headline-box">
-    ${sevCounts.critical > 0
-      ? `${sevCounts.critical} ${sevCounts.critical > 1 ? 'critical findings' : 'critical finding'} require immediate action ahead of the normal planning cycle. Together with ${sevCounts.high} high-severity ${sevCounts.high === 1 ? 'finding' : 'findings'}, this indicates a credible and present risk warranting urgent, structured intervention.`
-      : sevCounts.high > 0
-        ? `${sevCounts.high} high-severity ${sevCounts.high === 1 ? 'finding' : 'findings'} identified. Prioritized action within the near-term programme is recommended.`
-        : 'No critical or high-severity findings identified. Address items within the standardization and maintenance programme.'}
-  </div>
+    <!-- ONE SHEET PER FINDING -->
+    ${inspections.map((ins, i) => `
+      <div class="sheet">
+        ${ribbonHtml}
+        ${i === 0 ? `<h1 class="doc-h1">${esc(L.sectionFindings)}</h1>` : ''}
+        ${renderFindingSection(ins, L, { index: i + 1, total: inspections.length })}
+        ${footerFor(L, docRef)}
+      </div>
+    `).join('')}
 
-  <!-- ═════════ FINDINGS SUMMARY TABLE ═════════ -->
-  <h2 class="doc-h2">${esc(L.sectionSummaryTable)}</h2>
-  <table class="summary-table">
-    <thead>
-      <tr>
-        <th style="width:40px;">#</th>
-        <th style="width:110px;">${esc(L.inspectionNo)}</th>
-        <th>${esc(L.finding)}</th>
-        <th style="width:110px;">${esc(L.category)}</th>
-        <th style="width:80px;">${esc(L.priority)}</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${inspections.map((ins, idx) => {
-        const sev = severityLabel(ins, L);
-        const cm = CATEGORIES[ins.category];
-        return `<tr>
-          <td style="font-weight:700;color:#0f2544;">${idx + 1}</td>
-          <td style="font-family:monospace;font-size:9pt;color:#666;">${esc(ins.inspection_no || '')}</td>
-          <td>${esc(ins.title || '—')}</td>
-          <td>${cm ? esc(cm.icon + ' ' + cm.label) : esc(ins.category || '—')}</td>
-          <td><span class="sev-pill" style="background:${sev.bg};color:${sev.color};font-size:8.5pt;">${esc(sev.label)}</span></td>
-        </tr>`;
-      }).join('')}
-    </tbody>
-  </table>
-
-  <!-- ═════════ PER-FINDING SECTIONS ═════════ -->
-  ${ribbon}
-  <h1 class="doc-h1">${esc(L.sectionFindings)}</h1>
-  ${inspections.map((ins, i) => renderFindingSection(ins, L, { withPageBreak: i > 0, index: i + 1, total: inspections.length })).join('')}
-
-  <!-- ═════════ RISK ASSESSMENT MATRIX ═════════ -->
-  <div class="finding-block">
-    ${ribbon}
-    <h1 class="doc-h1">${esc(L.sectionRiskMatrix)}</h1>
-    <table class="risk-table">
-      <thead>
-        <tr>
-          <th style="width:70px;">${esc(L.riskRef)}</th>
-          <th>${esc(L.riskFinding)}</th>
-          <th style="width:110px;">${esc(L.category)}</th>
-          <th style="width:100px;">${esc(L.riskOverall)}</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${inspections
-          .slice()
-          .sort((a, b) => {
+    <!-- RISK MATRIX SHEET -->
+    <div class="sheet">
+      ${ribbonHtml}
+      <h1 class="doc-h1">${esc(L.sectionRiskMatrix)}</h1>
+      <table class="risk-table">
+        <thead>
+          <tr>
+            <th style="width:110px;">${esc(L.riskRef)}</th>
+            <th>${esc(L.riskFinding)}</th>
+            <th style="width:110px;">${esc(L.category)}</th>
+            <th style="width:100px;">${esc(L.riskOverall)}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${inspections.slice().sort((a, b) => {
             const rank = { critical: 1, high: 2, medium: 3, low: 4 };
             return (rank[a.priority] || 3) - (rank[b.priority] || 3);
-          })
-          .map(ins => {
+          }).map(ins => {
             const sev = severityLabel(ins, L);
             const cm = CATEGORIES[ins.category];
             return `<tr>
@@ -967,77 +1038,63 @@ export function openLocationPDF(inspections, ctx = {}, langCode = 'en') {
               <td class="overall-cell" style="color:${sev.color};">${esc(sev.label)}</td>
             </tr>`;
           }).join('')}
-      </tbody>
-    </table>
-  </div>
+        </tbody>
+      </table>
+      ${footerFor(L, docRef)}
+    </div>
 
-  <!-- ═════════ PRIORITY ACTION PLAN ═════════ -->
-  <div class="finding-block">
-    ${ribbon}
-    <h1 class="doc-h1">${esc(L.sectionActionPlan)}</h1>
-    <table class="plan-table">
-      <thead>
-        <tr>
-          <th style="width:32%;">${esc(L.priority)}</th>
-          <th>${esc(L.riskFinding)}s</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${[
-          { key: 'p1', label: L.priority1, group: priorityGroups.p1 },
-          { key: 'p2', label: L.priority2, group: priorityGroups.p2 },
-          { key: 'p3', label: L.priority3, group: priorityGroups.p3 },
-          { key: 'p4', label: L.priority4, group: priorityGroups.p4 },
-        ].filter(x => x.group.length).map(x => `
+    <!-- ACTION PLAN SHEET -->
+    <div class="sheet">
+      ${ribbonHtml}
+      <h1 class="doc-h1">${esc(L.sectionActionPlan)}</h1>
+      <table class="plan-table">
+        <thead>
           <tr>
-            <td class="plan-priority">${esc(x.label)}</td>
-            <td>${x.group.map(i => `<div style="margin-bottom:4px;"><span style="font-family:monospace;color:#666;font-size:8.5pt;">${esc(i.inspection_no)}</span> · ${esc(i.title)}</div>`).join('')}</td>
+            <th style="width:32%;">${esc(L.priority)}</th>
+            <th>${esc(L.riskFinding)}s</th>
           </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ═════════ CONCLUSION + SIGNATURES ═════════ -->
-  <div class="finding-block">
-    ${ribbon}
-    <h1 class="doc-h1">${esc(L.sectionConclusion)}</h1>
-    <div class="prose" style="font-size:10.5pt;line-height:1.65;color:#222;white-space:pre-wrap;">
-${esc(sevCounts.critical > 0
-  ? `The assessment identified ${inspections.length} findings across ${discMap.size} disciplines at ${property}${area && area !== '—' ? ' — ' + area : ''}. Of these, ${sevCounts.critical} are Critical, warranting immediate action ahead of the normal capital-planning cycle. Delivering the phased action plan — immediate make-safe measures, then standardization and preventive controls — will materially reduce the identified life-safety, operational, financial and asset risks, and provide management with a defensible basis for capital planning.`
-  : `The assessment identified ${inspections.length} findings across ${discMap.size} disciplines at ${property}${area && area !== '—' ? ' — ' + area : ''}. Address items within the phased plan to reduce risk and support sound capital planning.`)}
+        </thead>
+        <tbody>
+          ${[
+            { label: L.priority1, group: priorityGroups.p1 },
+            { label: L.priority2, group: priorityGroups.p2 },
+            { label: L.priority3, group: priorityGroups.p3 },
+            { label: L.priority4, group: priorityGroups.p4 },
+          ].filter(x => x.group.length).map(x => `
+            <tr>
+              <td class="plan-priority">${esc(x.label)}</td>
+              <td>${x.group.map(i => `<div style="margin-bottom:4px;"><span style="font-family:'Courier New',monospace;color:#666;font-size:8.5pt;">${esc(i.inspection_no)}</span> · ${esc(i.title)}</div>`).join('')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      ${footerFor(L, docRef)}
     </div>
 
-    <div class="signatures">
-      <div class="sig-block">
-        <div class="sig-label">${esc(L.signature)}</div>
-        <div class="sig-name">${esc(inspectorsStr)}</div>
+    <!-- CONCLUSION + SIGNATURES SHEET -->
+    <div class="sheet">
+      ${ribbonHtml}
+      <h1 class="doc-h1">${esc(L.sectionConclusion)}</h1>
+      <div class="prose">${esc(conclusionText)}</div>
+
+      <div class="signatures">
+        <div class="sig-block">
+          <div class="sig-label">${esc(L.signature)}</div>
+          <div class="sig-name">${esc(inspectorsStr)}</div>
+        </div>
+        <div class="sig-block">
+          <div class="sig-label">${esc(L.chief)}${companionsStr ? ' / ' + esc(L.companion) : ''}</div>
+          <div class="sig-name">${companionsStr ? esc(companionsStr) : '&nbsp;'}</div>
+        </div>
       </div>
-      <div class="sig-block">
-        <div class="sig-label">${esc(L.chief)}${companionsStr ? ' / ' + esc(L.companion) : ''}</div>
-        <div class="sig-name">${companionsStr ? esc(companionsStr) : '&nbsp;'}</div>
-      </div>
-    </div>
 
-    <div style="margin-top:30px;text-align:center;font-size:8pt;color:#999;border-top:1px solid #eee;padding-top:8px;">
-      ${esc(L.footerBrand)} · ${esc(docRef)} · ${esc(L.footerClassification)}
+      ${footerFor(L, docRef)}
     </div>
   </div>
-
-  <script>
-    (function() {
-      let imgs = document.images, count = imgs.length, loaded = 0;
-      if (count === 0) return;
-      for (let i = 0; i < count; i++) {
-        if (imgs[i].complete) loaded++;
-        else imgs[i].onload = imgs[i].onerror = () => { loaded++; };
-      }
-    })();
-  </script>
 </body>
 </html>`;
 
-  const w = window.open('', '_blank', 'width=900,height=1100');
+  const w = window.open('', '_blank', 'width=1100,height=1200');
   if (!w) {
     alert(langCode === 'he' ? 'הדפדפן חסם את החלון. אנא אפשר חלונות קופצים.' :
           langCode === 'fa' ? 'مرورگر پنجره را مسدود کرد. لطفاً پاپ‌آپ‌ها را مجاز کنید.' :
@@ -1047,4 +1104,12 @@ ${esc(sevCounts.critical > 0
   w.document.open();
   w.document.write(html);
   w.document.close();
+}
+
+function footerFor(L, docRef) {
+  return `<div class="footer-bar">
+    <span>${esc(docRef)}</span>
+    <span>${esc(L.footerBrand)}</span>
+    <span>${esc(L.footerClassification)}</span>
+  </div>`;
 }
