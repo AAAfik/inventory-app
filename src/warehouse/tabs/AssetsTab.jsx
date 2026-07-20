@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
 // AssetsTab.jsx — Warehouse 2.0 asset grid: photos, badges, filters
+// + barcode search (includes barcode field) + inline scan button
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
@@ -7,6 +8,7 @@ import { supabase } from "../../supabase";
 import { ASSET_KINDS, ASSET_STATUS, fmtMoney, serviceStatus } from "../lib/warehouseUtils";
 import { tr } from "../../i18n";
 import AssetDetail from "./AssetDetail";
+import BarcodeScanner from "../components/BarcodeScanner";
 
 export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChanged }) {
   const L = tr(lang);
@@ -15,6 +17,7 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selected, setSelected] = useState(null);
+  const [scanning, setScanning] = useState(false);
 
   const [kindFilter, setKindFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -41,6 +44,24 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
     }
   }
 
+  async function handleScan(code) {
+    setScanning(false);
+    setError(null);
+    try {
+      const { data, error: e } = await supabase.rpc('scan_asset_barcode', { p_barcode: code });
+      if (e) throw e;
+      if (data && data.length > 0) {
+        setSelected(data[0].id);
+      } else {
+        // Fallback: put the scanned value in search
+        setSearch(code);
+        setError((L.scanNotFound || 'Not found') + ': ' + code);
+      }
+    } catch (e) {
+      setError(e.message || String(e));
+    }
+  }
+
   if (selected) {
     return <AssetDetail
       TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin}
@@ -59,7 +80,7 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
     if (serviceFilter && !serviceStatus(a)) return false;
     if (search) {
       const q = search.toLowerCase();
-      const hay = [a.name, a.asset_no, a.brand, a.model, a.serial_number, a.plate_number, a.holder_name].filter(Boolean).join(' ').toLowerCase();
+      const hay = [a.name, a.asset_no, a.barcode, a.brand, a.model, a.serial_number, a.plate_number, a.holder_name].filter(Boolean).join(' ').toLowerCase();
       if (!hay.includes(q)) return false;
     }
     return true;
@@ -70,6 +91,14 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
 
   return (
     <div>
+      {scanning && (
+        <BarcodeScanner
+          TH={TH} lang={lang}
+          onDetected={handleScan}
+          onClose={() => setScanning(false)}
+        />
+      )}
+
       {/* Kind pills */}
       <div style={{display:"flex", gap:8, marginBottom:12, overflowX:"auto"}}>
         {[["all", { label: L.all, icon: "📦" }], ...Object.entries(ASSET_KINDS).map(([k,v]) => [k, {...v, label: L[k] || v.label}])].map(([k, meta]) => {
@@ -96,18 +125,39 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
         }}>{L.serviceDueBtn}</button>
       </div>
 
-      {/* Search + filters */}
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr 1fr", gap:8, marginBottom:16}}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchAssets} style={inputStyle(TH)} />
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">{L.allStatuses}</option>
-          {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{({available:L.available,checked_out:L.checkedOut,in_service:L.inService,damaged:L.damaged,lost:L.lost,retired:L.retired})[k] || v.label}</option>)}
-        </select>
-        <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}>
-          <option value="all">{L.allWarehouses}</option>
-          {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-        </select>
+      {/* Search + filters (with scan button) */}
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr auto":"2fr auto 1fr 1fr", gap:8, marginBottom:16}}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchAssetsPh || L.searchAssets || "Search name / barcode / serial…"} style={inputStyle(TH)} />
+        <button onClick={() => setScanning(true)} title={L.scanBtn || 'Scan'} style={{
+          background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8,
+          color:"#000", padding:"9px 14px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit",
+          display:"flex", alignItems:"center", gap:5,
+        }}>📷 {isMobile ? '' : (L.scanBtn || 'Scan')}</button>
+        {!isMobile && (
+          <>
+            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
+              <option value="all">{L.allStatuses}</option>
+              {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{({available:L.available,checked_out:L.checkedOut,in_service:L.inService,damaged:L.damaged,lost:L.lost,retired:L.retired})[k] || v.label}</option>)}
+            </select>
+            <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}>
+              <option value="all">{L.allWarehouses}</option>
+              {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+            </select>
+          </>
+        )}
       </div>
+      {isMobile && (
+        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:16}}>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
+            <option value="all">{L.allStatuses}</option>
+            {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{({available:L.available,checked_out:L.checkedOut,in_service:L.inService,damaged:L.damaged,lost:L.lost,retired:L.retired})[k] || v.label}</option>)}
+          </select>
+          <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}>
+            <option value="all">{L.allWarehouses}</option>
+            {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
+          </select>
+        </div>
+      )}
 
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
 
@@ -142,11 +192,14 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
                       <div style={{fontSize:14, fontWeight:700, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
                       <span style={{fontSize:9, color:statusMeta.color, fontWeight:700, textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0}}>● {statusMeta.label}</span>
                     </div>
-                    <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginBottom:6}}>{a.asset_no}</div>
+                    <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginBottom:6}}>
+                      {a.asset_no}{a.barcode ? ` · ${a.barcode}` : ''}
+                    </div>
                     <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
                       {a.brand && <Chip TH={TH}>{a.brand}{a.model ? ` ${a.model}` : ''}</Chip>}
                       {a.plate_number && <Chip TH={TH}>🚗 {a.plate_number}</Chip>}
                       {wh && <Chip TH={TH}>📍 {wh.code}</Chip>}
+                      {a.condition && <Chip TH={TH}>🔧 {a.condition}</Chip>}
                       {a.holder_name && a.status === 'checked_out' && <Chip TH={TH} gold>👤 {a.holder_name}</Chip>}
                       {a.purchase_price != null && <Chip TH={TH}>{fmtMoney(a.purchase_price, a.currency)}</Chip>}
                     </div>

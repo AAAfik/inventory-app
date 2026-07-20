@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
-// WarehouseHub.jsx — Warehouse 2.0 container: stats bar + 5 tabs
+// WarehouseHub.jsx — Modiriate Darayi (Asset Management)
+// Tabs: QuickAdd · Assets · CheckInOut · Consumables · Warehouses · Scan · Activity
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
@@ -11,10 +12,12 @@ import AssetsTab from "./tabs/AssetsTab";
 import CheckInOutTab from "./tabs/CheckInOutTab";
 import ConsumablesTab from "./tabs/ConsumablesTab";
 import WarehousesTab from "./tabs/WarehousesTab";
+import ScanTab from "./tabs/ScanTab";
+import ActivityTab from "./tabs/ActivityTab";
 
 export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
   const L = tr(lang);
-  const [tab, setTab] = useState(isMobile ? "quickadd" : "assets");
+  const [tab, setTab] = useState(isMobile ? "scan" : "assets");
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(null);
 
@@ -49,20 +52,23 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
   const bump = () => setRefreshKey(k => k + 1);
 
   const tabs = [
+    { key: "scan",        icon: "📷", label: L.scanTab       || "Scan" },
     { key: "quickadd",    icon: "📸", label: L.quickAdd },
     { key: "assets",      icon: "📦", label: L.assets },
     { key: "checkinout",  icon: "⇄",  label: L.checkInOut, badge: stats?.overdueReturns || 0 },
     { key: "consumables", icon: "🧴", label: L.consumables },
     { key: "warehouses",  icon: "🏬", label: L.warehouses },
+    { key: "activity",    icon: "📜", label: L.activityTab   || "Activity" },
   ];
+
+  const title = L.assetMgmtTitle || L.warehouseTitle || "Modiriate Darayi";
+  const subtitle = L.assetMgmtSub || L.warehouseSub;
 
   return (
     <div>
       <div style={{marginBottom:14}}>
-        <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{L.warehouseTitle}</div>
-        {!isMobile && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-          {L.warehouseSub}
-        </div>}
+        <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{title}</div>
+        {!isMobile && subtitle && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>{subtitle}</div>}
       </div>
 
       {/* Stats bar */}
@@ -100,11 +106,13 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
         })}
       </div>
 
+      {tab === "scan"        && <ScanTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
       {tab === "quickadd"    && <QuickAddTab TH={TH} lang={lang} isMobile={isMobile} onSaved={() => { bump(); setTab("assets"); }} />}
       {tab === "assets"      && <AssetsTab key={refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
       {tab === "checkinout"  && <CheckInOutTab key={"co-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
       {tab === "consumables" && <ConsumablesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
       {tab === "warehouses"  && <WarehousesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "activity"    && <ActivityTab key={"act-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} />}
     </div>
   );
 }
