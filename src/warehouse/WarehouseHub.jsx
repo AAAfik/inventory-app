@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════
-// WarehouseHub.jsx — Modiriate Darayi (Asset Management)
-// Tabs: QuickAdd · Assets · CheckInOut · Consumables · Warehouses · Scan · Activity
+// WarehouseHub.jsx — Asset Management (English title)
+// Tabs: Scan · QuickAdd · Assets · CheckInOut · Consumables ·
+//       Packages · Warehouses · Activity
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
@@ -14,6 +15,7 @@ import ConsumablesTab from "./tabs/ConsumablesTab";
 import WarehousesTab from "./tabs/WarehousesTab";
 import ScanTab from "./tabs/ScanTab";
 import ActivityTab from "./tabs/ActivityTab";
+import PackagesTab from "./tabs/PackagesTab";
 
 export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
   const L = tr(lang);
@@ -25,10 +27,11 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
 
   async function loadStats() {
     try {
-      const { data: assets } = await supabase
-        .from('assets')
-        .select('id, status, purchase_price, next_service_date, expected_return_at')
-        .eq('is_active', true);
+      const [rA, rP] = await Promise.all([
+        supabase.from('assets').select('id, status, purchase_price, next_service_date, expected_return_at').eq('is_active', true),
+        supabase.from('packages').select('id, status').eq('is_active', true).eq('status', 'received'),
+      ]);
+      const assets = rA.data;
       if (!assets) return;
 
       const totalValue = assets.reduce((s, a) => s + (Number(a.purchase_price) || 0), 0);
@@ -45,6 +48,7 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
         checkedOut: checkedOut.length,
         overdueReturns,
         serviceDue,
+        pendingPackages: (rP.data || []).length,
       });
     } catch { /* stats are non-critical */ }
   }
@@ -57,12 +61,13 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
     { key: "assets",      icon: "📦", label: L.assets },
     { key: "checkinout",  icon: "⇄",  label: L.checkInOut, badge: stats?.overdueReturns || 0 },
     { key: "consumables", icon: "🧴", label: L.consumables },
+    { key: "packages",    icon: "📮", label: L.packagesTab || "Packages", badge: stats?.pendingPackages || 0 },
     { key: "warehouses",  icon: "🏬", label: L.warehouses },
-    { key: "activity",    icon: "📜", label: L.activityTab   || "Activity" },
+    { key: "activity",    icon: "📜", label: L.activityTab || "Activity" },
   ];
 
-  const title = L.assetMgmtTitle || L.warehouseTitle || "Modiriate Darayi";
-  const subtitle = L.assetMgmtSub || L.warehouseSub;
+  const title = L.assetMgmtTitle || "Asset Management";
+  const subtitle = L.assetMgmtSub || "Vehicles, machinery, tools, consumables and packages — all in one system";
 
   return (
     <div>
@@ -71,14 +76,14 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
         {!isMobile && subtitle && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>{subtitle}</div>}
       </div>
 
-      {/* Stats bar */}
       {stats && (
-        <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(5,1fr)", gap:8, marginBottom:16}}>
+        <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(6,1fr)", gap:8, marginBottom:16}}>
           <Stat TH={TH} label={L.assets} value={stats.total} />
           <Stat TH={TH} label={L.totalValue} value={fmtMoney(stats.totalValue)} />
           <Stat TH={TH} label={L.checkedOutK} value={stats.checkedOut} onClick={() => setTab("checkinout")} />
           <Stat TH={TH} label={L.overdueReturns} value={stats.overdueReturns} alert={stats.overdueReturns > 0} onClick={() => setTab("checkinout")} />
           <Stat TH={TH} label={L.serviceDue7} value={stats.serviceDue} alert={stats.serviceDue > 0} onClick={() => setTab("assets")} />
+          <Stat TH={TH} label={L.pendingPackages || "Pending pkgs"} value={stats.pendingPackages} alert={stats.pendingPackages > 0} onClick={() => setTab("packages")} />
         </div>
       )}
 
@@ -111,6 +116,7 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
       {tab === "assets"      && <AssetsTab key={refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
       {tab === "checkinout"  && <CheckInOutTab key={"co-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
       {tab === "consumables" && <ConsumablesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "packages"    && <PackagesTab key={"pkg-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
       {tab === "warehouses"  && <WarehousesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
       {tab === "activity"    && <ActivityTab key={"act-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} />}
     </div>
