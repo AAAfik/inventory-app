@@ -6,6 +6,7 @@ import WarehouseHub from "./warehouse/WarehouseHub";
 import InspectionHub from "./inspection/InspectionHub";
 import PoolControlHub from "./pools/PoolControlHub";
 import ProcureHub from "./procurement/ProcureHub";
+import ProcurementHub from "./procurement/ProcurementHub";
 import PWAInstall from "./PWAInstall";
 import { tr } from "./i18n";
 
@@ -14,6 +15,7 @@ const WAREHOUSE_ENABLED  = true;
 const INSPECTION_ENABLED = true;
 const POOLS_ENABLED      = true;
 const PROCURE_ENABLED    = true;
+const REQUESTS_ENABLED   = true;
 
 // Superadmin bootstrap: only YOU. Never locked out even if DB roles fail.
 // Everyone else (including Hezi, Anzhela) is controlled purely by DB roles.
@@ -73,6 +75,7 @@ const NAV_GROUPS = [
   ...(INSPECTION_ENABLED ? [{ key: "inspectionGroup", items: ["inspection"] }] : []),
   ...(POOLS_ENABLED      ? [{ key: "poolGroup",       items: ["pools"] }]      : []),
   ...(PROCURE_ENABLED    ? [{ key: "procurement",     items: ["procure"] }]    : []),
+  ...(REQUESTS_ENABLED   ? [{ key: "requestsGroup",   items: ["requests"] }]   : []),
   { key: "adminGroup",   items: ["users"] },
 ];
 
@@ -82,7 +85,18 @@ const TAB_ICONS = {
   inspection: "🔍",
   pools:      "🏊",
   procure:    "💳",
+  requests:   "📝",
   users:      "👥",
+};
+
+// Local label overrides (bypass i18n for renamed modules)
+const LABEL_OVERRIDES = {
+  warehouse: "Asset Management",
+  requests:  "Requests",
+};
+const GROUP_LABEL_OVERRIDES = {
+  warehouseGroup: "ASSET MANAGEMENT",
+  requestsGroup:  "REQUESTS",
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -119,6 +133,8 @@ export default function InventorySystem() {
     "finance_officer","approver_mid","approver_high",
   ].some(r => userRoles.includes(r));
   const canSeeUsers      = isOwner;
+  // Requests visible to everyone signed in — hub itself handles no-role state
+  const canSeeRequests   = true;
 
   const allTabs = [
     ...(canSeeDashboard                        ? ["dashboard"]  : []),
@@ -126,6 +142,7 @@ export default function InventorySystem() {
     ...(INSPECTION_ENABLED && canSeeInspection ? ["inspection"] : []),
     ...(POOLS_ENABLED      && canSeePools      ? ["pools"]      : []),
     ...(PROCURE_ENABLED    && canSeeProcure    ? ["procure"]    : []),
+    ...(REQUESTS_ENABLED   && canSeeRequests   ? ["requests"]   : []),
     ...(canSeeUsers                            ? ["users"]      : []),
   ];
 
@@ -295,7 +312,7 @@ export default function InventorySystem() {
             {NAV_GROUPS.filter(g => g.items.some(k => allTabs.includes(k))).map(group => (
               <div key={group.key} style={{marginBottom:16, padding:"0 12px"}}>
                 <div style={{padding:"0 12px 8px", color:TH.textDim, fontSize:9.5, fontWeight:800, letterSpacing:"0.16em"}}>
-                  {(t[group.key]||group.key).toUpperCase()}
+                  {GROUP_LABEL_OVERRIDES[group.key] || (t[group.key]||group.key).toUpperCase()}
                 </div>
                 {group.items.filter(k=>allTabs.includes(k)).map(k=>{
                   const active = tab===k;
@@ -314,7 +331,7 @@ export default function InventorySystem() {
                     onMouseEnter={e=>{ if(!active) e.currentTarget.style.background = TH.bgHover; }}
                     onMouseLeave={e=>{ if(!active) e.currentTarget.style.background = "transparent"; }}>
                       <span style={{fontSize:15, width:20, textAlign:"center", flexShrink:0, filter: active ? "none" : "grayscale(0.4)"}}>{TAB_ICONS[k]}</span>
-                      <span style={{flex:1}}>{t[k] || k}</span>
+                      <span style={{flex:1}}>{LABEL_OVERRIDES[k] || t[k] || k}</span>
                       {active && <span style={{width:5, height:5, borderRadius:3, background:"#C9A960", flexShrink:0}}/>}
                     </button>
                   );
@@ -345,6 +362,7 @@ export default function InventorySystem() {
           {tab==="inspection" && INSPECTION_ENABLED && canSeeInspection && <InspectionHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="pools"      && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="procure"    && PROCURE_ENABLED    && canSeeProcure    && <ProcureHub    TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+          {tab==="requests"   && REQUESTS_ENABLED   && canSeeRequests   && <ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="users"      && canSeeUsers        && <UsersTab TH={TH} lang={lang} isMobile={isMobile} />}
         </main>
       </div>
