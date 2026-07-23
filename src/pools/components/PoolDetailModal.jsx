@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../../supabase";
 import { formatDate, formatDateShort } from "../../inspection/lib/inspectionUtils";
 import NewOperationModal from "./NewOperationModal";
+import EquipmentList from "./EquipmentList";
 
 const FILTER_TYPES = ['sand', 'cartridge', 'de', 'glass', 'zeolite', 'other'];
 const CHLORINE_SYSTEMS = ['manual', 'auto', 'salt', 'uv', 'mixed'];
@@ -115,7 +116,7 @@ export default function PoolDetailModal({ TH, lang = "en", isMobile, isAdmin, po
           {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:10, padding:"12px 14px", color:"#C43D3D", fontSize:13, marginBottom:14}}>{error}</div>}
 
           {subTab === "overview" && <OverviewSubTab TH={TH} pool={pool} operations={operations} />}
-          {subTab === "equipment" && <EquipmentSubTab TH={TH} pool={pool} isAdmin={isAdmin} onSaved={load} onZoom={setZoom} />}
+          {subTab === "equipment" && <EquipmentList TH={TH} poolId={poolId} isAdmin={isAdmin} onZoom={setZoom} />}
           {subTab === "operations" && <OperationsSubTab TH={TH} operations={operations} onZoom={setZoom} />}
           {subTab === "history" && <HistorySubTab TH={TH} consumables={consumables} />}
         </div>
