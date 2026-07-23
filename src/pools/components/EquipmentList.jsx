@@ -9,9 +9,9 @@ import { supabase } from "../../supabase";
 
 const EQUIPMENT_TYPES = [
   { k: 'pump',        icon: '⚙️',  label: 'Pump',         color: '#7BB3D4' },
-  { k: 'filter',      icon: '🧴',  label: 'Filter',       color: '#C9A960' },
+  { k: 'filter',      icon: '🧴',  label: 'Filter',       color: '#B8935A' },
   { k: 'chlorinator', icon: '🧪',  label: 'Chlorinator',  color: '#B8862C' },
-  { k: 'dosing_pump', icon: '💉',  label: 'Dosing Pump',  color: '#8B7A44' },
+  { k: 'dosing_pump', icon: '💉',  label: 'Dosing Pump',  color: '#8B7040' },
   { k: 'heater',      icon: '🔥',  label: 'Heater',       color: '#E67A2C' },
   { k: 'uv',          icon: '💡',  label: 'UV Sanitizer', color: '#9370DB' },
   { k: 'ozone',       icon: '💨',  label: 'Ozone',        color: '#7A9A5B' },
@@ -75,7 +75,7 @@ export default function EquipmentList({ TH, poolId, isAdmin, onZoom }) {
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12, flexWrap:"wrap", gap:8}}>
         <div style={{fontSize:12, color:TH.textMuted}}>{items.length} equipment {items.length === 1 ? 'item' : 'items'}</div>
         {isAdmin && (
-          <button onClick={() => setEditing({ new: true })} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit"}}>
+          <button onClick={() => setEditing({ new: true })} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit"}}>
             + Add equipment
           </button>
         )}
@@ -335,10 +335,10 @@ function EquipmentEditor({ TH, poolId, row = null, onClose, onSaved }) {
               </div>
             ))}
             {newPreviews.map((src, i) => (
-              <div key={"n"+i} style={{position:"relative", borderRadius:8, overflow:"hidden", border:`2px solid #C9A960`, background:"#000"}}>
+              <div key={"n"+i} style={{position:"relative", borderRadius:8, overflow:"hidden", border:`2px solid #B8935A`, background:"#000"}}>
                 <img src={src} alt="" style={{width:80, height:80, objectFit:"cover", display:"block"}} />
                 <button onClick={() => removeNew(i)} disabled={busy} style={{position:"absolute", top:2, right:2, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:10, width:20, height:20, color:"#fff", cursor:"pointer", fontSize:11, padding:0, lineHeight:1}}>✕</button>
-                <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(201,169,96,0.85)", color:"#000", fontSize:8, fontWeight:800, textAlign:"center"}}>NEW</div>
+                <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(184,147,90,0.85)", color:"#000", fontSize:8, fontWeight:800, textAlign:"center"}}>NEW</div>
               </div>
             ))}
             <button onClick={() => fileRef.current?.click()} disabled={busy} style={{width:80, height:80, background:"transparent", border:`2px dashed ${TH.border}`, borderRadius:8, color:TH.textMuted, cursor:"pointer", fontSize:26, fontFamily:"inherit"}}>+</button>
@@ -355,7 +355,7 @@ function EquipmentEditor({ TH, poolId, row = null, onClose, onSaved }) {
 
         <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
           <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
-          <button onClick={save} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
+          <button onClick={save} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
             {busy ? "Saving…" : (isNew ? "Add equipment" : "Save changes")}
           </button>
         </div>

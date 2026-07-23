@@ -2,9 +2,9 @@
 // warehouseUtils.js — Warehouse 2.0 shared constants + helpers
 // ═══════════════════════════════════════════════════════════════════
 
-const GOLD       = '#C9A960';
-const GOLD_LIGHT = '#D4B876';
-const GOLD_DARK  = '#8B7A44';
+const GOLD       = '#B8935A';
+const GOLD_LIGHT = '#D4A853';
+const GOLD_DARK  = '#8B7040';
 const GRAY       = '#8f8f8f';
 
 export const ASSET_KINDS = {

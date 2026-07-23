@@ -204,7 +204,7 @@ export default function QuickAddTab({ TH, lang = "en", isMobile, onSaved }) {
     return (
       <div style={{padding:"40px 20px", textAlign:"center", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12}}>
         <div style={{fontSize:60, marginBottom:16}}>✅</div>
-        <div style={{fontSize:20, fontWeight:800, color:"#C9A960", marginBottom:8}}>Success!</div>
+        <div style={{fontSize:20, fontWeight:800, color:"#B8935A", marginBottom:8}}>Success!</div>
         <div style={{fontSize:14, color:TH.text}}>{success}</div>
         <div style={{fontSize:12, color:TH.textMuted, marginTop:12}}>Preparing next…</div>
       </div>
@@ -222,7 +222,7 @@ export default function QuickAddTab({ TH, lang = "en", isMobile, onSaved }) {
         <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2, 1fr)":"repeat(4, 1fr)", gap:8}}>
           {Object.entries(kinds).map(([k, meta]) => {
             const on = kind === k;
-            const color = meta.color || "#C9A960";
+            const color = meta.color || "#B8935A";
             return (
               <button key={k} onClick={() => setKind(k)} style={{
                 background: on ? color + "22" : "transparent",
@@ -252,7 +252,7 @@ export default function QuickAddTab({ TH, lang = "en", isMobile, onSaved }) {
         <div style={{marginBottom:14, padding:20, textAlign:"center", background:TH.bgCard, border:`2px dashed ${TH.border}`, borderRadius:12}}>
           <div style={{fontSize:isMobile?36:48, marginBottom:10}}>📸</div>
           <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFileSelected} style={{display:"none"}} />
-          <button onClick={() => fileInputRef.current?.click()} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"12px 24px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit"}}>
+          <button onClick={() => fileInputRef.current?.click()} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"12px 24px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit"}}>
             📷 {isConsumable ? "Add photo (optional)" : "Take photo *"}
           </button>
           {isConsumable && (
@@ -355,7 +355,7 @@ export default function QuickAddTab({ TH, lang = "en", isMobile, onSaved }) {
         <button
           onClick={submit}
           disabled={submitDisabled}
-          style={{flex:2, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12, color:"#000", padding:"16px", cursor:"pointer", fontSize:16, fontWeight:800, fontFamily:"inherit", opacity: submitDisabled ? 0.5 : 1, boxShadow: submitting ? "none" : "0 4px 14px rgba(201,169,96,0.3)"}}
+          style={{flex:2, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12, color:"#000", padding:"16px", cursor:"pointer", fontSize:16, fontWeight:800, fontFamily:"inherit", opacity: submitDisabled ? 0.5 : 1, boxShadow: submitting ? "none" : "0 4px 14px rgba(184,147,90,0.3)"}}
         >
           {submitting ? "Saving…" : `✓ Save ${isConsumable ? 'consumable' : 'asset'}`}
         </button>

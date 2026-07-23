@@ -163,7 +163,7 @@ export default function LogTreatmentTab({ TH, isMobile, onSaved }) {
  return (
       <div style={{padding:"48px 20px", textAlign:"center", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow: TH.cardGlow}}>
         <div style={{fontSize:56, marginBottom:12}}>✅</div>
-        <div style={{fontSize:22, fontWeight:800, color:"#C9A960", marginBottom:6, fontFamily:"'Playfair Display', Georgia, serif"}}>Treatment saved</div>
+        <div style={{fontSize:22, fontWeight:800, color:"#B8935A", marginBottom:6, fontFamily:"'Playfair Display', Georgia, serif"}}>Treatment saved</div>
         <div style={{fontSize:14, color:TH.text, fontFamily:"monospace", marginBottom:10}}>{success}</div>
         <div style={{fontSize:12, color:TH.textMuted}}>Chemicals deducted from warehouse </div>
       </div> );
@@ -187,7 +187,7 @@ export default function LogTreatmentTab({ TH, isMobile, onSaved }) {
             </select>
           </Field>
         </div> {selectedPool && (
-          <div style={{marginTop:10, padding:10, background:"rgba(201,169,96,0.08)", border:"1px solid rgba(201,169,96,0.20)", borderRadius:8, fontSize:12, color:TH.text}}>
+          <div style={{marginTop:10, padding:10, background:"rgba(184,147,90,0.08)", border:"1px solid rgba(184,147,90,0.20)", borderRadius:8, fontSize:12, color:TH.text}}>
              <strong>{selectedPool.name}</strong> · Volume <strong>{Number(selectedPool.volume_m3).toLocaleString()} m³</strong>
             <div style={{fontSize:11, color:TH.textMuted, marginTop:3}}>Chemicals below will auto-fill with recommended doses for this volume.</div>
           </div> )}
@@ -232,8 +232,8 @@ export default function LogTreatmentTab({ TH, isMobile, onSaved }) {
  const cost = estimatedCost(chem, selectedLine?.qty || 0);
  return (
                 <div key={chem.id} onClick={(e) => { if (e.target.tagName !== 'INPUT') toggleChemical(chem.id); }} style={{
- background: selectedLine ? "rgba(201,169,96,0.08)" : TH.bgInput,
- border: `2px solid ${selectedLine ? (purp.color || "#C9A960") : TH.border}`,
+ background: selectedLine ? "rgba(184,147,90,0.08)" : TH.bgInput,
+ border: `2px solid ${selectedLine ? (purp.color || "#B8935A") : TH.border}`,
  borderRadius: 10, padding: 12, cursor: "pointer",
  }}>
                   <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:6}}>
@@ -249,15 +249,15 @@ export default function LogTreatmentTab({ TH, isMobile, onSaved }) {
  style={{...inp(TH), fontSize:15, fontWeight:700, padding:"6px 8px", width:90, textAlign:"center"}}
  />
                       <span style={{fontSize:11, color:TH.textMuted}}>{chem.unit}</span>
-                      <span style={{marginLeft:"auto", fontSize:12, color:"#C9A960", fontWeight:700, fontFamily:"monospace"}}>{fmtMoney(cost)}</span>
+                      <span style={{marginLeft:"auto", fontSize:12, color:"#B8935A", fontWeight:700, fontFamily:"monospace"}}>{fmtMoney(cost)}</span>
                     </div> )}
                 </div> );
  })}
           </div> )}
  {lines.length > 0 && (
-          <div style={{marginTop:12, padding:12, background:"rgba(201,169,96,0.10)", borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:13}}>
+          <div style={{marginTop:12, padding:12, background:"rgba(184,147,90,0.10)", borderRadius:8, display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:13}}>
             <span style={{color:TH.text, fontWeight:600}}>Total estimated cost:</span>
-            <span style={{color:"#C9A960", fontWeight:800, fontFamily:"monospace", fontSize:16}}>{fmtMoney(totalEstCost)}</span>
+            <span style={{color:"#B8935A", fontWeight:800, fontFamily:"monospace", fontSize:16}}>{fmtMoney(totalEstCost)}</span>
           </div> )}
       </SectionCard> {/* Photos */}
       <SectionCard TH={TH} title="Evidence photos * (required)">
@@ -278,17 +278,17 @@ export default function LogTreatmentTab({ TH, isMobile, onSaved }) {
         <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:10, padding:10, marginBottom:10}}>
           <div style={{fontSize:12, color:TH.textMuted, marginBottom:6}}>Uploading {progress.done} / {progress.total} photos...</div>
           <div style={{height:4, background:TH.bgInput, borderRadius:2, overflow:"hidden"}}>
-            <div style={{height:"100%", width:`${(progress.done/progress.total)*100}%`, background:"linear-gradient(90deg,#C9A960,#D4B876)", transition:"width .2s"}}/>
+            <div style={{height:"100%", width:`${(progress.done/progress.total)*100}%`, background:"linear-gradient(90deg,#B8935A,#D4A853)", transition:"width .2s"}}/>
           </div>
         </div> )}
 
       <div style={{display:"flex", gap:10, marginTop:14}}>
         <button onClick={resetForm} disabled={busy} style={{flex:1, ...ghostBtn(TH)}}>Cancel</button>
         <button onClick={submit} disabled={busy || !poolId || photoFiles.length===0 || lines.length===0} style={{
- flex:2, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
+ flex:2, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12,
  color:"#000", padding:"16px", cursor:"pointer", fontSize:15, fontWeight:800, fontFamily:"inherit",
  opacity:(busy||!poolId||photoFiles.length===0||lines.length===0)?0.5:1,
- boxShadow:busy?"none":"0 4px 14px rgba(201,169,96,0.3)",
+ boxShadow:busy?"none":"0 4px 14px rgba(184,147,90,0.3)",
  }}>{busy ? "Saving..." : " Save treatment"}</button>
       </div>
     </div> );

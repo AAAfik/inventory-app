@@ -12,7 +12,7 @@ import NewPackageModal from "../components/NewPackageModal";
 import PackageDetail from "./PackageDetail";
 
 const STATUS_META = {
-  received:  { label: "Received",  color: "#C9A960", icon: "📦" },
+  received:  { label: "Received",  color: "#B8935A", icon: "📦" },
   collected: { label: "Collected", color: "#7A9A5B", icon: "✓" },
   returned:  { label: "Returned",  color: "#8f8f8f", icon: "↩" },
   lost:      { label: "Lost",      color: "#C43D3D", icon: "⚠" },
@@ -94,9 +94,9 @@ export default function PackagesTab({ TH, lang = "en", isMobile, isAdmin }) {
         <button
           onClick={() => setShowNew(true)}
           style={{
-            background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+            background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
             color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer", fontFamily:"inherit",
-            boxShadow:"0 2px 10px rgba(201,169,96,0.3)", display:"flex", alignItems:"center", gap:6,
+            boxShadow:"0 2px 10px rgba(184,147,90,0.3)", display:"flex", alignItems:"center", gap:6,
           }}
         >📦 {L.newPackage || 'New package'}</button>
       </div>
@@ -188,10 +188,10 @@ function PillBtn({ TH, on, onClick, children }) {
   );
 }
 function Count({ children, on }) {
-  return <span style={{background: on ? "#C9A960" : "rgba(255,255,255,0.05)", color: on ? "#000" : "#888", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{children}</span>;
+  return <span style={{background: on ? "#B8935A" : "rgba(255,255,255,0.05)", color: on ? "#000" : "#888", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{children}</span>;
 }
 function Chip({ TH, children, gold }) {
-  return <span style={{fontSize:10, color: gold ? "#C9A960" : TH.textMuted, background: gold ? "rgba(201,169,96,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
+  return <span style={{fontSize:10, color: gold ? "#B8935A" : TH.textMuted, background: gold ? "rgba(184,147,90,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
 }
 function inp(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };

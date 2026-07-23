@@ -10,19 +10,19 @@ import { formatDateShort } from "../../inspection/lib/inspectionUtils";
 
 export const STATUS_META = {
   submitted:            { label: "Submitted",             color: "#7BB3D4", icon: "📤" },
-  edem_reviewing:       { label: "Under review",          color: "#C9A960", icon: "🔍" },
+  edem_reviewing:       { label: "Under review",          color: "#B8935A", icon: "🔍" },
   fulfilled_from_stock: { label: "From stock",            color: "#7A9A5B", icon: "📦" },
   edem_approved:        { label: "Awaiting final",        color: "#B8862C", icon: "⏳" },
   edem_rejected:        { label: "Rejected (L1)",         color: "#C43D3D", icon: "✕" },
   hezi_approved:        { label: "Approved to buy",       color: "#7A9A5B", icon: "✓" },
   hezi_rejected:        { label: "Rejected (L2)",         color: "#C43D3D", icon: "✕" },
-  purchased:            { label: "Purchased",             color: "#8B7A44", icon: "🛒" },
+  purchased:            { label: "Purchased",             color: "#8B7040", icon: "🛒" },
   cancelled:            { label: "Cancelled",             color: "#8f8f8f", icon: "⊘" },
 };
 
 const PRIORITY_META = {
   low:      { label: "Low",      color: "#7A9A5B" },
-  medium:   { label: "Medium",   color: "#D4B876" },
+  medium:   { label: "Medium",   color: "#D4A853" },
   high:     { label: "High",     color: "#E67A2C" },
   urgent:   { label: "Urgent",   color: "#C43D3D" },
 };

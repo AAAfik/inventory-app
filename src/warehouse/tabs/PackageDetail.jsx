@@ -8,15 +8,15 @@ import { tr } from "../../i18n";
 import { formatDate } from "../../inspection/lib/inspectionUtils";
 
 const STATUS_META = {
-  received:  { label: "Received",  color: "#C9A960", icon: "📦" },
+  received:  { label: "Received",  color: "#B8935A", icon: "📦" },
   collected: { label: "Collected", color: "#7A9A5B", icon: "✓" },
   returned:  { label: "Returned",  color: "#8f8f8f", icon: "↩" },
   lost:      { label: "Lost",      color: "#C43D3D", icon: "⚠" },
 };
 
 const EVENT_META = {
-  received:    { icon: "📦", color: "#C9A960", label: "Received" },
-  updated:     { icon: "✏️", color: "#8B7A44", label: "Updated" },
+  received:    { icon: "📦", color: "#B8935A", label: "Received" },
+  updated:     { icon: "✏️", color: "#8B7040", label: "Updated" },
   collected:   { icon: "✓",  color: "#7A9A5B", label: "Collected" },
   returned:    { icon: "↩",  color: "#8f8f8f", label: "Returned" },
   lost:        { icon: "⚠",  color: "#C43D3D", label: "Lost" },
@@ -175,7 +175,7 @@ export default function PackageDetail({ TH, lang = "en", isMobile, isAdmin, pack
       {/* Actions */}
       {pkg.status === 'received' && !showCollect && (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr 1fr", gap:8, marginBottom:16}}>
-          <button onClick={() => setShowCollect(true)} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit"}}>
+          <button onClick={() => setShowCollect(true)} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit"}}>
             ✓ {L.markCollected || 'Mark as collected'}
           </button>
           <button onClick={markReturned} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.text, padding:"12px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>
@@ -193,7 +193,7 @@ export default function PackageDetail({ TH, lang = "en", isMobile, isAdmin, pack
           <input value={collectSignature} onChange={e => setCollectSignature(e.target.value)} placeholder={pkg.recipient_name} autoFocus style={{width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"10px 12px", color:TH.text, fontSize:14, outline:"none", boxSizing:"border-box", marginBottom:10, fontFamily:"inherit"}} />
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
             <button onClick={() => { setShowCollect(false); setCollectSignature(""); }} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 16px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || 'Cancel'}</button>
-            <button onClick={markCollected} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
+            <button onClick={markCollected} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
               {busy ? (L.saving || 'Saving…') : (L.confirm || 'Confirm')}
             </button>
           </div>

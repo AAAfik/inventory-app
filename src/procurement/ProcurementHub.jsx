@@ -115,9 +115,9 @@ export default function ProcurementHub({ TH, lang = "en", isMobile = false, isAd
           <button
             onClick={() => setShowNew(true)}
             style={{
-              background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+              background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
               color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer",
-              fontFamily:"inherit", boxShadow:"0 2px 10px rgba(201,169,96,0.3)",
+              fontFamily:"inherit", boxShadow:"0 2px 10px rgba(184,147,90,0.3)",
             }}
           >📝 {L.newRequest || "New request"}</button>
         )}
@@ -151,7 +151,7 @@ export default function ProcurementHub({ TH, lang = "en", isMobile = false, isAd
                 }}>
                   {t.icon} {t.label}
                   {t.badge > 0 && (
-                    <span style={{background: t.alert ? "#C43D3D" : "#8B7A44", color:"#fff", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>
+                    <span style={{background: t.alert ? "#C43D3D" : "#8B7040", color:"#fff", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>
                       {t.badge}
                     </span>
                   )}

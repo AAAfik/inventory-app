@@ -313,7 +313,7 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
                     title="Remove"
                     style={{position:"absolute", top:3, right:3, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:12, width:20, height:20, color:"#fff", cursor:"pointer", fontSize:11, padding:0, lineHeight:1}}
                   >✕</button>
-                  <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(201,169,96,0.85)", color:"#000", fontSize:9, fontWeight:800, textAlign:"center", padding:"2px 0", letterSpacing:"0.3px"}}>NEW</div>
+                  <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(184,147,90,0.85)", color:"#000", fontSize:9, fontWeight:800, textAlign:"center", padding:"2px 0", letterSpacing:"0.3px"}}>NEW</div>
                 </div>
               ))}
               {/* Add button */}
@@ -341,7 +341,7 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
 
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
             <button onClick={cancelEdit} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
-            <button onClick={saveEdit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? L.saving : L.saveChanges}</button>
+            <button onClick={saveEdit} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? L.saving : L.saveChanges}</button>
           </div>
         </div>
       )}
@@ -383,14 +383,14 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
         )}
 
         {ins.action_required && (
-          <div style={{marginTop:10, padding:14, background:"rgba(201,169,96,0.08)", border:`1px solid rgba(201,169,96,0.3)`, borderRadius:10}}>
+          <div style={{marginTop:10, padding:14, background:"rgba(184,147,90,0.08)", border:`1px solid rgba(184,147,90,0.3)`, borderRadius:10}}>
             <div style={{fontSize:11, color:TH.accent, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>⚡ {L.actionRequired}</div>
             <div style={{fontSize:14, color:TH.text}}>{ins.action_required}</div>
           </div>
         )}
 
         {ins.resolution_note && (
-          <div style={{marginTop:10, padding:14, background:"rgba(201,169,96,0.06)", borderRadius:10}}>
+          <div style={{marginTop:10, padding:14, background:"rgba(184,147,90,0.06)", borderRadius:10}}>
             <div style={{fontSize:11, color:TH.accent, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:6}}>{L.resolution}</div>
             <div style={{fontSize:13, color:TH.text}}>{ins.resolution_note}</div>
           </div>
@@ -414,7 +414,7 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
       {/* Actions */}
       {ins.status !== 'fixed' && !resolveMode && (
         <button onClick={() => setResolveMode(true)} style={{
-          width:"100%", background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
+          width:"100%", background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12,
           color:"#000", padding:"14px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit", marginBottom:16,
         }}>
           {L.markResolved}
@@ -437,7 +437,7 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
           />
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
             <button onClick={() => { setResolveMode(false); setResolutionNote(""); }} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 16px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
-            <button onClick={markResolved} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:busy?0.6:1}}>
+            <button onClick={markResolved} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:busy?0.6:1}}>
               {busy ? L.saving : L.confirm}
             </button>
           </div>
@@ -446,8 +446,8 @@ export default function InspectionDetail({ TH, lang = "en", isMobile, isAdmin, i
 
             {/* Visit siblings — other problems from same visit */}
       {siblings.length > 0 && (
-        <div style={{background:"rgba(201,169,96,0.06)", border:"1px solid rgba(201,169,96,0.25)", borderRadius:12, padding:14, marginBottom:16}}>
-          <div style={{fontSize:12, fontWeight:800, color:"#C9A960", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.5px"}}>
+        <div style={{background:"rgba(184,147,90,0.06)", border:"1px solid rgba(184,147,90,0.25)", borderRadius:12, padding:14, marginBottom:16}}>
+          <div style={{fontSize:12, fontWeight:800, color:"#B8935A", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.5px"}}>
             ◇ Part of a visit — {siblings.length + 1} problem{siblings.length + 1 > 1 ? 's' : ''} recorded together
           </div>
           <div style={{display:"flex", flexDirection:"column", gap:6}}>
@@ -497,6 +497,6 @@ function editInp(TH) {
 
 
 function pdfBtn(TH, lang) {
-  const bg = lang === 'he' ? 'linear-gradient(135deg,#8B7A44,#C9A960)' : 'linear-gradient(135deg,#C9A960,#D4B876)';
+  const bg = lang === 'he' ? 'linear-gradient(135deg,#8B7040,#B8935A)' : 'linear-gradient(135deg,#B8935A,#D4A853)';
   return { background: bg, border: 'none', borderRadius: 8, color: '#000', padding: '7px 12px', cursor: 'pointer', fontSize: 12, fontWeight: 800, fontFamily: 'inherit' };
 }

@@ -26,26 +26,26 @@ const ADMIN_EMAILS = [
 // ─── Themes ─────────────────────────────────────────────────────────
 const THEMES = {
   dark: {
-    bg:"#050505", bgElev:"#0d0d0c", bgCard:"#0f0e0c", bgInput:"#171613", bgHover:"#1d1c18",
-    text:"#f4efe4", textMuted:"#98917f", textDim:"#5c584d", textHeading:"#ffffff",
-    border:"#232119", borderStrong:"#33301f", divider:"#191813",
-    sidebar:"linear-gradient(180deg, #0a0a09 0%, #050505 100%)", sidebarBorder:"#232119",
-    header:"rgba(5,5,5,0.92)", headerBorder:"#232119",
-    accent:"#C9A960", accentText:"#D4B876",
-    accentBg:"rgba(201,169,96,.10)", accentBorder:"rgba(201,169,96,.30)",
+    bg:"#141210", bgElev:"#1a1712", bgCard:"#1a1712", bgInput:"#211d16", bgHover:"#2a2519",
+    text:"#EAE4D3", textMuted:"#8B8580", textDim:"#5f5a52", textHeading:"#F5F0E4",
+    border:"#2e2a20", borderStrong:"#403a2c", divider:"#241f18",
+    sidebar:"linear-gradient(180deg, #191612 0%, #141210 100%)", sidebarBorder:"#2e2a20",
+    header:"rgba(20,18,16,0.92)", headerBorder:"#2e2a20",
+    accent:"#B8935A", accentText:"#D4A853",
+    accentBg:"rgba(184,147,90,.12)", accentBorder:"rgba(184,147,90,.32)",
     shadow:"0 1px 3px rgba(0,0,0,.5)", shadowLg:"0 12px 40px rgba(0,0,0,.55)",
-    cardGlow:"0 0 0 1px rgba(201,169,96,.06), 0 8px 30px rgba(0,0,0,.35)",
+    cardGlow:"0 0 0 1px rgba(184,147,90,.07), 0 8px 30px rgba(0,0,0,.35)",
   },
   light: {
-    bg:"#F6F2E9", bgElev:"#FFFDF8", bgCard:"#FFFDF8", bgInput:"#F1EBDD", bgHover:"#EDE6D5",
-    text:"#1c1a14", textMuted:"#7a7361", textDim:"#a8a08c", textHeading:"#141210",
-    border:"#E6DFCC", borderStrong:"#D5CBAE", divider:"#EDE6D5",
-    sidebar:"linear-gradient(180deg, #FFFDF8 0%, #FAF6EC 100%)", sidebarBorder:"#E6DFCC",
-    header:"rgba(255,253,248,0.92)", headerBorder:"#E6DFCC",
-    accent:"#8B7A44", accentText:"#8B7A44",
-    accentBg:"rgba(139,122,68,.09)", accentBorder:"rgba(139,122,68,.30)",
-    shadow:"0 1px 3px rgba(139,122,68,.10)", shadowLg:"0 12px 40px rgba(139,122,68,.18)",
-    cardGlow:"0 1px 2px rgba(139,122,68,.06), 0 8px 28px rgba(139,122,68,.10)",
+    bg:"#EFE9D9", bgElev:"#FBF7EB", bgCard:"#FBF7EB", bgInput:"#F0EAD8", bgHover:"#E8E1CD",
+    text:"#231f18", textMuted:"#7a7361", textDim:"#a49c88", textHeading:"#1a1712",
+    border:"#DDD4BC", borderStrong:"#C9BE9F", divider:"#E8E1CD",
+    sidebar:"linear-gradient(180deg, #FBF7EB 0%, #F3EDDC 100%)", sidebarBorder:"#DDD4BC",
+    header:"rgba(251,247,235,0.92)", headerBorder:"#DDD4BC",
+    accent:"#8B7040", accentText:"#8B7040",
+    accentBg:"rgba(139,112,64,.10)", accentBorder:"rgba(139,112,64,.32)",
+    shadow:"0 1px 3px rgba(139,112,64,.10)", shadowLg:"0 12px 40px rgba(139,112,64,.18)",
+    cardGlow:"0 1px 2px rgba(139,112,64,.06), 0 8px 28px rgba(139,112,64,.10)",
   },
 };
 
@@ -54,17 +54,28 @@ if (typeof document !== 'undefined' && !document.getElementById('caesar-polish')
   const st = document.createElement('style');
   st.id = 'caesar-polish';
   st.textContent = `
-    * { scrollbar-width: thin; scrollbar-color: rgba(201,169,96,.35) transparent; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(184,147,90,.35) transparent; }
     *::-webkit-scrollbar { width: 8px; height: 8px; }
-    *::-webkit-scrollbar-thumb { background: rgba(201,169,96,.30); border-radius: 8px; }
-    *::-webkit-scrollbar-thumb:hover { background: rgba(201,169,96,.55); }
+    *::-webkit-scrollbar-thumb { background: rgba(184,147,90,.30); border-radius: 8px; }
+    *::-webkit-scrollbar-thumb:hover { background: rgba(184,147,90,.55); }
     *::-webkit-scrollbar-track { background: transparent; }
     button { transition: background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease, box-shadow .15s ease; }
     button:active { transform: scale(.985); }
     input, select, textarea { transition: border-color .15s ease, box-shadow .15s ease; }
-    input:focus, select:focus, textarea:focus { border-color: rgba(201,169,96,.55) !important; box-shadow: 0 0 0 3px rgba(201,169,96,.12); }
+    input:focus, select:focus, textarea:focus { border-color: rgba(184,147,90,.55) !important; box-shadow: 0 0 0 3px rgba(184,147,90,.12); }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
     main > * { animation: fadeUp .25s ease; }
+    /* Softer serif headings — Plastic Surgery style */
+    h1, h2, h3 { font-weight: 400; }
+    /* Paper texture overlay (crumpled paper feel) */
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.011 0.013' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.72 0 0 0 0 0.58 0 0 0 0 0.35 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 400px 400px;
+      mix-blend-mode: overlay;
+    }
   `;
   document.head.appendChild(st);
 }
@@ -228,7 +239,7 @@ export default function InventorySystem() {
         background:TH.header,
         backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)",
         borderBottom:`1px solid ${TH.headerBorder}`,
-        boxShadow:"0 1px 0 rgba(201,169,96,.15)",
+        boxShadow:"0 1px 0 rgba(184,147,90,.15)",
         height:isMobile?54:62,
         display:"flex", alignItems:"center",
         padding:isMobile?"0 12px":"0 24px",
@@ -245,7 +256,7 @@ export default function InventorySystem() {
             <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:"100%", width:"auto", objectFit:"contain", display:"block"}}
                  onError={(e)=>{ e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="color:'+TH.accent+';font-weight:800;font-family:Georgia,serif;font-size:20px">CAESAR</span>'; }} />
           </div>
-          {!isMobile && <div style={{fontSize:11, color:"#C9A960", fontWeight:700, letterSpacing:"0.14em"}}>● LIVE</div>}
+          {!isMobile && <div style={{fontSize:11, color:"#B8935A", fontWeight:700, letterSpacing:"0.14em"}}>● LIVE</div>}
         </div>
 
         <div style={{flex:1}} />
@@ -267,7 +278,7 @@ export default function InventorySystem() {
         <div style={{display:"flex", gap:2, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:20, padding:2}}>
           {["en","he","fa"].map(l=>(
             <button key={l} onClick={()=>setLang(l)} style={{
-              background: lang===l ? "linear-gradient(135deg,#C9A960,#8B7A44)" : "transparent",
+              background: lang===l ? "linear-gradient(135deg,#B8935A,#8B7040)" : "transparent",
               border:"none", borderRadius:16, color: lang===l?"#000":TH.textMuted,
               padding:"5px 12px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit",
               textTransform:"uppercase",
@@ -277,7 +288,7 @@ export default function InventorySystem() {
 
         {!isMobile && (
           <div style={{display:"flex", alignItems:"center", gap:10, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:24, padding:"4px 14px 4px 4px"}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:"linear-gradient(135deg,#C9A960,#8B7A44)",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontWeight:800,fontSize:13}}>
+            <div style={{width:32,height:32,borderRadius:"50%",background:"linear-gradient(135deg,#B8935A,#8B7040)",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontWeight:800,fontSize:13}}>
               {(email[0]||"?").toUpperCase()}
             </div>
             <div>
@@ -320,19 +331,19 @@ export default function InventorySystem() {
                     <button key={k} onClick={()=>{ setTab(k); if(isMobile) setSidebarOpen(false); }} style={{
                       display:"flex", alignItems:"center", gap:11, width:"100%",
                       padding:"10px 12px", marginBottom:2,
-                      background: active ? "linear-gradient(135deg, rgba(201,169,96,.16), rgba(139,122,68,.08))" : "transparent",
-                      border: active ? "1px solid rgba(201,169,96,.35)" : "1px solid transparent",
+                      background: active ? "linear-gradient(135deg, rgba(184,147,90,.16), rgba(139,112,64,.08))" : "transparent",
+                      border: active ? "1px solid rgba(184,147,90,.35)" : "1px solid transparent",
                       borderRadius:11,
                       color: active ? TH.accent : TH.textMuted,
                       cursor:"pointer", fontSize:13, textAlign:"left", fontFamily:"inherit",
                       fontWeight: active ? 700 : 500,
-                      boxShadow: active ? "0 2px 10px rgba(201,169,96,.10)" : "none",
+                      boxShadow: active ? "0 2px 10px rgba(184,147,90,.10)" : "none",
                     }}
                     onMouseEnter={e=>{ if(!active) e.currentTarget.style.background = TH.bgHover; }}
                     onMouseLeave={e=>{ if(!active) e.currentTarget.style.background = "transparent"; }}>
                       <span style={{fontSize:15, width:20, textAlign:"center", flexShrink:0, filter: active ? "none" : "grayscale(0.4)"}}>{TAB_ICONS[k]}</span>
                       <span style={{flex:1}}>{LABEL_OVERRIDES[k] || t[k] || k}</span>
-                      {active && <span style={{width:5, height:5, borderRadius:3, background:"#C9A960", flexShrink:0}}/>}
+                      {active && <span style={{width:5, height:5, borderRadius:3, background:"#B8935A", flexShrink:0}}/>}
                     </button>
                   );
                 })}
@@ -350,7 +361,7 @@ export default function InventorySystem() {
           {allTabs.length === 0 && (
             <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}>
               <div style={{fontSize:44, marginBottom:12, color:TH.accent}}>🔒</div>
-              <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:700, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div>
+              <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:400, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div>
               <div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>
                 {t.noAccessDesc}
               </div>
@@ -398,7 +409,7 @@ function LoginScreen({ TH, onSignedIn }) {
       minHeight:"100vh", background:TH.bg, color:TH.text,
       display:"flex", alignItems:"center", justifyContent:"center",
       padding:20, fontFamily:"'Inter',system-ui,sans-serif",
-      backgroundImage: `radial-gradient(ellipse 800px 500px at 50% -10%, rgba(201,169,96,0.10), transparent 60%)`,
+      backgroundImage: `radial-gradient(ellipse 800px 500px at 50% -10%, rgba(184,147,90,0.10), transparent 60%)`,
     }}>
       <form onSubmit={submit} style={{
         background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16,
@@ -411,11 +422,11 @@ function LoginScreen({ TH, onSignedIn }) {
             background: "linear-gradient(135deg, #1a1814 0%, #0d0c0a 100%)",
             border:`1px solid ${TH.accentBorder}`,
             display:"flex", alignItems:"center", justifyContent:"center",
-            fontFamily:"'Playfair Display',Georgia,serif", fontSize:38, color:TH.accent, fontWeight:700,
-            boxShadow: `0 0 0 1px rgba(201,169,96,.15) inset, 0 8px 24px rgba(201,169,96,.15)`,
+            fontFamily:"'Playfair Display',Georgia,serif", fontSize:38, color:TH.accent, fontWeight:400,
+            boxShadow: `0 0 0 1px rgba(184,147,90,.15) inset, 0 8px 24px rgba(184,147,90,.15)`,
             lineHeight:1,
           }}>Ω</div>
-          <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:26, fontWeight:700, color:TH.text, letterSpacing:"-0.01em"}}>Omega Control System</div>
+          <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:26, fontWeight:400, color:TH.text, letterSpacing:"-0.01em"}}>Omega Control System</div>
           <div style={{fontSize:11, color:TH.textMuted, letterSpacing:"0.18em", marginTop:6, textTransform:"uppercase"}}>Caesar Projects · Internal</div>
         </div>
 
@@ -441,11 +452,11 @@ function LoginScreen({ TH, onSignedIn }) {
 
         <button type="submit" disabled={busy} style={{
           width:"100%", padding:"14px",
-          background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+          background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
           color:"#000", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
           letterSpacing:"0.02em",
           opacity: busy ? 0.6 : 1,
-          boxShadow: "0 4px 14px rgba(201,169,96,.25)",
+          boxShadow: "0 4px 14px rgba(184,147,90,.25)",
         }}>{busy ? "Signing in…" : "Sign in"}</button>
 
         <div style={{marginTop:20, padding:"12px 14px", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, textAlign:"center"}}>

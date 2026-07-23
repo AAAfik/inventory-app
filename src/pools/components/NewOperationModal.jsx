@@ -9,8 +9,8 @@ import { supabase } from "../../supabase";
 
 const OP_TYPES = [
   { k: 'cleaning',        icon: '🧹', label: 'Cleaning',        color: '#7BB3D4' },
-  { k: 'chemical_dosing', icon: '🧪', label: 'Chemical Dosing', color: '#C9A960' },
-  { k: 'maintenance',     icon: '🔧', label: 'Maintenance',     color: '#8B7A44' },
+  { k: 'chemical_dosing', icon: '🧪', label: 'Chemical Dosing', color: '#B8935A' },
+  { k: 'maintenance',     icon: '🔧', label: 'Maintenance',     color: '#8B7040' },
   { k: 'filter_change',   icon: '🔄', label: 'Filter Change',   color: '#B8862C' },
 ];
 
@@ -306,7 +306,7 @@ export default function NewOperationModal({ TH, lang = "en", isMobile, presetPoo
 
         <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
           <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
-          <button onClick={submit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
+          <button onClick={submit} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
             {busy ? "Saving…" : "Save operation"}
           </button>
         </div>

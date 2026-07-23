@@ -306,7 +306,7 @@ function inputStyle(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
 }
 function goldBtn() {
-  return { background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit" };
+  return { background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit" };
 }
 function ErrorBox({ TH, children }) {
   return <div style={{background:"rgba(201,80,80,.10)", border:"1px solid rgba(201,80,80,.35)", borderRadius:9, padding:"10px 14px", color:"#d67373", fontSize:13, marginBottom:16}}>{children}</div>;

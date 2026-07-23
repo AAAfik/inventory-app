@@ -3,18 +3,18 @@
 // ═══════════════════════════════════════════════════════════════════
 
 export const POOL_TYPES = {
- main:  { label: 'Main pool',  color: '#C9A960' },
- kids:  { label: 'Kids pool',  color: '#D4B876' },
- jacuzzi: { label: 'Jacuzzi',  color: '#8B7A44' },
+ main:  { label: 'Main pool',  color: '#B8935A' },
+ kids:  { label: 'Kids pool',  color: '#D4A853' },
+ jacuzzi: { label: 'Jacuzzi',  color: '#8B7040' },
  spa:  { label: 'Spa',  color: '#A89566' },
  plunge:  { label: 'Plunge pool',  color: '#7BB3D4' },
  indoor:  { label: 'Indoor pool',  color: '#8f8f8f' },
 };
 
 export const CHEMICAL_PURPOSES = {
- sanitizer:  { label: 'Sanitizer',  color: '#C9A960' },
- ph_up:  { label: 'pH raiser',  color: '#D4B876' },
- ph_down:  { label: 'pH lowerer', color: '#8B7A44' },
+ sanitizer:  { label: 'Sanitizer',  color: '#B8935A' },
+ ph_up:  { label: 'pH raiser',  color: '#D4A853' },
+ ph_down:  { label: 'pH lowerer', color: '#8B7040' },
  algaecide:  { label: 'Algaecide',  color: '#7BB3D4' },
  clarifier:  { label: 'Clarifier',  color: '#A89566' },
  stabilizer: { label: 'Stabilizer', color: '#8f8f8f' },
@@ -22,9 +22,9 @@ export const CHEMICAL_PURPOSES = {
 };
 
 export const CLARITY_OPTIONS = {
- clear:  { label: 'Clear',  color: '#C9A960' },
- cloudy: { label: 'Cloudy', color: '#D4B876' },
- green:  { label: 'Green',  color: '#8B7A44' },
+ clear:  { label: 'Clear',  color: '#B8935A' },
+ cloudy: { label: 'Cloudy', color: '#D4A853' },
+ green:  { label: 'Green',  color: '#8B7040' },
  turbid: { label: 'Turbid', color: '#8f8f8f' },
 };
 
@@ -45,9 +45,9 @@ export function phStatus(ph) {
  const n = Number(ph);
  if (isNaN(n))  return null;
  if (n < 7.0)  return { label: 'Too low',  color: '#8f8f8f', urgent: true };
- if (n < 7.2)  return { label: 'Low',  color: '#8B7A44', urgent: true };
- if (n <= 7.6)  return { label: 'Ideal',  color: '#C9A960', urgent: false };
- if (n <= 7.8)  return { label: 'High',  color: '#D4B876', urgent: false };
+ if (n < 7.2)  return { label: 'Low',  color: '#8B7040', urgent: true };
+ if (n <= 7.6)  return { label: 'Ideal',  color: '#B8935A', urgent: false };
+ if (n <= 7.8)  return { label: 'High',  color: '#D4A853', urgent: false };
  return  { label: 'Too high', color: '#8f8f8f', urgent: true };
 }
 
@@ -57,9 +57,9 @@ export function chlorineStatus(ppm) {
  const n = Number(ppm);
  if (isNaN(n))  return null;
  if (n < 0.5)  return { label: 'Too low',  color: '#8f8f8f', urgent: true };
- if (n < 1.0)  return { label: 'Low',  color: '#8B7A44', urgent: true };
- if (n <= 3.0)  return { label: 'Ideal',  color: '#C9A960', urgent: false };
- if (n <= 5.0)  return { label: 'High',  color: '#D4B876', urgent: false };
+ if (n < 1.0)  return { label: 'Low',  color: '#8B7040', urgent: true };
+ if (n <= 3.0)  return { label: 'Ideal',  color: '#B8935A', urgent: false };
+ if (n <= 5.0)  return { label: 'High',  color: '#D4A853', urgent: false };
  return  { label: 'Too high', color: '#8f8f8f', urgent: true };
 }
 

@@ -8,16 +8,16 @@ import { supabase } from "./supabase";
 import { tr } from "./i18n";
 
 const INS_STATUS = {
-  ok:            { label: 'OK',       color: '#C9A960' },
-  minor_issue:   { label: 'Minor',    color: '#D4B876' },
-  major_issue:   { label: 'Major',    color: '#8B7A44' },
+  ok:            { label: 'OK',       color: '#B8935A' },
+  minor_issue:   { label: 'Minor',    color: '#D4A853' },
+  major_issue:   { label: 'Major',    color: '#8B7040' },
   critical:      { label: 'Critical', color: '#8f8f8f' },
-  needs_repair:  { label: 'Repair',   color: '#8B7A44' },
-  fixed:         { label: 'Fixed',    color: '#C9A960' },
+  needs_repair:  { label: 'Repair',   color: '#8B7040' },
+  fixed:         { label: 'Fixed',    color: '#B8935A' },
 };
 const AST_STATUS = {
-  available:   { label: 'Available',   color: '#C9A960' },
-  checked_out: { label: 'Checked out', color: '#8B7A44' },
+  available:   { label: 'Available',   color: '#B8935A' },
+  checked_out: { label: 'Checked out', color: '#8B7040' },
   in_service:  { label: 'In service',  color: '#8f8f8f' },
   damaged:     { label: 'Damaged',     color: '#8f8f8f' },
   lost:        { label: 'Lost',        color: '#8f8f8f' },
@@ -311,7 +311,7 @@ function ModalFooter({ TH, onClose, onOpenModule, moduleLabel, closeLabel = "Clo
   return (
     <div style={{display:"flex", gap:8, marginTop:16}}>
       <button onClick={onClose} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"12px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{closeLabel}</button>
-      <button onClick={onOpenModule} style={{flex:1, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{moduleLabel}</button>
+      <button onClick={onOpenModule} style={{flex:1, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{moduleLabel}</button>
     </div>
   );
 }
@@ -327,11 +327,11 @@ function MBlock({ TH, label, children, accent, gold }) {
   return (
     <div style={{
       padding:12, borderRadius:10, marginBottom:10,
-      background: gold ? "rgba(201,169,96,0.08)" : TH.bgInput,
-      border: gold ? "1px solid rgba(201,169,96,0.3)" : "none",
-      borderLeft: accent ? `3px solid #C9A960` : undefined,
+      background: gold ? "rgba(184,147,90,0.08)" : TH.bgInput,
+      border: gold ? "1px solid rgba(184,147,90,0.3)" : "none",
+      borderLeft: accent ? `3px solid #B8935A` : undefined,
     }}>
-      <div style={{fontSize:10, fontWeight:700, color: gold ? "#C9A960" : TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:5}}>{label}</div>
+      <div style={{fontSize:10, fontWeight:700, color: gold ? "#B8935A" : TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:5}}>{label}</div>
       <div style={{fontSize:13, color:TH.text, whiteSpace:"pre-wrap", lineHeight:1.5}}>{children}</div>
     </div>
   );
@@ -341,10 +341,10 @@ function MBlock({ TH, label, children, accent, gold }) {
 function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
   return (
     <div onClick={onClick} style={{
-      background: gradient ? "linear-gradient(135deg, rgba(201,169,96,0.15), rgba(139,122,68,0.08))"
+      background: gradient ? "linear-gradient(135deg, rgba(184,147,90,0.15), rgba(139,112,64,0.08))"
                             : highlight ? "linear-gradient(135deg, rgba(143,143,143,0.10), rgba(92,92,92,0.05))"
                                         : TH.bgCard,
-      border:`1px solid ${highlight ? "rgba(143,143,143,0.3)" : gradient ? "rgba(201,169,96,0.3)" : TH.border}`,
+      border:`1px solid ${highlight ? "rgba(143,143,143,0.3)" : gradient ? "rgba(184,147,90,0.3)" : TH.border}`,
       borderRadius:14, padding:18, cursor: onClick ? "pointer" : "default", transition:"transform 0.15s, box-shadow 0.15s", boxShadow: TH.cardGlow || "0 4px 20px rgba(0,0,0,0.08)",
     }}
     onMouseEnter={e => onClick && (e.currentTarget.style.transform = "translateY(-2px)")}

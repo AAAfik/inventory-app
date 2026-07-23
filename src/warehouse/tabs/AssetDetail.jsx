@@ -254,7 +254,7 @@ export default function AssetDetail({ TH, lang = "en", isMobile, isAdmin, assetI
             <div style={{fontSize:13, color:"#444", marginBottom:14}}>{asset.name}</div>
             <div style={{display:"flex", gap:8}}>
               <button onClick={() => setAction(null)} style={{flex:1, background:"#eee", border:"none", borderRadius:8, padding:"10px", cursor:"pointer", fontSize:13, fontWeight:600}}>Close</button>
-              <button onClick={printLabel} style={{flex:1, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700}}>🖨 Print</button>
+              <button onClick={printLabel} style={{flex:1, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700}}>🖨 Print</button>
             </div>
           </div>
         </div>
@@ -288,18 +288,18 @@ export default function AssetDetail({ TH, lang = "en", isMobile, isAdmin, assetI
 
         {/* Alerts */}
         {asset.status === 'checked_out' && (
-          <div style={{marginTop:14, padding:12, background:"rgba(139,122,68,0.12)", border:"1px solid rgba(139,122,68,0.4)", borderRadius:10, fontSize:13, color:TH.text}}>
+          <div style={{marginTop:14, padding:12, background:"rgba(139,112,64,0.12)", border:"1px solid rgba(139,112,64,0.4)", borderRadius:10, fontSize:13, color:TH.text}}>
             👤 {L.with} <strong>{asset.holder_name || 'unknown'}</strong>
             {asset.holder_phone && <> · 📞 {asset.holder_phone}</>}
             {asset.expected_return_at && (
               <> · {L.returnLbl} {fmtDate(asset.expected_return_at)}
-                {returnDays !== null && returnDays < 0 && <strong style={{color:"#C9A960"}}> — {L.overdue} {-returnDays}d</strong>}
+                {returnDays !== null && returnDays < 0 && <strong style={{color:"#B8935A"}}> — {L.overdue} {-returnDays}d</strong>}
               </>
             )}
           </div>
         )}
         {svc && (
-          <div style={{marginTop:10, padding:12, background:"rgba(201,169,96,0.08)", border:"1px solid rgba(201,169,96,0.3)", borderRadius:10, fontSize:13, color:svc.color, fontWeight:700}}>
+          <div style={{marginTop:10, padding:12, background:"rgba(184,147,90,0.08)", border:"1px solid rgba(184,147,90,0.3)", borderRadius:10, fontSize:13, color:svc.color, fontWeight:700}}>
             🔧 {svc.label}
           </div>
         )}
@@ -434,7 +434,7 @@ function Info({ TH, label, children }) {
 function ActionBtn({ TH, children, onClick, primary, danger }) {
   return (
     <button onClick={onClick} style={primary ? {
-      background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+      background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
       color:"#000", padding:"13px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit",
     } : danger ? {
       background:"transparent", border:`1px solid rgba(143,143,143,0.4)`, borderRadius:10,
@@ -452,7 +452,7 @@ function FormCard({ TH, title, children, onCancel, onSubmit, busy, submitLabel }
       {children}
       <div style={{display:"flex", gap:8, justifyContent:"flex-end", marginTop:14}}>
         <button onClick={onCancel} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
-        <button onClick={onSubmit} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? "..." : submitLabel}</button>
+        <button onClick={onSubmit} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>{busy ? "..." : submitLabel}</button>
       </div>
     </div>
   );

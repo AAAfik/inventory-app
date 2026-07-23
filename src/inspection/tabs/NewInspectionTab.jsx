@@ -210,7 +210,7 @@ export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved })
       <div style={{padding:"32px 20px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16}}>
         <div style={{textAlign:"center"}}>
           <div style={{fontSize:56, marginBottom:12}}>✅</div>
-          <div style={{fontSize:22, fontWeight:800, color:"#C9A960", marginBottom:6, fontFamily:"'Playfair Display', Georgia, serif"}}>
+          <div style={{fontSize:22, fontWeight:800, color:"#B8935A", marginBottom:6, fontFamily:"'Playfair Display', Georgia, serif"}}>
             Visit saved
           </div>
           <div style={{fontSize:14, color:TH.textMuted, marginBottom:18}}>
@@ -255,7 +255,7 @@ export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved })
       {error && <div style={errBox(TH)}>{error}</div>}
 
       {/* HEADER CARD */}
-      <div style={{background:TH.bgCard, border:`1px solid ${headerLocked ? TH.border : "rgba(201,169,96,0.4)"}`, borderRadius:14, padding:16, marginBottom:14}}>
+      <div style={{background:TH.bgCard, border:`1px solid ${headerLocked ? TH.border : "rgba(184,147,90,0.4)"}`, borderRadius:14, padding:16, marginBottom:14}}>
         <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12}}>
           <div style={{fontSize:12, fontWeight:800, color:TH.accent, textTransform:"uppercase", letterSpacing:"0.06em"}}>
             📋 Visit header
@@ -303,7 +303,7 @@ export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved })
             {!headerLocked && problems.length === 0 && (
               <button onClick={lockHeader} disabled={!headerValid()} style={{
                 width:"100%", marginTop:6,
-                background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
+                background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12,
                 color:"#000", padding:"14px", cursor: headerValid() ? "pointer" : "not-allowed",
                 fontSize:15, fontWeight:800, fontFamily:"inherit", opacity: headerValid() ? 1 : 0.5,
               }}>
@@ -377,7 +377,7 @@ export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved })
 
           <button onClick={openNewProblem} disabled={problems.length >= MAX_PROBLEMS} style={{
             width:"100%", padding:"14px",
-            background: problems.length === 0 ? "linear-gradient(135deg,#C9A960,#8B7A44)" : "transparent",
+            background: problems.length === 0 ? "linear-gradient(135deg,#B8935A,#8B7040)" : "transparent",
             border: problems.length === 0 ? "none" : `2px dashed ${TH.accent}`,
             borderRadius:12,
             color: problems.length === 0 ? "#000" : TH.accent,
@@ -398,7 +398,7 @@ export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved })
                     Saving problem {progress.probIdx + 1} of {progress.problemsTotal} · uploading photo {progress.photoIdx + 1}/{progress.total || 1}
                   </div>
                   <div style={{height:4, background:TH.bgInput, borderRadius:2, overflow:"hidden"}}>
-                    <div style={{height:"100%", width:`${((progress.probIdx + (progress.total ? progress.photoIdx / progress.total : 0)) / progress.problemsTotal) * 100}%`, background:"linear-gradient(90deg,#C9A960,#D4B876)", transition:"width .2s"}}/>
+                    <div style={{height:"100%", width:`${((progress.probIdx + (progress.total ? progress.photoIdx / progress.total : 0)) / progress.problemsTotal) * 100}%`, background:"linear-gradient(90deg,#B8935A,#D4A853)", transition:"width .2s"}}/>
                   </div>
                 </div>
               )}
@@ -406,9 +406,9 @@ export default function NewInspectionTab({ TH, lang = "en", isMobile, onSaved })
               <div style={{display:"flex", gap:10}}>
                 <button onClick={() => { if (confirm("Discard all problems and header?")) resetAll(); }} disabled={submitting} style={{flex:1, ...ghostBtn(TH)}}>{L.cancel}</button>
                 <button onClick={saveVisit} disabled={submitting} style={{
-                  flex:2, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
+                  flex:2, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12,
                   color:"#000", padding:"16px", cursor:"pointer", fontSize:15, fontWeight:800, fontFamily:"inherit",
-                  opacity:submitting?0.6:1, boxShadow:submitting?"none":"0 4px 14px rgba(201,169,96,0.3)",
+                  opacity:submitting?0.6:1, boxShadow:submitting?"none":"0 4px 14px rgba(184,147,90,0.3)",
                 }}>
                   {submitting ? "Saving..." : `✓ Save visit (${problems.length} problem${problems.length > 1 ? 's' : ''})`}
                 </button>
@@ -540,7 +540,7 @@ function ProblemEditor({ TH, L, STATUS_LBL, isMobile, initial, problemNumber, on
 
         {currentCat?.warnings?.length > 0 && (
           <div style={{marginTop:12, padding:11, background:"rgba(255,180,60,0.08)", border:"1px solid rgba(255,180,60,0.3)", borderRadius:10}}>
-            <div style={{fontSize:10.5, fontWeight:800, color:"#D4B876", marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>⚠️ Safety references (included in PDF)</div>
+            <div style={{fontSize:10.5, fontWeight:800, color:"#D4A853", marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>⚠️ Safety references (included in PDF)</div>
             {currentCat.warnings.map((w, i) => (
               <div key={i} style={{fontSize:11.5, color:TH.text, marginBottom: i < currentCat.warnings.length - 1 ? 8 : 0, lineHeight:1.45}}>
                 • {w.text}
@@ -612,7 +612,7 @@ function ProblemEditor({ TH, L, STATUS_LBL, isMobile, initial, problemNumber, on
       <div style={{display:"flex", gap:10}}>
         <button onClick={onCancel} style={{flex:1, ...ghostBtn(TH)}}>{L.cancel}</button>
         <button onClick={submit} disabled={!title.trim()} style={{
-          flex:2, background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
+          flex:2, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12,
           color:"#000", padding:"15px", cursor: title.trim() ? "pointer" : "not-allowed",
           fontSize:15, fontWeight:800, fontFamily:"inherit", opacity: title.trim() ? 1 : 0.5,
         }}>
@@ -650,7 +650,7 @@ function chip(color) {
   return { fontSize:10, color: color, background: color + "22", padding:"3px 8px", borderRadius:5, fontWeight:600 };
 }
 const goldBtn = {
-  background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:12,
+  background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:12,
   color:"#000", padding:"14px 20px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
 };
 function ghostBtn(TH) {

@@ -11,16 +11,16 @@ import { formatDate } from "../../inspection/lib/inspectionUtils";
 
 const EVENT_META = {
   created:          { icon: "✨", color: "#7A9A5B", label: "Created" },
-  updated:          { icon: "✏️", color: "#8B7A44", label: "Updated" },
+  updated:          { icon: "✏️", color: "#8B7040", label: "Updated" },
   moved:            { icon: "📍", color: "#7BB3D4", label: "Moved" },
-  assigned:         { icon: "👤", color: "#C9A960", label: "Assigned" },
+  assigned:         { icon: "👤", color: "#B8935A", label: "Assigned" },
   unassigned:       { icon: "🔓", color: "#8f8f8f", label: "Unassigned" },
   serviced:         { icon: "🔧", color: "#B8862C", label: "Serviced" },
   condition_changed:{ icon: "🩹", color: "#E67A2C", label: "Condition changed" },
-  cost_updated:     { icon: "💰", color: "#8B7A44", label: "Cost updated" },
+  cost_updated:     { icon: "💰", color: "#8B7040", label: "Cost updated" },
   status_changed:   { icon: "🔄", color: "#7BB3D4", label: "Status changed" },
   deleted:          { icon: "🗑",  color: "#C43D3D", label: "Deleted" },
-  barcode_scanned:  { icon: "📷", color: "#C9A960", label: "Barcode scanned" },
+  barcode_scanned:  { icon: "📷", color: "#B8935A", label: "Barcode scanned" },
   note:             { icon: "📝", color: "#8f8f8f", label: "Note" },
 };
 
@@ -90,7 +90,7 @@ export default function AssetHistoryPanel({ TH, lang = "en", assetId }) {
           onClick={addNote}
           disabled={!newNote.trim() || saving}
           style={{
-            background: newNote.trim() ? "linear-gradient(135deg,#C9A960,#8B7A44)" : TH.bgInput,
+            background: newNote.trim() ? "linear-gradient(135deg,#B8935A,#8B7040)" : TH.bgInput,
             border:"none", borderRadius:8, color: newNote.trim() ? "#000" : TH.textMuted,
             padding:"9px 16px", fontSize:13, fontWeight:700, cursor: newNote.trim() ? "pointer" : "not-allowed",
             fontFamily:"inherit",

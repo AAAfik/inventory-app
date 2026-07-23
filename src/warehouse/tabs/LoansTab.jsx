@@ -130,7 +130,7 @@ export default function LoansTab({ TH, lang = "en", isMobile, onChanged }) {
             <textarea value={returnNotes} onChange={e => setReturnNotes(e.target.value)} disabled={busy} rows={2} placeholder="Optional" style={{...inp(TH), resize:"vertical"}} />
             <div style={{display:"flex", gap:8, justifyContent:"flex-end", marginTop:14}}>
               <button onClick={() => setReturning(null)} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"9px 16px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || "Cancel"}</button>
-              <button onClick={doReturn} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{busy ? "Returning…" : (L.confirmReturn || "Confirm return")}</button>
+              <button onClick={doReturn} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"9px 20px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{busy ? "Returning…" : (L.confirmReturn || "Confirm return")}</button>
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function LoansTab({ TH, lang = "en", isMobile, onChanged }) {
           <div style={{fontSize:14, fontWeight:800, color:TH.text}}>📤 {L.loansTitle || "Asset Loans"}</div>
           <div style={{fontSize:11, color:TH.textMuted, marginTop:2}}>{L.loansDesc || "Active asset check-outs with expected return dates."}</div>
         </div>
-        <button onClick={() => setShowCheckout(true)} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
+        <button onClick={() => setShowCheckout(true)} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
           📤 {L.newCheckout || "New checkout"}
         </button>
       </div>
@@ -234,7 +234,7 @@ export default function LoansTab({ TH, lang = "en", isMobile, onChanged }) {
 }
 
 function Chip({ TH, children, gold }) {
-  return <span style={{fontSize:10, color: gold ? "#C9A960" : TH.textMuted, background: gold ? "rgba(201,169,96,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
+  return <span style={{fontSize:10, color: gold ? "#B8935A" : TH.textMuted, background: gold ? "rgba(184,147,90,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
 }
 function inp(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };

@@ -102,7 +102,7 @@ export default function TreatmentHistoryTab({ TH, isMobile, isAdmin }) {
                   <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace"}}>{t.treatment_no}</div>
                 </div>
                 <div style={{textAlign:"right", flexShrink:0}}>
-                  <div style={{fontSize:15, fontWeight:800, color:"#C9A960", fontFamily:"monospace"}}>{fmtMoney(t.total_cost)}</div> {t.photos?.length > 1 && <div style={{fontSize:10, color:TH.textDim}}> {t.photos.length}</div>}
+                  <div style={{fontSize:15, fontWeight:800, color:"#B8935A", fontFamily:"monospace"}}>{fmtMoney(t.total_cost)}</div> {t.photos?.length > 1 && <div style={{fontSize:10, color:TH.textDim}}> {t.photos.length}</div>}
                 </div>
               </div> );
  })}
@@ -165,7 +165,7 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
               <Info TH={TH} label="Chlorine">{treatment.chlorine_ppm ? `${treatment.chlorine_ppm} ppm` : '—'}</Info>
               <Info TH={TH} label="Water temp">{treatment.water_temp ? `${treatment.water_temp}°C` : '—'}</Info>
               <Info TH={TH} label="Clarity">{CLARITY_OPTIONS[treatment.clarity]?.label || '—'}</Info>
-              <Info TH={TH} label="Total cost"><strong style={{color:"#C9A960", fontFamily:"monospace"}}>{fmtMoney(treatment.total_cost)}</strong></Info>
+              <Info TH={TH} label="Total cost"><strong style={{color:"#B8935A", fontFamily:"monospace"}}>{fmtMoney(treatment.total_cost)}</strong></Info>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ function TreatmentDetail({ TH, isMobile, isAdmin, treatment, pool, onClose }) {
                       <td style={td(TH)}> {l.chemical_name || chem?.name || '—'}</td>
                       <td style={{...td(TH), textAlign:"right", fontFamily:"monospace"}}>{fmtQty(l.qty, l.unit)}</td>
                       <td style={{...td(TH), textAlign:"right", fontFamily:"monospace"}}>{fmtMoney(l.total_cost)}</td>
-                      <td style={{...td(TH), textAlign:"center"}}>{l.auto_deducted ? <span style={{color:"#C9A960", fontWeight:800}}></span> : <span style={{color:TH.textDim}}>—</span>}</td>
+                      <td style={{...td(TH), textAlign:"center"}}>{l.auto_deducted ? <span style={{color:"#B8935A", fontWeight:800}}></span> : <span style={{color:TH.textDim}}>—</span>}</td>
                     </tr> );
  })}
               </tbody>

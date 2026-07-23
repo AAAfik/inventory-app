@@ -100,9 +100,9 @@ export default function PoolControlHub({ TH, lang = "en", isMobile = false, isAd
         <button
           onClick={() => setShowNewOp(true)}
           style={{
-            background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+            background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
             color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer",
-            fontFamily:"inherit", boxShadow:"0 2px 10px rgba(201,169,96,0.3)",
+            fontFamily:"inherit", boxShadow:"0 2px 10px rgba(184,147,90,0.3)",
           }}
         >⚙️ New Operation</button>
       </div>

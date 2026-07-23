@@ -16,23 +16,23 @@ import { STATUS_META } from "./RequestsListTab";
 const DECISION_META = {
   pending:      { label: "Pending",     color: "#8f8f8f", icon: "○" },
   from_stock:   { label: "From stock",  color: "#7A9A5B", icon: "📦" },
-  to_purchase:  { label: "To purchase", color: "#C9A960", icon: "🛒" },
+  to_purchase:  { label: "To purchase", color: "#B8935A", icon: "🛒" },
   rejected:     { label: "Rejected",    color: "#C43D3D", icon: "✕" },
 };
 
 const EVENT_META = {
   created:              { icon: "📝", color: "#7BB3D4", label: "Created" },
-  opened:               { icon: "👁", color: "#C9A960", label: "Opened by Edem" },
+  opened:               { icon: "👁", color: "#B8935A", label: "Opened by Edem" },
   edem_approved:        { icon: "✓",  color: "#B8862C", label: "Approved by Edem" },
   edem_rejected:        { icon: "✕",  color: "#C43D3D", label: "Rejected by Edem" },
   fulfilled_from_stock: { icon: "📦", color: "#7A9A5B", label: "Fulfilled from stock" },
   hezi_approved:        { icon: "✓",  color: "#7A9A5B", label: "Final approval (Hezi)" },
   hezi_rejected:        { icon: "✕",  color: "#C43D3D", label: "Rejected by Hezi" },
-  purchased:            { icon: "🛒", color: "#8B7A44", label: "Purchased" },
+  purchased:            { icon: "🛒", color: "#8B7040", label: "Purchased" },
   cancelled:            { icon: "⊘",  color: "#8f8f8f", label: "Cancelled" },
   item_decision:        { icon: "•",  color: "#8f8f8f", label: "Item decision" },
   note:                 { icon: "💬", color: "#8f8f8f", label: "Note" },
-  updated:              { icon: "✏️", color: "#8B7A44", label: "Updated" },
+  updated:              { icon: "✏️", color: "#8B7040", label: "Updated" },
 };
 
 export default function RequestDetail({ TH, lang = "en", isMobile, requestId, role, isAdmin, onClose }) {
@@ -341,7 +341,7 @@ export default function RequestDetail({ TH, lang = "en", isMobile, requestId, ro
                   )}
 
                   <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
-                    <button onClick={() => setItemDecision(it, 'to_purchase')} disabled={busy} style={{background:"rgba(201,169,96,0.15)", border:"1px solid #C9A960", borderRadius:6, color:"#C9A960", padding:"6px 12px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}>
+                    <button onClick={() => setItemDecision(it, 'to_purchase')} disabled={busy} style={{background:"rgba(184,147,90,0.15)", border:"1px solid #B8935A", borderRadius:6, color:"#B8935A", padding:"6px 12px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}>
                       🛒 {L.toPurchase || 'To purchase'}
                     </button>
                     <button onClick={() => setItemDecision(it, 'rejected')} disabled={busy} style={{background:"transparent", border:"1px solid rgba(196,61,61,0.4)", borderRadius:6, color:"#C43D3D", padding:"6px 12px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}>
@@ -393,7 +393,7 @@ export default function RequestDetail({ TH, lang = "en", isMobile, requestId, ro
         <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:14, marginBottom:16}}>
           {req.edem_notes && (
             <div style={{marginBottom:req.hezi_notes ? 10 : 0, padding:10, background:TH.bgInput, borderRadius:8}}>
-              <div style={{fontSize:10, fontWeight:800, color:"#C9A960", textTransform:"uppercase", letterSpacing:"0.05em", marginBottom:4}}>Edem — {formatDate(req.edem_decided_at)}</div>
+              <div style={{fontSize:10, fontWeight:800, color:"#B8935A", textTransform:"uppercase", letterSpacing:"0.05em", marginBottom:4}}>Edem — {formatDate(req.edem_decided_at)}</div>
               <div style={{fontSize:12, color:TH.text}}>{req.edem_notes}</div>
             </div>
           )}
@@ -444,7 +444,7 @@ function Info({ TH, label, children }) {
     </div>
   );
 }
-function btnPrimary()  { return { background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit" }; }
+function btnPrimary()  { return { background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit" }; }
 function btnSuccess()  { return { background:"linear-gradient(135deg,#7A9A5B,#5B7A44)", border:"none", borderRadius:9, color:"#fff", padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit" }; }
 function btnDanger()   { return { background:"transparent", border:"1px solid rgba(196,61,61,0.4)", borderRadius:9, color:"#C43D3D", padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit" }; }
 function btnCancel(TH) { return { background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit" }; }

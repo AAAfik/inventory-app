@@ -105,7 +105,7 @@ export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) 
         {!scanning ? (
           <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
             <button onClick={startScan} style={{
-              background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+              background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
               color:"#000", padding:"12px 22px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
             }}>{L.scanQR}</button>
             <input
@@ -143,8 +143,8 @@ export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) 
             const overdue = d !== null && d < 0;
             return (
               <div key={a.id} onClick={() => setSelected(a.id)} style={{
-                background:TH.bgCard, border:`1px solid ${overdue ? "rgba(139,122,68,0.5)" : TH.border}`,
-                borderLeft:`3px solid ${overdue ? "#C9A960" : "#8B7A44"}`,
+                background:TH.bgCard, border:`1px solid ${overdue ? "rgba(139,112,64,0.5)" : TH.border}`,
+                borderLeft:`3px solid ${overdue ? "#B8935A" : "#8B7040"}`,
                 borderRadius:12, padding:14, cursor:"pointer",
                 display:"flex", gap:12, alignItems:"center",
               }}>
@@ -161,7 +161,7 @@ export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) 
                 <div style={{textAlign:"right", flexShrink:0}}>
                   {a.expected_return_at ? (
                     <>
-                      <div style={{fontSize:11, color: overdue ? "#C9A960" : TH.textMuted, fontWeight: overdue ? 800 : 500}}>
+                      <div style={{fontSize:11, color: overdue ? "#B8935A" : TH.textMuted, fontWeight: overdue ? 800 : 500}}>
                         {overdue ? `${L.overdue} ${-d}d` : d === 0 ? L.dueToday : `${d}${L.daysLeft}`}
                       </div>
                       <div style={{fontSize:10, color:TH.textDim}}>{fmtDate(a.expected_return_at)}</div>

@@ -160,7 +160,7 @@ function PoolDetail({ TH, isMobile, isAdmin, pool, chemicals, propMap, onClose }
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, gap:8, flexWrap:"wrap"}}>
         <button onClick={onClose} style={ghostBtn(TH)}>Back</button>
         <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
-          <button onClick={() => setShowEquipment(true)} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", fontSize:12, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
+          <button onClick={() => setShowEquipment(true)} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", fontSize:12, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
             🔧 Equipment & Operations
           </button>
           {isAdmin && !editMode && (
@@ -292,7 +292,7 @@ function ghostBtn(TH) {
  return { background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.text, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", fontWeight:600 };
 }
 const goldBtn = {
- background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9,
+ background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9,
  color:"#000", padding:"10px 22px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit",
 };
 function ErrBox({ TH, children }) {

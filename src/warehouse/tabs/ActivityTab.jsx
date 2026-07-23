@@ -10,16 +10,16 @@ import { formatDate } from "../../inspection/lib/inspectionUtils";
 
 const EVENT_META = {
   created:          { icon: "✨", color: "#7A9A5B", label: "Created" },
-  updated:          { icon: "✏️", color: "#8B7A44", label: "Updated" },
+  updated:          { icon: "✏️", color: "#8B7040", label: "Updated" },
   moved:            { icon: "📍", color: "#7BB3D4", label: "Moved" },
-  assigned:         { icon: "👤", color: "#C9A960", label: "Assigned" },
+  assigned:         { icon: "👤", color: "#B8935A", label: "Assigned" },
   unassigned:       { icon: "🔓", color: "#8f8f8f", label: "Unassigned" },
   serviced:         { icon: "🔧", color: "#B8862C", label: "Serviced" },
   condition_changed:{ icon: "🩹", color: "#E67A2C", label: "Condition changed" },
-  cost_updated:     { icon: "💰", color: "#8B7A44", label: "Cost updated" },
+  cost_updated:     { icon: "💰", color: "#8B7040", label: "Cost updated" },
   status_changed:   { icon: "🔄", color: "#7BB3D4", label: "Status changed" },
   deleted:          { icon: "🗑",  color: "#C43D3D", label: "Deleted" },
-  barcode_scanned:  { icon: "📷", color: "#C9A960", label: "Barcode scanned" },
+  barcode_scanned:  { icon: "📷", color: "#B8935A", label: "Barcode scanned" },
   note:             { icon: "📝", color: "#8f8f8f", label: "Note" },
 };
 
@@ -174,5 +174,5 @@ function pill(TH, on) {
   };
 }
 function Count({ children, on }) {
-  return <span style={{background: on ? "#C9A960" : "rgba(255,255,255,0.05)", color: on ? "#000" : "#888", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{children}</span>;
+  return <span style={{background: on ? "#B8935A" : "rgba(255,255,255,0.05)", color: on ? "#000" : "#888", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{children}</span>;
 }

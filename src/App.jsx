@@ -58,17 +58,20 @@ export default function App() {
 
   const isDark = theme === "dark"
 
-  // ─── Caesar / Omega palette ────────────────────────────────────────
-  const bg           = isDark ? "#050505" : "#F6F2E9"
-  const cardBg       = isDark ? "#0f0e0c" : "#FFFDF8"
-  const border       = isDark ? "#232119" : "#E6DFCC"
-  const text         = isDark ? "#F4EFE4" : "#1c1a14"
-  const muted        = isDark ? "#98917f" : "#7a7361"
-  const inputBg      = isDark ? "#171613" : "#F1EBDD"
-  const accent       = "#C9A960"
-  const accentDark   = "#8B7A44"
-  const accentBg     = isDark ? "rgba(201,169,96,.08)" : "rgba(139,122,68,.06)"
-  const accentBorder = isDark ? "rgba(201,169,96,.30)" : "rgba(139,122,68,.30)"
+  // ─── Caesar / Omega palette — Plastic Surgery edition ─────────────
+  const bg           = isDark ? "#141210" : "#EFE9D9"
+  const cardBg       = isDark ? "#1a1712" : "#FBF7EB"
+  const border       = isDark ? "#2e2a20" : "#DDD4BC"
+  const text         = isDark ? "#EAE4D3" : "#231f18"
+  const muted        = isDark ? "#8B8580" : "#7a7361"
+  const inputBg      = isDark ? "#211d16" : "#F0EAD8"
+  const accent       = "#B8935A"
+  const accentDark   = "#8B7040"
+  const accentBg     = isDark ? "rgba(184,147,90,.10)" : "rgba(139,112,64,.08)"
+  const accentBorder = isDark ? "rgba(184,147,90,.32)" : "rgba(139,112,64,.32)"
+
+  // Paper texture (same as main app)
+  const paperTexture = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.011 0.013' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.72 0 0 0 0 0.58 0 0 0 0 0.35 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`
 
   if (loading) return (
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:bg}}>
@@ -80,9 +83,10 @@ export default function App() {
     <div style={{
       display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",
       background:bg,
-      backgroundImage: isDark
-        ? `radial-gradient(ellipse 900px 500px at 50% -10%, rgba(201,169,96,0.10), transparent 60%)`
-        : `radial-gradient(ellipse 900px 500px at 50% -10%, rgba(139,122,68,0.10), transparent 60%)`,
+      backgroundImage: `${paperTexture}, ${isDark
+        ? `radial-gradient(ellipse 900px 500px at 50% -10%, rgba(184,147,90,0.12), transparent 60%)`
+        : `radial-gradient(ellipse 900px 500px at 50% -10%, rgba(139,112,64,0.12), transparent 60%)`}`,
+      backgroundSize: "400px 400px, auto",
       fontFamily:"'Inter','Tahoma',sans-serif",padding:20,position:"relative"
     }}>
 
@@ -92,20 +96,20 @@ export default function App() {
         </button>
       </div>
 
-      <div style={{background:cardBg,border:`1px solid ${border}`,borderRadius:18,padding:"40px 36px",width:"100%",maxWidth:420,boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.55)" : "0 12px 40px rgba(139,122,68,0.18)"}}>
+      <div style={{background:cardBg,border:`1px solid ${border}`,borderRadius:18,padding:"40px 36px",width:"100%",maxWidth:420,boxShadow: isDark ? "0 12px 40px rgba(0,0,0,0.55)" : "0 12px 40px rgba(139,112,64,0.18)"}}>
 
         <div style={{textAlign:"center",marginBottom:32}}>
           <div style={{
             display:"inline-flex",alignItems:"center",justifyContent:"center",
             width:72,height:72,borderRadius:18,
-            background: isDark ? "linear-gradient(135deg,#1a1814 0%,#0d0c0a 100%)" : "linear-gradient(135deg,#FFFDF8 0%,#F1EBDD 100%)",
+            background: isDark ? "linear-gradient(135deg,#211d16 0%,#171410 100%)" : "linear-gradient(135deg,#FBF7EB 0%,#F0EAD8 100%)",
             border:`1px solid ${accentBorder}`,
             fontFamily:"'Playfair Display',Georgia,serif",
-            fontSize:40,color:accent,fontWeight:700,lineHeight:1,
+            fontSize:40,color:accent,fontWeight:400,lineHeight:1,
             marginBottom:16,
-            boxShadow: `0 0 0 1px ${accentBorder} inset, 0 8px 24px rgba(201,169,96,0.20)`
+            boxShadow: `0 0 0 1px ${accentBorder} inset, 0 8px 24px rgba(184,147,90,0.20)`
           }}>Ω</div>
-          <div style={{color:text,fontSize:26,fontWeight:700,letterSpacing:"-0.01em",fontFamily:"'Playfair Display',Georgia,serif"}}>Omega Control System</div>
+          <div style={{color:text,fontSize:26,fontWeight:400,letterSpacing:"-0.01em",fontFamily:"'Playfair Display',Georgia,serif"}}>Omega Control System</div>
           <div style={{color:muted,fontSize:11,marginTop:6,letterSpacing:"0.18em",textTransform:"uppercase",fontWeight:600}}>Caesar Projects · Internal</div>
         </div>
 
@@ -134,7 +138,7 @@ export default function App() {
             padding:"14px",cursor:"pointer",fontSize:14,fontWeight:800,fontFamily:"inherit",
             letterSpacing:"0.02em",
             opacity:isLogging?0.6:1,
-            boxShadow:"0 6px 18px rgba(201,169,96,0.30)"
+            boxShadow:"0 6px 18px rgba(184,147,90,0.30)"
           }}>
             {isLogging ? "Signing in…" : "Sign in"}
           </button>
@@ -157,17 +161,17 @@ export default function App() {
 
   if (showOperator) {
     const TH = isDark ? {
-      bg:"#050505", bgCard:"#0f0e0c", bgInput:"#171613", bgElev:"#0d0d0c",
-      header:"#050505", headerBorder:"#232119",
-      text:"#F4EFE4", textHeading:"#ffffff", textMuted:"#98917f", textDim:"#5c584d",
-      border:"#232119", divider:"#191813", accentBorder:"rgba(201,169,96,.30)",
-      accent:"#C9A960", accentBg:"rgba(201,169,96,.10)", accentText:"#D4B876",
+      bg:"#141210", bgCard:"#1a1712", bgInput:"#211d16", bgElev:"#1a1712",
+      header:"#141210", headerBorder:"#2e2a20",
+      text:"#EAE4D3", textHeading:"#F5F0E4", textMuted:"#8B8580", textDim:"#5f5a52",
+      border:"#2e2a20", divider:"#241f18", accentBorder:"rgba(184,147,90,.32)",
+      accent:"#B8935A", accentBg:"rgba(184,147,90,.12)", accentText:"#D4A853",
     } : {
-      bg:"#F6F2E9", bgCard:"#FFFDF8", bgInput:"#F1EBDD", bgElev:"#FFFDF8",
-      header:"#FFFDF8", headerBorder:"#E6DFCC",
-      text:"#1c1a14", textHeading:"#141210", textMuted:"#7a7361", textDim:"#a8a08c",
-      border:"#E6DFCC", divider:"#EDE6D5", accentBorder:"rgba(139,122,68,.30)",
-      accent:"#8B7A44", accentBg:"rgba(139,122,68,.09)", accentText:"#8B7A44",
+      bg:"#EFE9D9", bgCard:"#FBF7EB", bgInput:"#F0EAD8", bgElev:"#FBF7EB",
+      header:"#FBF7EB", headerBorder:"#DDD4BC",
+      text:"#231f18", textHeading:"#1a1712", textMuted:"#7a7361", textDim:"#a49c88",
+      border:"#DDD4BC", divider:"#E8E1CD", accentBorder:"rgba(139,112,64,.32)",
+      accent:"#8B7040", accentBg:"rgba(139,112,64,.10)", accentText:"#8B7040",
     }
     const isMobile = window.innerWidth < 900
     return <OperatorApp TH={TH} lang="en" isMobile={isMobile} user={session.user} />

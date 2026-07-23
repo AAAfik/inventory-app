@@ -98,9 +98,9 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
           {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
         <button onClick={() => setLowOnly(v => !v)} style={{
-          background: lowOnly ? "rgba(139,122,68,0.2)" : "transparent",
-          border:`1px solid ${lowOnly ? "#8B7A44" : TH.border}`, borderRadius:8,
-          color: lowOnly ? "#C9A960" : TH.textMuted, padding:"9px 16px",
+          background: lowOnly ? "rgba(139,112,64,0.2)" : "transparent",
+          border:`1px solid ${lowOnly ? "#8B7040" : TH.border}`, borderRadius:8,
+          color: lowOnly ? "#B8935A" : TH.textMuted, padding:"9px 16px",
           cursor:"pointer", fontSize:13, fontWeight: lowOnly ? 700 : 500, fontFamily:"inherit", whiteSpace:"nowrap",
         }}>{L.lowOnly}</button>
       </div>
@@ -114,15 +114,15 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
           <div style={{fontSize:12, color:TH.textMuted, marginBottom:12}}>{adjusting.whName} · current: {adjusting.current}</div>
           <div style={{display:"flex", gap:8, marginBottom:10}}>
             <button onClick={() => setAdjDir('in')} style={{
-              flex:1, background: adjDir==='in' ? "rgba(201,169,96,0.15)" : "transparent",
-              border:`2px solid ${adjDir==='in' ? "#C9A960" : TH.border}`, borderRadius:9,
-              color: adjDir==='in' ? "#C9A960" : TH.textMuted, padding:"10px", cursor:"pointer",
+              flex:1, background: adjDir==='in' ? "rgba(184,147,90,0.15)" : "transparent",
+              border:`2px solid ${adjDir==='in' ? "#B8935A" : TH.border}`, borderRadius:9,
+              color: adjDir==='in' ? "#B8935A" : TH.textMuted, padding:"10px", cursor:"pointer",
               fontSize:13, fontWeight:700, fontFamily:"inherit",
             }}>{L.stockIn}</button>
             <button onClick={() => setAdjDir('out')} style={{
-              flex:1, background: adjDir==='out' ? "rgba(139,122,68,0.15)" : "transparent",
-              border:`2px solid ${adjDir==='out' ? "#8B7A44" : TH.border}`, borderRadius:9,
-              color: adjDir==='out' ? "#C9A960" : TH.textMuted, padding:"10px", cursor:"pointer",
+              flex:1, background: adjDir==='out' ? "rgba(139,112,64,0.15)" : "transparent",
+              border:`2px solid ${adjDir==='out' ? "#8B7040" : TH.border}`, borderRadius:9,
+              color: adjDir==='out' ? "#B8935A" : TH.textMuted, padding:"10px", cursor:"pointer",
               fontSize:13, fontWeight:700, fontFamily:"inherit",
             }}>{L.issueOut}</button>
           </div>
@@ -132,7 +132,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
           </div>
           <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
             <button onClick={() => setAdjusting(null)} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel}</button>
-            <button onClick={applyAdjust} disabled={busy || !adjQty} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:(busy||!adjQty)?0.5:1}}>{busy ? L.saving : L.apply}</button>
+            <button onClick={applyAdjust} disabled={busy || !adjQty} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:(busy||!adjQty)?0.5:1}}>{busy ? L.saving : L.apply}</button>
           </div>
         </div>
       )}
@@ -147,7 +147,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
         <div style={{display:"flex", flexDirection:"column", gap:8}}>
           {rows.map(({ item, warehouse, qty, low }) => (
             <div key={`${item.id}-${warehouse.id}`} style={{
-              background:TH.bgCard, border:`1px solid ${low ? "rgba(139,122,68,0.5)" : TH.border}`,
+              background:TH.bgCard, border:`1px solid ${low ? "rgba(139,112,64,0.5)" : TH.border}`,
               borderRadius:10, padding:"12px 14px",
               display:"flex", alignItems:"center", gap:12,
             }}>
@@ -156,10 +156,10 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
                 <div style={{fontSize:10, color:TH.textDim}}>{item.code} · {warehouse.code}</div>
               </div>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:18, fontWeight:800, color: low ? "#C9A960" : TH.text, lineHeight:1}}>
+                <div style={{fontSize:18, fontWeight:800, color: low ? "#B8935A" : TH.text, lineHeight:1}}>
                   {qty} <span style={{fontSize:10, color:TH.textDim, fontWeight:500}}>{item.unit || ''}</span>
                 </div>
-                {low && <div style={{fontSize:9, color:"#C9A960", fontWeight:700}}>{L.low} ({L.min} {item.min_stock})</div>}
+                {low && <div style={{fontSize:9, color:"#B8935A", fontWeight:700}}>{L.low} ({L.min} {item.min_stock})</div>}
               </div>
               <button onClick={() => setAdjusting({ itemId: item.id, warehouseId: warehouse.id, current: qty, itemName: item.name, whName: warehouse.name })} style={{
                 background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8,

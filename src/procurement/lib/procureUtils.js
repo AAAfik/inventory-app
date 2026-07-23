@@ -21,14 +21,14 @@ export const ROLES = {
 // ─── Status meta ───────────────────────────────────────────────────
 export const REQ_STATUS = {
   draft:             { label: 'Draft',             color: '#5c5c5c' },
-  submitted:         { label: 'Submitted',         color: '#D4B876' },
-  dept_approved:     { label: 'Dept approved',     color: '#C9A960' },
-  in_procurement:    { label: 'In procurement',    color: '#D4B876' },
-  pending_approval:  { label: 'Pending approval',  color: '#D4B876' },
-  approved:          { label: 'Approved',          color: '#C9A960' },
+  submitted:         { label: 'Submitted',         color: '#D4A853' },
+  dept_approved:     { label: 'Dept approved',     color: '#B8935A' },
+  in_procurement:    { label: 'In procurement',    color: '#D4A853' },
+  pending_approval:  { label: 'Pending approval',  color: '#D4A853' },
+  approved:          { label: 'Approved',          color: '#B8935A' },
   rejected:          { label: 'Rejected',          color: '#8f8f8f' },
   cancelled:         { label: 'Cancelled',         color: '#5c5c5c' },
-  fulfilled:         { label: 'Fulfilled',         color: '#8B7A44' },
+  fulfilled:         { label: 'Fulfilled',         color: '#8B7040' },
 };
 
 // ─── Role groups for tab visibility ────────────────────────────────

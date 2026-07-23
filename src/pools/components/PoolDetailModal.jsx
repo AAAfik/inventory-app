@@ -14,8 +14,8 @@ const CHLORINE_SYSTEMS = ['manual', 'auto', 'salt', 'uv', 'mixed'];
 
 const OP_META = {
   cleaning:        { icon: '🧹', color: '#7BB3D4', label: 'Cleaning' },
-  chemical_dosing: { icon: '🧪', color: '#C9A960', label: 'Chemical Dosing' },
-  maintenance:     { icon: '🔧', color: '#8B7A44', label: 'Maintenance' },
+  chemical_dosing: { icon: '🧪', color: '#B8935A', label: 'Chemical Dosing' },
+  maintenance:     { icon: '🔧', color: '#8B7040', label: 'Maintenance' },
   filter_change:   { icon: '🔄', color: '#B8862C', label: 'Filter Change' },
 };
 
@@ -84,7 +84,7 @@ export default function PoolDetailModal({ TH, lang = "en", isMobile, isAdmin, po
               {pool.location_note && <div style={{fontSize:11, color:TH.textMuted, marginTop:2}}>📍 {pool.location_note}</div>}
             </div>
             <div style={{display:"flex", gap:8, alignItems:"center"}}>
-              <button onClick={() => setShowNewOp(true)} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", fontSize:12, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
+              <button onClick={() => setShowNewOp(true)} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", fontSize:12, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
                 ⚙️ New Op
               </button>
               <button onClick={onClose} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>✕</button>
@@ -262,10 +262,10 @@ function EquipmentSubTab({ TH, pool, isAdmin, onSaved, onZoom }) {
             </div>
           ))}
           {newPhotoPreviews.map((src, i) => (
-            <div key={"n"+i} style={{position:"relative", flexShrink:0, borderRadius:8, overflow:"hidden", border:`2px solid #C9A960`, background:"#000"}}>
+            <div key={"n"+i} style={{position:"relative", flexShrink:0, borderRadius:8, overflow:"hidden", border:`2px solid #B8935A`, background:"#000"}}>
               <img src={src} alt="" style={{width:100, height:100, objectFit:"cover", display:"block"}} />
               <button onClick={() => removeNewPhoto(i)} style={{position:"absolute", top:2, right:2, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:10, width:22, height:22, color:"#fff", cursor:"pointer", fontSize:12}}>✕</button>
-              <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(201,169,96,0.85)", color:"#000", fontSize:9, fontWeight:800, textAlign:"center", padding:"2px 0"}}>NEW</div>
+              <div style={{position:"absolute", bottom:0, left:0, right:0, background:"rgba(184,147,90,0.85)", color:"#000", fontSize:9, fontWeight:800, textAlign:"center", padding:"2px 0"}}>NEW</div>
             </div>
           ))}
           {isAdmin && (
@@ -332,7 +332,7 @@ function EquipmentSubTab({ TH, pool, isAdmin, onSaved, onZoom }) {
 
       {isAdmin && (
         <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-          <button onClick={save} disabled={busy} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 22px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>
+          <button onClick={save} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 22px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>
             {busy ? "Saving…" : "Save equipment"}
           </button>
         </div>
@@ -402,8 +402,8 @@ function HistorySubTab({ TH, consumables }) {
       <div style={{fontSize:11, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:8}}>Total usage</div>
       <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(160px, 1fr))", gap:8, marginBottom:16}}>
         {Object.values(summary).map((s, i) => (
-          <div key={i} style={{background:"rgba(201,169,96,0.08)", border:"1px solid rgba(201,169,96,0.3)", borderRadius:8, padding:10}}>
-            <div style={{fontSize:10, fontWeight:700, color:"#C9A960", textTransform:"uppercase", letterSpacing:"0.05em"}}>{s.name}</div>
+          <div key={i} style={{background:"rgba(184,147,90,0.08)", border:"1px solid rgba(184,147,90,0.3)", borderRadius:8, padding:10}}>
+            <div style={{fontSize:10, fontWeight:700, color:"#B8935A", textTransform:"uppercase", letterSpacing:"0.05em"}}>{s.name}</div>
             <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"monospace", marginTop:3}}>{s.total.toLocaleString()} {s.unit}</div>
             <div style={{fontSize:9, color:TH.textDim, marginTop:2}}>{s.count} times</div>
           </div>
@@ -420,7 +420,7 @@ function HistorySubTab({ TH, consumables }) {
               <div style={{fontSize:10, color:TH.textMuted, marginTop:2}}>from {c.warehouse_name}{c.destination_person_name ? ` · by ${c.destination_person_name}` : ''}</div>
             </div>
             <div style={{textAlign:"right"}}>
-              <div style={{fontSize:12, fontWeight:800, color:"#C9A960", fontFamily:"monospace"}}>{c.qty} {c.unit}</div>
+              <div style={{fontSize:12, fontWeight:800, color:"#B8935A", fontFamily:"monospace"}}>{c.qty} {c.unit}</div>
               <div style={{fontSize:9, color:TH.textDim}}>{formatDateShort(c.performed_at)}</div>
             </div>
           </div>
@@ -439,7 +439,7 @@ function Info({ TH, label, children }) {
   );
 }
 function Chip({ TH, children, gold }) {
-  return <span style={{fontSize:10, color: gold ? "#C9A960" : TH.textMuted, background: gold ? "rgba(201,169,96,0.12)" : TH.bgCard, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
+  return <span style={{fontSize:10, color: gold ? "#B8935A" : TH.textMuted, background: gold ? "rgba(184,147,90,0.12)" : TH.bgCard, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
 }
 
 function lbl(TH)  { return { display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px" }; }

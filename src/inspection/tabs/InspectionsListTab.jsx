@@ -216,7 +216,7 @@ function LocationCard({ TH, L, STATUS_LBL, isMobile, lang, group, propMap, areaM
                 onClick={e => handlePrintAll(e, "en")}
                 title={`Print all ${group.items.length} findings for this location`}
                 style={{
-                  background: "linear-gradient(135deg,#C9A960,#8B7A44)",
+                  background: "linear-gradient(135deg,#B8935A,#8B7040)",
                   color: "#000", border: "none",
                   padding: "6px 12px", borderRadius: 6,
                   fontSize: 11, fontWeight: 800, cursor: "pointer",

@@ -147,7 +147,7 @@ export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, t
               placeholder="CP-VH-00001 …"
               autoFocus
               style={{
-                width:"100%", background:TH.bgInput, border:`2px solid ${TH.accent || '#C9A960'}`,
+                width:"100%", background:TH.bgInput, border:`2px solid ${TH.accent || '#B8935A'}`,
                 borderRadius:10, padding:"14px 16px", color:TH.text, fontSize:18,
                 fontFamily:"monospace", letterSpacing:"0.08em", outline:"none", boxSizing:"border-box",
               }}
@@ -157,7 +157,7 @@ export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, t
               disabled={!manualValue.trim()}
               style={{
                 width:"100%", marginTop:10,
-                background: manualValue.trim() ? "linear-gradient(135deg,#C9A960,#8B7A44)" : TH.bgInput,
+                background: manualValue.trim() ? "linear-gradient(135deg,#B8935A,#8B7040)" : TH.bgInput,
                 border:"none", borderRadius:10, color: manualValue.trim() ? "#000" : TH.textMuted,
                 padding:"12px 16px", fontSize:14, fontWeight:800, cursor: manualValue.trim() ? "pointer" : "not-allowed",
                 fontFamily:"inherit",
@@ -177,7 +177,7 @@ export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, t
               )}
               {/* Scanning overlay */}
               {cameraReady && (
-                <div style={{position:"absolute", inset:20, border:"3px solid #C9A960", borderRadius:10, pointerEvents:"none", boxShadow:"0 0 0 4000px rgba(0,0,0,0.4)"}} />
+                <div style={{position:"absolute", inset:20, border:"3px solid #B8935A", borderRadius:10, pointerEvents:"none", boxShadow:"0 0 0 4000px rgba(0,0,0,0.4)"}} />
               )}
             </div>
             <div style={{fontSize:11, color:TH.textMuted, textAlign:"center", marginTop:8}}>

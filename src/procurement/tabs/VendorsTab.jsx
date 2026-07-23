@@ -8,8 +8,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
 
 const VENDOR_STATUS = {
-  pending_approval: { label: "Pending approval", color: "#D4B876" },
-  active:           { label: "Active",           color: "#C9A960" },
+  pending_approval: { label: "Pending approval", color: "#D4A853" },
+  active:           { label: "Active",           color: "#B8935A" },
   suspended:        { label: "Suspended",        color: "#5c5c5c" },
   blacklisted:      { label: "Blacklisted",      color: "#8f8f8f" },
 };
@@ -17,8 +17,8 @@ const VENDOR_STATUS = {
 function riskColor(score) {
   const s = Number(score) || 0;
   if (s >= 70) return "#8f8f8f";  // high risk (red)
-  if (s >= 40) return "#D4B876";  // medium (amber)
-  return "#C9A960";               // low (green)
+  if (s >= 40) return "#D4A853";  // medium (amber)
+  return "#B8935A";               // low (green)
 }
 
 export default function VendorsTab({ TH, isMobile }) {
@@ -167,7 +167,7 @@ export default function VendorsTab({ TH, isMobile }) {
             {loading ? "Loading..." : `${filt.length} of ${vendors.length} vendors`}
           </div>
         </div>
-        <button onClick={() => setShowForm(s => !s)} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit"}}>
+        <button onClick={() => setShowForm(s => !s)} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit"}}>
           {showForm ? "Cancel" : "+ New vendor"}
         </button>
       </div>
@@ -225,7 +225,7 @@ export default function VendorsTab({ TH, isMobile }) {
           </div>
 
           <div style={{display:"flex", justifyContent:"flex-end", marginTop:18, paddingTop:14, borderTop:`1px solid ${TH.border}`}}>
-            <button onClick={submitVendor} disabled={submitting} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:submitting?0.6:1}}>
+            <button onClick={submitVendor} disabled={submitting} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:submitting?0.6:1}}>
               {submitting ? "Creating..." : "Create vendor (pending approval)"}
             </button>
           </div>
@@ -290,7 +290,7 @@ export default function VendorsTab({ TH, isMobile }) {
                       <div style={{fontSize:11, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", marginBottom:6}}>Properties</div>
                       <div style={{display:"flex", flexWrap:"wrap", gap:6}}>
                         {vProps.length === 0 ? <span style={{color:TH.textDim, fontSize:12}}>All properties</span> :
-                          vProps.map(p => <span key={p.id} style={{background:"rgba(139,122,68,.15)", color:TH.accent, padding:"3px 10px", borderRadius:5, fontSize:11, fontWeight:600}}>{p.code}</span>)
+                          vProps.map(p => <span key={p.id} style={{background:"rgba(139,112,64,.15)", color:TH.accent, padding:"3px 10px", borderRadius:5, fontSize:11, fontWeight:600}}>{p.code}</span>)
                         }
                       </div>
                     </div>
@@ -300,9 +300,9 @@ export default function VendorsTab({ TH, isMobile }) {
                       <div style={{fontSize:11, color:TH.textMuted, marginRight:8}}>Risk score:</div>
                       <input type="number" min="0" max="100" defaultValue={v.risk_score || 0} onBlur={e => updateRiskScore(v, e.target.value)} style={{width:70, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:6, padding:"5px 8px", color:TH.text, fontSize:12, fontFamily:"inherit", outline:"none"}} />
                       <div style={{flex:1}} />
-                      {v.status === 'pending_approval' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#C9A960", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>✓ Approve</button>}
+                      {v.status === 'pending_approval' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#B8935A", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>✓ Approve</button>}
                       {v.status === 'active' && <button onClick={() => changeStatus(v, 'suspended')} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit"}}>Suspend</button>}
-                      {v.status === 'suspended' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#C9A960", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Reactivate</button>}
+                      {v.status === 'suspended' && <button onClick={() => changeStatus(v, 'active')} style={{background:"#B8935A", border:"none", borderRadius:8, color:"#fff", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Reactivate</button>}
                       {v.status !== 'blacklisted' && <button onClick={() => changeStatus(v, 'blacklisted')} style={{background:"rgba(239,68,68,.1)", border:"1px solid rgba(239,68,68,.3)", borderRadius:8, color:"#ef4444", padding:"7px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Blacklist</button>}
                     </div>
                   </div>

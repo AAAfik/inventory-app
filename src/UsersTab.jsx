@@ -4,8 +4,8 @@ import { tr } from "./i18n";
 
 // ─── Role catalog: DB key → display labels ─────────────────────────
 const ROLE_CATALOG = [
-  { key: "owner",               en: "Owner (full access)",     fa: "مدیر (دسترسی کامل)",           he: "מנהל (גישה מלאה)",           color: "#C9A960" },
-  { key: "auditor",             en: "Auditor (full access)",   fa: "بازرس ارشد (دسترسی کامل)",      he: "בקר (גישה מלאה)",            color: "#C9A960" },
+  { key: "owner",               en: "Owner (full access)",     fa: "مدیر (دسترسی کامل)",           he: "מנהל (גישה מלאה)",           color: "#B8935A" },
+  { key: "auditor",             en: "Auditor (full access)",   fa: "بازرس ارشد (دسترسی کامل)",      he: "בקר (גישה מלאה)",            color: "#B8935A" },
   { key: "warehouse_keeper",    en: "Warehouse keeper",        fa: "انباردار",                     he: "מנהל מחסן",                  color: "#5DCAA5" },
   { key: "pool_operator",       en: "Pool chemical operator",  fa: "مسئول مواد شیمیایی استخر",     he: "מפעיל כימיקלים לבריכה",       color: "#4FA5D8" },
   { key: "inspector",           en: "Inspector",               fa: "بازرس",                        he: "מבקר",                       color: "#B48ADE" },
@@ -147,9 +147,9 @@ export default function UsersTab({ TH, lang = "en", isMobile }) {
 
       {/* ─── Stats ─── */}
       <div style={s.statsGrid}>
-        <StatCard TH={TH} label={t.statTotalUsers}       value={stats.total}       accent="#C9A960" />
+        <StatCard TH={TH} label={t.statTotalUsers}       value={stats.total}       accent="#B8935A" />
         <StatCard TH={TH} label={t.statActiveToday}      value={stats.activeToday} accent="#5DCAA5" />
-        <StatCard TH={TH} label={t.statAdmins}           value={stats.owners}      accent="#C9A960" />
+        <StatCard TH={TH} label={t.statAdmins}           value={stats.owners}      accent="#B8935A" />
         <StatCard TH={TH} label={t.statNeverSignedIn}    value={stats.pending}     accent="#EF9F27" />
       </div>
 
@@ -244,23 +244,23 @@ function UserRow({ user, isMe, lang, t, TH, busy, onAddRole, onRemoveRole }) {
   return (
     <div style={{
       background: TH.bgCard,
-      border: `1px solid ${isMe ? "rgba(201,169,96,.35)" : TH.border}`,
+      border: `1px solid ${isMe ? "rgba(184,147,90,.35)" : TH.border}`,
       borderRadius: 12, padding: "14px 16px", marginBottom: 10,
       opacity: busy ? 0.6 : 1,
     }}>
       <div style={{display:"flex", alignItems:"center", gap:14, marginBottom:10}}>
         <div style={{
           width:42, height:42, borderRadius:"50%",
-          background: isMe ? "linear-gradient(135deg,#C9A960,#8B7A44)" : "rgba(201,169,96,.15)",
-          border: isMe ? "none" : "1px solid rgba(201,169,96,.35)",
-          color: isMe ? "#000" : "#C9A960",
+          background: isMe ? "linear-gradient(135deg,#B8935A,#8B7040)" : "rgba(184,147,90,.15)",
+          border: isMe ? "none" : "1px solid rgba(184,147,90,.35)",
+          color: isMe ? "#000" : "#B8935A",
           display:"flex", alignItems:"center", justifyContent:"center",
           fontWeight:700, fontSize:14,
         }}>{initials(user.email)}</div>
         <div style={{flex:1, minWidth:0}}>
           <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:2, flexWrap:"wrap"}}>
             <span style={{fontSize:14, fontWeight:600, color:TH.text}}>{user.email || user.id.slice(0,8)+"…"}</span>
-            {isMe && <span style={{background:"#C9A960", color:"#000", fontSize:10, padding:"2px 6px", borderRadius:4, fontWeight:700}}>{t.you}</span>}
+            {isMe && <span style={{background:"#B8935A", color:"#000", fontSize:10, padding:"2px 6px", borderRadius:4, fontWeight:700}}>{t.you}</span>}
             <span style={{background:status.color+"22", color:status.color, fontSize:10, padding:"2px 6px", borderRadius:4, fontWeight:600}}>{status.txt}</span>
           </div>
           <div style={{fontSize:11, color:TH.textMuted}}>{t.lastActive}: {relativeTime(user.last_sign_in_at, t)}</div>
@@ -342,7 +342,7 @@ function AccessMatrix({ TH, t }) {
     }}>
       <div onClick={()=>setOpen(v=>!v)} style={{display:"flex", justifyContent:"space-between", cursor:"pointer"}}>
         <div style={{display:"flex", alignItems:"center", gap:8}}>
-          <span style={{color:"#C9A960"}}>🛡</span>
+          <span style={{color:"#B8935A"}}>🛡</span>
           <span style={{fontSize:13, fontWeight:600, color:TH.text}}>{t.accessMatrixTitle}</span>
           <span style={{fontSize:11, color:TH.textMuted}}>{rows.length} {t.rolesCount}</span>
         </div>
@@ -352,7 +352,7 @@ function AccessMatrix({ TH, t }) {
         <div style={{marginTop:12, borderTop:`1px solid ${TH.border}`, paddingTop:12}}>
           {rows.map(r => (
             <div key={r.role} style={{display:"flex", padding:"6px 0", fontSize:12, gap:16}}>
-              <div style={{width:200, fontWeight:700, color:"#C9A960", flexShrink:0}}>{r.role}</div>
+              <div style={{width:200, fontWeight:700, color:"#B8935A", flexShrink:0}}>{r.role}</div>
               <div style={{flex:1, color:TH.textMuted}}>{r.access}</div>
             </div>
           ))}
@@ -425,7 +425,7 @@ function NewUserModal({ TH, t, lang, onClose, onCreated }) {
           }}>{t.cancel}</button>
           <button type="submit" disabled={busy} style={{
             flex:1, padding:"12px",
-            background:"linear-gradient(135deg,#C9A960,#8B7A44)",
+            background:"linear-gradient(135deg,#B8935A,#8B7040)",
             border:"none", borderRadius:10, color:"#000",
             cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit",
             opacity: busy ? 0.6 : 1,
@@ -443,7 +443,7 @@ function styles(TH) {
     h1: { fontFamily:"'Playfair Display',Georgia,serif", fontSize:28, fontWeight:700, color:TH.text, margin:"0 0 4px" },
     sub: { color:TH.textMuted, fontSize:13, margin:0 },
     primaryBtn: {
-      background:"linear-gradient(135deg,#C9A960,#8B7A44)", color:"#000",
+      background:"linear-gradient(135deg,#B8935A,#8B7040)", color:"#000",
       border:"none", padding:"10px 18px", borderRadius:10,
       fontSize:13, fontWeight:800, cursor:"pointer", fontFamily:"inherit",
     },
@@ -464,8 +464,8 @@ function styles(TH) {
       fontSize:12, cursor:"pointer", fontFamily:"inherit",
     },
     chipActive: {
-      background:"rgba(201,169,96,.15)", border:"1px solid rgba(201,169,96,.4)",
-      color:"#C9A960", padding:"6px 12px", borderRadius:6,
+      background:"rgba(184,147,90,.15)", border:"1px solid rgba(184,147,90,.4)",
+      color:"#B8935A", padding:"6px 12px", borderRadius:6,
       fontSize:12, fontWeight:600, cursor:"pointer", fontFamily:"inherit",
     },
     errorBox: {

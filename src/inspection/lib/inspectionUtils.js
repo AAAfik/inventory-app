@@ -4,9 +4,9 @@
 // per-finding sections with photos, risk matrix)
 // ═══════════════════════════════════════════════════════════════════
 
-const GOLD       = '#C9A960';
-const GOLD_LIGHT = '#D4B876';
-const GOLD_DARK  = '#8B7A44';
+const GOLD       = '#B8935A';
+const GOLD_LIGHT = '#D4A853';
+const GOLD_DARK  = '#8B7040';
 const CREAM      = '#F4EFE4';
 const GRAY       = '#8f8f8f';
 const GRAY_DIM   = '#5c5c5c';
@@ -22,7 +22,7 @@ export const INSPECTION_STATUS = {
 
 export const PRIORITY = {
   low:      { label: 'Low',      color: '#A89566', dot: '●' },
-  medium:   { label: 'Medium',   color: '#D4B876', dot: '●●' },
+  medium:   { label: 'Medium',   color: '#D4A853', dot: '●●' },
   high:     { label: 'High',     color: '#B8862C', dot: '●●●' },
   critical: { label: 'Critical', color: '#C43D3D', dot: '⚠' },
 };
@@ -32,7 +32,7 @@ export const CATEGORIES = {
   electrical: {
     label: 'Electrical',
     icon: '⚡',
-    color: '#D4B876',
+    color: '#D4A853',
     subcategories: {
       wiring_method:   'Wiring method / installation',
       wiring_material: 'Wiring material / cables',
@@ -64,7 +64,7 @@ export const CATEGORIES = {
   sewage: {
     label: 'Sewage',
     icon: '🚱',
-    color: '#8B7A44',
+    color: '#8B7040',
     subcategories: {
       equipment: 'Sewage equipment (overall)',
     },
@@ -72,7 +72,7 @@ export const CATEGORIES = {
   structure: {
     label: 'Structure',
     icon: '🏗️',
-    color: '#C9A960',
+    color: '#B8935A',
     subcategories: {
       standards: 'Building standards',
       material:  'Construction material',
@@ -91,19 +91,19 @@ export const CATEGORIES = {
   // do not have sub-taxonomies but must display in the PDF/list without
   // falling back to the raw slug.
   HSE:            { label: 'HSE',            icon: '🛡',  color: '#B8862C', subcategories: {} },
-  Electrical:     { label: 'Electrical',     icon: '⚡',  color: '#D4B876', subcategories: {} },
+  Electrical:     { label: 'Electrical',     icon: '⚡',  color: '#D4A853', subcategories: {} },
   Mechanical:     { label: 'Mechanical',     icon: '⚙️', color: '#9B8A5C', subcategories: {} },
-  Infrastructure: { label: 'Infrastructure', icon: '🏗️', color: '#C9A960', subcategories: {} },
-  Operational:    { label: 'Operational',    icon: '📋', color: '#8B7A44', subcategories: {} },
+  Infrastructure: { label: 'Infrastructure', icon: '🏗️', color: '#B8935A', subcategories: {} },
+  Operational:    { label: 'Operational',    icon: '📋', color: '#8B7040', subcategories: {} },
   'Pool Assessment': { label: 'Pool Assessment', icon: '🏊', color: '#7BB3D4', subcategories: {} },
-  Proposal:       { label: 'Proposal',       icon: '📐', color: '#8B7A44', subcategories: {} },
+  Proposal:       { label: 'Proposal',       icon: '📐', color: '#8B7040', subcategories: {} },
   Reference:      { label: 'Reference',      icon: '📚', color: '#666666', subcategories: {} },
 };
 
 export function severityColor(sev) {
   if (sev >= 4) return '#C43D3D';
   if (sev >= 3) return '#E67A2C';
-  if (sev >= 2) return '#D4B876';
+  if (sev >= 2) return '#D4A853';
   if (sev >= 1) return '#A89566';
   return GOLD;
 }
@@ -439,27 +439,27 @@ function afikStyles(rtl) {
 
   /* Cover — full sheet, no padding, own layout */
   .cover-inner { padding: 26mm 20mm 20mm; height: 297mm; display: flex; flex-direction: column; }
-  .cover-topband { border-top: 4px solid #C9A960; border-bottom: 1px solid #C9A960; padding: 14px 0 18px; margin-bottom: 22mm; }
+  .cover-topband { border-top: 4px solid #B8935A; border-bottom: 1px solid #B8935A; padding: 14px 0 18px; margin-bottom: 22mm; }
   .cover-hse   { font-family: 'Playfair Display', Georgia, serif; font-size: 44pt; font-weight: 800; letter-spacing: 0.35em; color: #0f2544; line-height: 1; }
-  .cover-afik  { font-family: 'Inter', Arial, sans-serif; font-size: 13pt; color: #8B7A44; letter-spacing: 0.15em; font-weight: 700; margin-top: 6px; }
+  .cover-afik  { font-family: 'Inter', Arial, sans-serif; font-size: 13pt; color: #8B7040; letter-spacing: 0.15em; font-weight: 700; margin-top: 6px; }
   .cover-program { font-family: 'Playfair Display', Georgia, serif; font-size: 14pt; color: #0f2544; font-style: italic; margin-top: 16px; }
 
   .cover-project-name { font-family: 'Playfair Display', Georgia, serif; font-size: 30pt; font-weight: 800; color: #0f2544; letter-spacing: 0.02em; line-height: 1.15; margin-bottom: 10px; }
   .cover-project-sub  { font-size: 12pt; color: #333; margin-bottom: 4px; }
-  .cover-project-disc { font-size: 10pt; color: #8B7A44; letter-spacing: 0.05em; margin-bottom: 18mm; text-transform: uppercase; }
+  .cover-project-disc { font-size: 10pt; color: #8B7040; letter-spacing: 0.05em; margin-bottom: 18mm; text-transform: uppercase; }
 
-  .cover-report-title { font-family: 'Playfair Display', Georgia, serif; font-size: 15pt; color: #0f2544; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #C9A960; }
+  .cover-report-title { font-family: 'Playfair Display', Georgia, serif; font-size: 15pt; color: #0f2544; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #B8935A; }
 
   .cover-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
   .cover-table th { background: #0f2544; color: #fff; font-size: 9pt; text-transform: uppercase; letter-spacing: 0.06em; padding: 8px 12px; text-align: ${rtl ? 'right' : 'left'}; font-weight: 700; }
   .cover-table td { padding: 7px 12px; border-bottom: 1px solid #E6DFCC; font-size: 10pt; vertical-align: top; }
   .cover-table td:first-child { background: #FAF6EC; color: #0f2544; font-weight: 700; width: 38%; }
 
-  .cover-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid #C9A960; font-size: 8.5pt; color: #666; display: flex; justify-content: space-between; }
+  .cover-footer { margin-top: auto; padding-top: 10px; border-top: 1px solid #B8935A; font-size: 8.5pt; color: #666; display: flex; justify-content: space-between; }
 
   /* Section headings */
   h1.doc-h1 { font-size: 18pt; margin: 4px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #0f2544; }
-  h2.doc-h2 { font-size: 14pt; margin: 20px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #C9A960; }
+  h2.doc-h2 { font-size: 14pt; margin: 20px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #B8935A; }
   h3.doc-h3 { font-size: 12.5pt; margin: 14px 0 8px; }
 
   /* Severity strip under finding title */
@@ -509,7 +509,7 @@ function afikStyles(rtl) {
 
   /* Action plan */
   .plan-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin: 10px 0; }
-  .plan-table th { background: #FAF6EC; color: #0f2544; padding: 8px 12px; text-align: ${rtl ? 'right' : 'left'}; font-size: 9.5pt; border-bottom: 2px solid #C9A960; }
+  .plan-table th { background: #FAF6EC; color: #0f2544; padding: 8px 12px; text-align: ${rtl ? 'right' : 'left'}; font-size: 9.5pt; border-bottom: 2px solid #B8935A; }
   .plan-table td { padding: 10px 12px; border-bottom: 1px solid #E6DFCC; vertical-align: top; }
   .plan-priority { font-weight: 800; color: #0f2544; letter-spacing: 0.03em; }
 
@@ -519,7 +519,7 @@ function afikStyles(rtl) {
   .summary-table td { padding: 7px 10px; border-bottom: 1px solid #E6DFCC; vertical-align: top; }
   .summary-table tr:last-child td { border-bottom: none; }
 
-  .action-box { background: #FFF8E1; border-${rtl ? 'right' : 'left'}: 4px solid #C9A960; padding: 10px 14px; margin: 10px 0; font-size: 10pt; }
+  .action-box { background: #FFF8E1; border-${rtl ? 'right' : 'left'}: 4px solid #B8935A; padding: 10px 14px; margin: 10px 0; font-size: 10pt; }
   .resolution-box { background: #F0FAF0; border-${rtl ? 'right' : 'left'}: 4px solid #6B9E3A; padding: 10px 14px; margin: 10px 0; font-size: 10pt; }
   .safety-box { background: #FFF4E6; border: 1px solid #E5B166; border-radius: 4px; padding: 10px 14px; margin: 10px 0; font-size: 9.5pt; }
   .safety-item { margin-bottom: 6px; }
@@ -548,7 +548,7 @@ function afikStyles(rtl) {
   .toolbar button:hover { transform: translateY(-1px); }
   .toolbar button:active { transform: translateY(0); }
   .toolbar .btn-download { background: #0f2544; color: #fff; }
-  .toolbar .btn-print    { background: #C9A960; color: #000; }
+  .toolbar .btn-print    { background: #B8935A; color: #000; }
   .toolbar .btn-close    { background: #eee; color: #333; padding: 10px 12px; }
   .toolbar .toolbar-status { font-size: 10pt; color: #666; padding: 8px 4px 0; }
 

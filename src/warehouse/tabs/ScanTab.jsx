@@ -81,9 +81,9 @@ export default function ScanTab({ TH, lang = "en", isMobile, isAdmin, onChanged 
         <button
           onClick={() => setScanning(true)}
           style={{
-            background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10,
+            background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
             color:"#000", padding:"14px 28px", fontSize:15, fontWeight:800, cursor:"pointer",
-            fontFamily:"inherit", boxShadow:"0 2px 10px rgba(201,169,96,0.3)",
+            fontFamily:"inherit", boxShadow:"0 2px 10px rgba(184,147,90,0.3)",
           }}
         >📷 {L.scanBtn || 'Open scanner'}</button>
       </div>
@@ -111,8 +111,8 @@ export default function ScanTab({ TH, lang = "en", isMobile, isAdmin, onChanged 
 
       {/* Found asset card */}
       {found && !busy && (
-        <div style={{background:TH.bgCard, border:`2px solid ${TH.accent || '#C9A960'}`, borderRadius:14, padding:16, marginBottom:14}}>
-          <div style={{fontSize:11, fontWeight:700, color:"#C9A960", textTransform:"uppercase", letterSpacing:"0.05em", marginBottom:8}}>
+        <div style={{background:TH.bgCard, border:`2px solid ${TH.accent || '#B8935A'}`, borderRadius:14, padding:16, marginBottom:14}}>
+          <div style={{fontSize:11, fontWeight:700, color:"#B8935A", textTransform:"uppercase", letterSpacing:"0.05em", marginBottom:8}}>
             ✓ {L.scanFound || 'Asset found'}
           </div>
           <div style={{display:"flex", gap:12}}>
@@ -168,7 +168,7 @@ export default function ScanTab({ TH, lang = "en", isMobile, isAdmin, onChanged 
 }
 
 function Tag({ TH, children, gold, color }) {
-  const c = color || (gold ? "#C9A960" : TH.textMuted);
-  const bg = gold ? "rgba(201,169,96,0.12)" : (color ? `${color}22` : TH.bgInput);
+  const c = color || (gold ? "#B8935A" : TH.textMuted);
+  const bg = gold ? "rgba(184,147,90,0.12)" : (color ? `${color}22` : TH.bgInput);
   return <span style={{fontSize:10, color:c, background:bg, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap", fontWeight:700}}>{children}</span>;
 }

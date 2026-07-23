@@ -141,7 +141,7 @@ export default function OperatorsTab({ TH, isMobile, isAdmin, onOpenPool }) {
                       {users.map(u => <option key={u.user_id} value={u.user_id}>{u.display_name} ({u.role})</option>)}
                     </select>
                   ) : (
-                    <div style={{fontSize:12, color:primary ? "#C9A960" : TH.textMuted, fontWeight:700}}>{primary?.display_name || '— None —'}</div>
+                    <div style={{fontSize:12, color:primary ? "#B8935A" : TH.textMuted, fontWeight:700}}>{primary?.display_name || '— None —'}</div>
                   )}
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function OperatorsTab({ TH, isMobile, isAdmin, onOpenPool }) {
                         <option key={u.user_id} value={u.user_id}>{u.display_name}</option>
                       ))}
                     </select>
-                    <button onClick={() => addOperator(p.id)} disabled={busy || !newUserId} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Add</button>
+                    <button onClick={() => addOperator(p.id)} disabled={busy || !newUserId} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>Add</button>
                     <button onClick={() => { setAssigningPoolId(null); setNewUserId(""); }} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.textMuted, padding:"8px 12px", cursor:"pointer", fontSize:12, fontFamily:"inherit"}}>Cancel</button>
                   </div>
                 ) : (

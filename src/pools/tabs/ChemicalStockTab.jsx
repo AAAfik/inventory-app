@@ -112,7 +112,7 @@ export default function ChemicalStockTab({ TH, isMobile, isAdmin }) {
  return (
               <div key={chem.id} style={{
  background:TH.bgCard,
- border:`1px solid ${isLow ? "rgba(139,122,68,0.5)" : TH.border}`,
+ border:`1px solid ${isLow ? "rgba(139,112,64,0.5)" : TH.border}`,
  borderLeft:`3px solid ${purp.color || TH.border}`,
  borderRadius:12, padding:14, boxShadow: TH.cardGlow,
  }}>
@@ -120,7 +120,7 @@ export default function ChemicalStockTab({ TH, isMobile, isAdmin }) {
                   <div style={{flex:1, minWidth:200}}>
                     <div style={{display:"flex", alignItems:"center", gap:8, marginBottom:4, flexWrap:"wrap"}}>
                       <span style={{fontSize:22}}></span>
-                      <span style={{fontSize:15, fontWeight:700, color:TH.text}}>{chem.name}</span> {isLow && <span style={{fontSize:9, color:"#C9A960", fontWeight:800, background:"rgba(201,169,96,0.15)", padding:"2px 6px", borderRadius:4}}>LOW STOCK</span>}
+                      <span style={{fontSize:15, fontWeight:700, color:TH.text}}>{chem.name}</span> {isLow && <span style={{fontSize:9, color:"#B8935A", fontWeight:800, background:"rgba(184,147,90,0.15)", padding:"2px 6px", borderRadius:4}}>LOW STOCK</span>}
                     </div>
                     <div style={{fontSize:11, color:TH.textDim, fontFamily:"monospace"}}>{chem.code} · {purp.label}</div>
                   </div> {isAdmin && <button onClick={() => setEditing({...chem})} style={ghostBtn(TH)}>Edit</button>}
@@ -132,7 +132,7 @@ export default function ChemicalStockTab({ TH, isMobile, isAdmin }) {
                   <Info TH={TH} label="Used this month">{fmtQty(usedThisMonth, chem.unit)}</Info>
                   <Info TH={TH} label="Cost this month">{chem.unit_cost ? fmtMoney(chem.unit_cost * usedThisMonth) : '—'}</Info> {totalStock != null && (
                     <Info TH={TH} label="Total stock">
-                      <strong style={{color: isLow ? "#C9A960" : TH.text, fontFamily:"monospace"}}>{fmtQty(totalStock, chem.unit)}</strong>
+                      <strong style={{color: isLow ? "#B8935A" : TH.text, fontFamily:"monospace"}}>{fmtQty(totalStock, chem.unit)}</strong>
                     </Info> )}
                 </div> {chem.item_id ? (
                   <div style={{overflow:"auto"}}>
@@ -150,9 +150,9 @@ export default function ChemicalStockTab({ TH, isMobile, isAdmin }) {
  return (
                             <tr key={w.id} style={{borderBottom:`1px solid ${TH.border}`}}>
                               <td style={td(TH)}>{w.code} · {w.name}</td>
-                              <td style={{...td(TH), textAlign:"right", fontWeight:700, fontFamily:"monospace", color: whLow ? "#C9A960" : TH.text}}> {fmtQty(qty, chem.unit)}
+                              <td style={{...td(TH), textAlign:"right", fontWeight:700, fontFamily:"monospace", color: whLow ? "#B8935A" : TH.text}}> {fmtQty(qty, chem.unit)}
                               </td>
-                              <td style={{...td(TH), textAlign:"right", fontSize:11}}> {qty === 0 ? <span style={{color:"#8f8f8f", fontWeight:800}}>OUT</span> : whLow ? <span style={{color:"#C9A960", fontWeight:800}}>LOW</span> : <span style={{color:"#6B9E3A"}}>OK</span>}
+                              <td style={{...td(TH), textAlign:"right", fontSize:11}}> {qty === 0 ? <span style={{color:"#8f8f8f", fontWeight:800}}>OUT</span> : whLow ? <span style={{color:"#B8935A", fontWeight:800}}>LOW</span> : <span style={{color:"#6B9E3A"}}>OK</span>}
                               </td>
                             </tr> );
  })}
@@ -189,7 +189,7 @@ function ghostBtn(TH) {
  return { background:"transparent", border:`1px solid ${TH.border}`, borderRadius:8, color:TH.text, padding:"7px 14px", cursor:"pointer", fontSize:13, fontFamily:"inherit", fontWeight:600 };
 }
 const goldBtn = {
- background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9,
+ background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9,
  color:"#000", padding:"10px 22px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit",
 };
 function ErrBox({ TH, children }) {

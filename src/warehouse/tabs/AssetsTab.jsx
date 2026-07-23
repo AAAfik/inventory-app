@@ -112,14 +112,14 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
               fontFamily: "inherit", whiteSpace: "nowrap", display:"flex", alignItems:"center", gap:6,
             }}>
               {meta.icon} {meta.label}
-              <span style={{background: on ? "#C9A960" : TH.bgInput, color: on ? "#000" : TH.textMuted, borderRadius:10, padding:"1px 8px", fontSize:11, fontWeight:700}}>{kindCounts[k] || 0}</span>
+              <span style={{background: on ? "#B8935A" : TH.bgInput, color: on ? "#000" : TH.textMuted, borderRadius:10, padding:"1px 8px", fontSize:11, fontWeight:700}}>{kindCounts[k] || 0}</span>
             </button>
           );
         })}
         <button onClick={() => setServiceFilter(v => !v)} style={{
-          background: serviceFilter ? "rgba(139,122,68,0.2)" : "transparent",
-          border: `1px solid ${serviceFilter ? "#8B7A44" : TH.border}`,
-          borderRadius: 20, color: serviceFilter ? "#C9A960" : TH.textMuted,
+          background: serviceFilter ? "rgba(139,112,64,0.2)" : "transparent",
+          border: `1px solid ${serviceFilter ? "#8B7040" : TH.border}`,
+          borderRadius: 20, color: serviceFilter ? "#B8935A" : TH.textMuted,
           padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: serviceFilter ? 700 : 500,
           fontFamily: "inherit", whiteSpace: "nowrap",
         }}>{L.serviceDueBtn}</button>
@@ -129,7 +129,7 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
       <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr auto":"2fr auto 1fr 1fr", gap:8, marginBottom:16}}>
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchAssetsPh || L.searchAssets || "Search name / barcode / serial…"} style={inputStyle(TH)} />
         <button onClick={() => setScanning(true)} title={L.scanBtn || 'Scan'} style={{
-          background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8,
+          background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8,
           color:"#000", padding:"9px 14px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit",
           display:"flex", alignItems:"center", gap:5,
         }}>📷 {isMobile ? '' : (L.scanBtn || 'Scan')}</button>
@@ -220,7 +220,7 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
 }
 
 function Chip({ TH, children, gold }) {
-  return <span style={{fontSize:10, color: gold ? "#C9A960" : TH.textMuted, background: gold ? "rgba(201,169,96,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
+  return <span style={{fontSize:10, color: gold ? "#B8935A" : TH.textMuted, background: gold ? "rgba(184,147,90,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
 }
 
 function inputStyle(TH) {

@@ -8,8 +8,8 @@ import { formatDate } from "../../inspection/lib/inspectionUtils";
 
 const OP_META = {
   cleaning:        { icon: '🧹', color: '#7BB3D4', label: 'Cleaning' },
-  chemical_dosing: { icon: '🧪', color: '#C9A960', label: 'Chemical Dosing' },
-  maintenance:     { icon: '🔧', color: '#8B7A44', label: 'Maintenance' },
+  chemical_dosing: { icon: '🧪', color: '#B8935A', label: 'Chemical Dosing' },
+  maintenance:     { icon: '🔧', color: '#8B7040', label: 'Maintenance' },
   filter_change:   { icon: '🔄', color: '#B8862C', label: 'Filter Change' },
 };
 
@@ -166,7 +166,7 @@ export default function OperationsTab({ TH, isMobile, isAdmin, onOpenPool }) {
 }
 
 function Chip({ TH, children, gold }) {
-  return <span style={{fontSize:10, color: gold ? "#C9A960" : TH.textMuted, background: gold ? "rgba(201,169,96,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
+  return <span style={{fontSize:10, color: gold ? "#B8935A" : TH.textMuted, background: gold ? "rgba(184,147,90,0.12)" : TH.bgInput, padding:"3px 8px", borderRadius:5, whiteSpace:"nowrap"}}>{children}</span>;
 }
 function PillBtn({ TH, on, onClick, children }) {
   return (
@@ -180,7 +180,7 @@ function PillBtn({ TH, on, onClick, children }) {
   );
 }
 function Count({ children, on }) {
-  return <span style={{background: on ? "#C9A960" : "rgba(255,255,255,0.05)", color: on ? "#000" : "#888", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{children}</span>;
+  return <span style={{background: on ? "#B8935A" : "rgba(255,255,255,0.05)", color: on ? "#000" : "#888", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{children}</span>;
 }
 function inp(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };

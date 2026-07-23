@@ -82,7 +82,7 @@ export default function PWAInstall({ TH, isMobile }) {
           </ol>
           <button
             onClick={() => setShowIosHint(false)}
-            style={{marginTop:16, width:"100%", background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"11px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit"}}
+            style={{marginTop:16, width:"100%", background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"11px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit"}}
           >
             Got it
           </button>
@@ -96,7 +96,7 @@ export default function PWAInstall({ TH, isMobile }) {
       onClick={install}
       title="Install Caesar app"
       style={{
-        background: "linear-gradient(135deg,#C9A960,#8B7A44)",
+        background: "linear-gradient(135deg,#B8935A,#8B7040)",
         border: "none",
         borderRadius: 9,
         color: "#000",

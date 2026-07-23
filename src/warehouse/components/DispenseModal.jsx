@@ -285,7 +285,7 @@ export default function DispenseModal({ TH, lang = "en", presetItemId = null, on
 
         <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
           <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || "Cancel"}</button>
-          <button onClick={submit} disabled={busy || !selectedItem || insufficient} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity: (busy || !selectedItem || insufficient) ? 0.6 : 1}}>
+          <button onClick={submit} disabled={busy || !selectedItem || insufficient} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity: (busy || !selectedItem || insufficient) ? 0.6 : 1}}>
             {busy ? (L.dispensing || "Dispensing…") : (L.confirmDispense || "Confirm dispense")}
           </button>
         </div>

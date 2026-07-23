@@ -128,7 +128,7 @@ export default function RequisitionsTab({ TH, isMobile, roles, isAdmin }) {
         {canCreate && (
           <button
             onClick={() => setShowForm(s => !s)}
-            style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit"}}
+            style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit"}}
           >
             {showForm ? "Cancel" : "+ New requisition"}
           </button>
@@ -186,7 +186,7 @@ export default function RequisitionsTab({ TH, isMobile, roles, isAdmin }) {
             <div style={{fontSize:14, color:TH.text}}>
               Estimated total: <span style={{fontWeight:700}}>{formatEUR(lineTotal)}</span>
             </div>
-            <button onClick={submitRequisition} disabled={submitting} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:"#000", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:submitting?0.6:1}}>
+            <button onClick={submitRequisition} disabled={submitting} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit", opacity:submitting?0.6:1}}>
               {submitting ? "Submitting..." : "Submit requisition"}
             </button>
           </div>
