@@ -1,102 +1,69 @@
-# Smart Procurement System
+# Pool Management — Phase 2
 
-## Files
+## SQL migration
+Run `migration_pool_management.sql` first (already done in previous step).
 
-**New module: `src/procurement/`**
-- `ProcurementHub.jsx` — role-aware container
-- `tabs/RequestsListTab.jsx` — filtered list (my / for-review / final / all)
-- `tabs/RequestDetail.jsx` — full view + role-based actions
-- `components/NewRequestModal.jsx` — supervisor creates request with items
+## Files in this zip
 
-## Sidebar integration
+**Updated:**
+- `src/pools/PoolControlHub.jsx` — title "Pool Management", 6 tabs, New Operation button, 6 stats including filter-due-in-30-days
 
-Az inja bayad `App.jsx` ya `inventory-system.jsx` ro modify koni ta modul-e Requests too sidebar zahar shavad. Ye chizi shabihe:
+**New:**
+- `src/pools/components/NewOperationModal.jsx` — operation form (4 types) with atomic auto-dispense
+- `src/pools/components/PoolDetailModal.jsx` — 4 sub-tabs: Overview / Equipment / Operations / History
+- `src/pools/tabs/OperationsTab.jsx` — all operations feed with filters
+- `src/pools/tabs/OperatorsTab.jsx` — per-pool operator assignment
+
+## ⚠ IMPORTANT: Wire up PoolsListTab
+
+The existing `PoolsListTab` needs to open `PoolDetailModal` when a pool is clicked. The new `PoolControlHub` passes an `onOpenPool` prop.
+
+In your existing `src/pools/tabs/PoolsListTab.jsx`, wherever a pool card is clicked, add:
 
 ```jsx
-import ProcurementHub from "./procurement/ProcurementHub";
+// In component signature:
+export default function PoolsListTab({ TH, isMobile, isAdmin, onChanged, onOpenPool }) {
+  // ...
+}
 
-// too render:
-{ activeModule === "procurement" && <ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /> }
-
-// too sidebar:
-<SidebarItem
-  icon="📝"
-  label="Requests"
-  active={activeModule === "procurement"}
-  onClick={() => setActiveModule("procurement")}
-/>
+// In the pool card click handler:
+<div onClick={() => onOpenPool?.(pool.id)}>
+  {/* card content */}
+</div>
 ```
 
-Age file-e sidebar ro befresti, direct modify mikonam.
-
-## Role seeding (bad az SQL migration)
-
-### 1. UUIDs ro peyda kon:
-```sql
-SELECT id, email FROM auth.users ORDER BY email;
-```
-
-### 2. Role-a ro seed kon:
-```sql
-INSERT INTO user_procurement_roles (user_id, role, display_name) VALUES
-  ('<edem-uuid>',        'approver_level_1', 'Mr. Edem'),
-  ('<hezi-uuid>',        'approver_level_2', 'Mr. Hezi')
-ON CONFLICT (user_id) DO UPDATE
-  SET role = EXCLUDED.role, display_name = EXCLUDED.display_name, is_active = true;
-```
-
-### 3. Supervisor-a (masalan supervisor gardening):
-```sql
-INSERT INTO user_procurement_roles (user_id, role, display_name, department_id) VALUES
-  ('<ahmad-uuid>', 'supervisor', 'Ahmad', (SELECT id FROM procurement_departments WHERE code='gardening'))
-ON CONFLICT (user_id) DO UPDATE
-  SET role = EXCLUDED.role, display_name = EXCLUDED.display_name, department_id = EXCLUDED.department_id, is_active = true;
-```
+If you don't do this, the "Pool Detail" modal will only open via the New Operation button; users can still access all functionality via the Operations tab and Operators tab.
 
 ## Workflow
 
-```
-┌─────────────┐
-│ Supervisor  │  makes request (multi-item)
-└──────┬──────┘
-       │  submitted
-       ▼
-┌─────────────┐
-│    Edem     │  reviews each item:
-│  (Level 1)  │  → 📦 From stock (auto-deduct + log movement)
-│             │  → 🛒 To purchase
-│             │  → ✕ Reject item
-└──────┬──────┘
-       │
-       ├─ all from_stock → status: fulfilled_from_stock (DONE)
-       ├─ rejected       → status: edem_rejected (CANCELLED)
-       └─ approved       │
-                         ▼
-                 ┌─────────────┐
-                 │    Hezi     │  final review
-                 │  (Level 2)  │
-                 └──────┬──────┘
-                        │
-                        ├─ approved → status: hezi_approved → purchase list
-                        └─ rejected → status: hezi_rejected (CANCELLED)
+**Pool Operator (via mobile):**
+1. Opens Pool Management
+2. Clicks "⚙️ New Operation"
+3. Selects pool → operation type (Cleaning / Dosing / Maintenance / Filter Change)
+4. If Chemical Dosing: enters pH before/after, chlorine before/after
+5. If Filter Change: enters new filter type/model, updates pool's filter_last_changed
+6. Adds any chemicals used → picks warehouse (sorted by stock) → qty
+7. Uploads photos
+8. Saves → RPC does atomic transaction:
+   - Creates `pool_operations` row
+   - For each chemical: deducts from `consumable_stock` + `items.current_qty` + inserts `consumable_movements` (linked to pool + operation)
+   - If filter_change: updates pool's `filter_type`, `filter_model`, `filter_last_changed`
 
-Admin: marks hezi_approved as 'purchased' when item is bought.
-```
+**Admin:**
+- Assigns operators via Operators tab
+- Views operations feed with filters
+- Opens pool detail → Equipment tab → uploads pump photos, sets filter type/dates
 
-## Smart features
-
-- **Stock check** — vaghti Edem "Check stock" mizane, RPC `lookup_item_stock` matching items ro az `items` table peyda mikone + qty per warehouse.
-- **Fulfill from stock** — atomic RPC: deduct az `consumable_stock` + insert `consumable_movements` (movement_type='out', reason='Procurement fulfilled', reference_no=REQ-...) + mark item `decision='from_stock'`.
-- **Warning na block** — age moujoodi kafi bashe, dokme sabz ba "Take from Main Warehouse: 12" mibinam. Age bekhaam khodam bekharam, dokme "To purchase" hanooz kar mikone.
-- **Confirm dialog** — ghabl az fulfill "Deduct 4 unit? Cannot be undone" mishe.
-- **Notif visual** — dashboard-e Edem badge sorkh mibine ta request rasidegi bekone.
+**Alerts:**
+- Filter due ≤30 days: red stat on dashboard
+- Historic usage: per-pool summary of chemicals used
 
 ## Deploy
 
 ```powershell
 cd C:\Users\MSI\inventory-app
-Expand-Archive "$env:USERPROFILE\Downloads\procurement-v2.zip" -DestinationPath . -Force
+Expand-Archive "$env:USERPROFILE\Downloads\pool-management.zip" -DestinationPath . -Force
 git add .
-git commit -m "Smart procurement system v2 (requests → Edem → Hezi)"
+git commit -m "Pool Management: operations log, equipment, operators, per-pool history"
 git push
 ```
