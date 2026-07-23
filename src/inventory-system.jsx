@@ -91,13 +91,13 @@ const NAV_GROUPS = [
 ];
 
 const TAB_ICONS = {
-  dashboard:  "◈",
-  warehouse:  "🏬",
-  inspection: "🔍",
-  pools:      "🏊",
-  procure:    "💳",
-  requests:   "📝",
-  users:      "👥",
+  dashboard:  "◇",
+  warehouse:  "▣",
+  inspection: "◎",
+  pools:      "≋",
+  procure:    "◈",
+  requests:   "▤",
+  users:      "◍",
 };
 
 // Local label overrides (bypass i18n for renamed modules)
@@ -213,9 +213,7 @@ export default function InventorySystem() {
 
   // ─── Login screen ───────────────────────────────────────────────
   if (checking) {
-    return <div style={{minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:TH.bg, color:TH.text, fontFamily:"'Inter',system-ui,sans-serif"}}>
-      Loading...
-    </div>;
+    return <div style={{minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:TH.bg, color:TH.text, fontFamily:"'Inter',system-ui,sans-serif"}}>Loading... </div>;
   }
   if (!session) return <LoginScreen TH={TH} onSignedIn={setSession} />;
   if (!rolesLoaded) return <div style={{minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", background:TH.bg, color:TH.text}}>{t.loadingRoles}</div>;
@@ -225,16 +223,11 @@ export default function InventorySystem() {
   const dateStr = dt.toLocaleDateString('en-GB', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
   const timeStr = dt.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
 
-  return (
-    <div dir={isRTL?"rtl":"ltr"} style={{
+  return ( <div dir={isRTL?"rtl":"ltr"} style={{
       display:"flex", flexDirection:"column", minHeight:"100vh",
       background:TH.bg, color:TH.text,
-      fontFamily: lang==="fa" ? "'Vazirmatn','Tahoma',sans-serif"
-                : lang==="he" ? "'Heebo','Arial',sans-serif"
-                : "'Inter','Segoe UI',system-ui,sans-serif",
-    }}>
-      {/* ═══ HEADER ═══ */}
-      <header style={{
+      fontFamily: lang==="fa" ? "'Vazirmatn','Tahoma',sans-serif" : lang==="he" ? "'Heebo','Arial',sans-serif" : "'Inter','Segoe UI',system-ui,sans-serif",
+    }}>{/* ═══ HEADER ═══ */} <header style={{
         position:"sticky", top:0, zIndex:100,
         background:TH.header,
         backdropFilter:"blur(14px)", WebkitBackdropFilter:"blur(14px)",
@@ -244,70 +237,24 @@ export default function InventorySystem() {
         display:"flex", alignItems:"center",
         padding:isMobile?"0 12px":"0 24px",
         gap:isMobile?8:16, flexShrink:0,
-      }}>
-        {isMobile && (
-          <button onClick={()=>setSidebarOpen(v=>!v)} style={{background:"transparent",border:"none",color:TH.text,fontSize:22,cursor:"pointer",padding:"4px 8px"}}>☰</button>
-        )}
-        <div style={{display:"flex", alignItems:"center", gap:12}}>
-          <div style={{
+      }}>{isMobile && ( <button onClick={()=>setSidebarOpen(v=>!v)} style={{background:"transparent",border:"none",color:TH.text,fontSize:22,cursor:"pointer",padding:"4px 8px"}}></button>)} <div style={{display:"flex", alignItems:"center", gap:12}}><div style={{
             height:isMobile?38:48,
             display:"flex", alignItems:"center", justifyContent:"center",
-          }}>
-            <img src="/caesar-logo.png" alt="Caesar Projects" style={{height:"100%", width:"auto", objectFit:"contain", display:"block"}}
-                 onError={(e)=>{ e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="color:'+TH.accent+';font-weight:800;font-family:Georgia,serif;font-size:20px">CAESAR</span>'; }} />
-          </div>
-          {!isMobile && <div style={{fontSize:11, color:"#B8935A", fontWeight:700, letterSpacing:"0.14em"}}>● LIVE</div>}
-        </div>
-
-        <div style={{flex:1}} />
-
-        {!isMobile && (
-          <div style={{fontFamily:"monospace", fontSize:13, color:TH.textMuted}}>
-            {dateStr} <span style={{color:TH.text, fontWeight:700}}>{timeStr}</span>
-          </div>
-        )}
-
-        <button onClick={()=>setTheme(theme==="dark"?"light":"dark")} style={{
+          }}><img src="/caesar-logo.png" alt="Caesar Projects" style={{height:"100%", width:"auto", objectFit:"contain", display:"block"}}
+                 onError={(e)=>{ e.target.style.display='none'; e.target.parentNode.innerHTML='<span style="color:'+TH.accent+';font-weight:800;font-family:Georgia,serif;font-size:20px">CAESAR</span>'; }} /></div>{!isMobile && <div style={{fontSize:11, color:"#B8935A", fontWeight:700, letterSpacing:"0.14em"}}>● LIVE</div>} </div><div style={{flex:1}} />{!isMobile && ( <div style={{fontFamily:"monospace", fontSize:13, color:TH.textMuted}}>{dateStr} <span style={{color:TH.text, fontWeight:700}}>{timeStr}</span></div>)} <button onClick={()=>setTheme(theme==="dark"?"light":"dark")} style={{
           background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:20,
           color:TH.text, padding:"6px 14px", cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit",
           display:"flex", alignItems:"center", gap:6,
-        }}>
-          {theme==="dark" ? "🌙 Dark" : "☀ Light"}
-        </button>
-
-        <div style={{display:"flex", gap:2, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:20, padding:2}}>
-          {["en","he","fa"].map(l=>(
-            <button key={l} onClick={()=>setLang(l)} style={{
+        }}>{theme==="dark" ? "Dark" : "Light"} </button><div style={{display:"flex", gap:2, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:20, padding:2}}>{["en","he","fa"].map(l=>( <button key={l} onClick={()=>setLang(l)} style={{
               background: lang===l ? "linear-gradient(135deg,#B8935A,#8B7040)" : "transparent",
               border:"none", borderRadius:16, color: lang===l?"#000":TH.textMuted,
               padding:"5px 12px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit",
               textTransform:"uppercase",
-            }}>{l}</button>
-          ))}
-        </div>
-
-        {!isMobile && (
-          <div style={{display:"flex", alignItems:"center", gap:10, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:24, padding:"4px 14px 4px 4px"}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:"linear-gradient(135deg,#B8935A,#8B7040)",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontWeight:800,fontSize:13}}>
-              {(email[0]||"?").toUpperCase()}
-            </div>
-            <div>
-              <div style={{fontSize:12, fontWeight:700, color:TH.text, lineHeight:1.2}}>{isAdmin?"Admin":"User"}</div>
-              <div style={{fontSize:10, color:TH.textMuted, lineHeight:1.2}}>{email}</div>
-            </div>
-          </div>
-        )}
-
-        <button onClick={async ()=>{ await supabase.auth.signOut(); }} style={{
+            }}>{l}</button>))} </div>{!isMobile && ( <div style={{display:"flex", alignItems:"center", gap:10, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:24, padding:"4px 14px 4px 4px"}}><div style={{width:32,height:32,borderRadius:"50%",background:"linear-gradient(135deg,#B8935A,#8B7040)",display:"flex",alignItems:"center",justifyContent:"center",color:"#000",fontWeight:800,fontSize:13}}>{(email[0]||"?").toUpperCase()} </div><div><div style={{fontSize:12, fontWeight:700, color:TH.text, lineHeight:1.2}}>{isAdmin?"Admin":"User"}</div><div style={{fontSize:10, color:TH.textMuted, lineHeight:1.2}}>{email}</div></div></div>)} <button onClick={async ()=>{ await supabase.auth.signOut(); }} style={{
           background:"transparent", border:`1px solid ${TH.border}`, borderRadius:20,
           color:TH.text, padding:"6px 14px", cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit",
-        }}>↩ Logout</button>
-      </header>
-
-      <div style={{display:"flex", flex:1, minHeight:0}}>
-        {/* ═══ SIDEBAR ═══ */}
-        {sidebarOpen && (
-          <aside style={{
+        }}> Logout</button></header><div style={{display:"flex", flex:1, minHeight:0}}>{/* ═══ SIDEBAR ═══ */}
+        {sidebarOpen && ( <aside style={{
             width: isMobile ? "80vw" : 260,
             maxWidth: 280,
             background: TH.sidebar,
@@ -319,16 +266,9 @@ export default function InventorySystem() {
             zIndex: isMobile ? 90 : 5,
             height: isMobile ? "calc(100vh - 54px)" : "auto",
             overflowY:"auto",
-          }}>
-            {NAV_GROUPS.filter(g => g.items.some(k => allTabs.includes(k))).map(group => (
-              <div key={group.key} style={{marginBottom:16, padding:"0 12px"}}>
-                <div style={{padding:"0 12px 8px", color:TH.textDim, fontSize:9.5, fontWeight:800, letterSpacing:"0.16em"}}>
-                  {GROUP_LABEL_OVERRIDES[group.key] || (t[group.key]||group.key).toUpperCase()}
-                </div>
-                {group.items.filter(k=>allTabs.includes(k)).map(k=>{
+          }}>{NAV_GROUPS.filter(g => g.items.some(k => allTabs.includes(k))).map(group => ( <div key={group.key} style={{marginBottom:16, padding:"0 12px"}}><div style={{padding:"0 12px 8px", color:TH.textDim, fontSize:9.5, fontWeight:800, letterSpacing:"0.16em"}}>{GROUP_LABEL_OVERRIDES[group.key] || (t[group.key]||group.key).toUpperCase()} </div>{group.items.filter(k=>allTabs.includes(k)).map(k=>{
                   const active = tab===k;
-                  return (
-                    <button key={k} onClick={()=>{ setTab(k); if(isMobile) setSidebarOpen(false); }} style={{
+                  return ( <button key={k} onClick={()=>{ setTab(k); if(isMobile) setSidebarOpen(false); }} style={{
                       display:"flex", alignItems:"center", gap:11, width:"100%",
                       padding:"10px 12px", marginBottom:2,
                       background: active ? "linear-gradient(135deg, rgba(184,147,90,.16), rgba(139,112,64,.08))" : "transparent",
@@ -340,45 +280,17 @@ export default function InventorySystem() {
                       boxShadow: active ? "0 2px 10px rgba(184,147,90,.10)" : "none",
                     }}
                     onMouseEnter={e=>{ if(!active) e.currentTarget.style.background = TH.bgHover; }}
-                    onMouseLeave={e=>{ if(!active) e.currentTarget.style.background = "transparent"; }}>
-                      <span style={{fontSize:15, width:20, textAlign:"center", flexShrink:0, filter: active ? "none" : "grayscale(0.4)"}}>{TAB_ICONS[k]}</span>
-                      <span style={{flex:1}}>{LABEL_OVERRIDES[k] || t[k] || k}</span>
-                      {active && <span style={{width:5, height:5, borderRadius:3, background:"#B8935A", flexShrink:0}}/>}
-                    </button>
-                  );
-                })}
-              </div>
-            ))}
-            <div style={{flex:1}} />
-            <div style={{padding:"12px"}}>
-              <PWAInstall TH={TH} isMobile={isMobile} />
-            </div>
-          </aside>
-        )}
+                    onMouseLeave={e=>{ if(!active) e.currentTarget.style.background = "transparent"; }}><span style={{fontSize:14, width:20, textAlign:"center", flexShrink:0, opacity: active ? 1 : 0.5}}>{TAB_ICONS[k]}</span><span style={{flex:1}}>{LABEL_OVERRIDES[k] || t[k] || k}</span>{active && <span style={{width:5, height:5, borderRadius:3, background:"#B8935A", flexShrink:0}}/>} </button>);
+                })} </div>))} <div style={{flex:1}} /><div style={{padding:"12px"}}><PWAInstall TH={TH} isMobile={isMobile} /></div></aside>)}
 
-        {/* ═══ MAIN ═══ */}
-        <main style={{flex:1, minWidth:0, padding: isMobile?"14px 12px":"22px 26px", overflow:"auto"}}>
-          {allTabs.length === 0 && (
-            <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}>
-              <div style={{fontSize:44, marginBottom:12, color:TH.accent}}>🔒</div>
-              <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:400, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div>
-              <div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>
-                {t.noAccessDesc}
-              </div>
-              <div style={{marginTop:16, fontSize:12, color:TH.textDim}}>{email}</div>
-            </div>
-          )}
-          {tab==="dashboard"  && canSeeDashboard   && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
-          {tab==="warehouse"  && WAREHOUSE_ENABLED  && canSeeWarehouse  && <WarehouseHub  TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+        {/* ═══ MAIN ═══ */} <main style={{flex:1, minWidth:0, padding: isMobile?"14px 12px":"22px 26px", overflow:"auto"}}>{allTabs.length === 0 && ( <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}><div style={{fontSize:38, marginBottom:12, color:TH.accent, fontFamily:"'Playfair Display',Georgia,serif"}}>⊘</div><div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:400, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div><div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>{t.noAccessDesc} </div><div style={{marginTop:16, fontSize:12, color:TH.textDim}}>{email}</div></div>)}
+          {tab==="dashboard" && canSeeDashboard   && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
+          {tab==="warehouse" && WAREHOUSE_ENABLED  && canSeeWarehouse  && <WarehouseHub  TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="inspection" && INSPECTION_ENABLED && canSeeInspection && <InspectionHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="pools"      && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="procure"    && PROCURE_ENABLED    && canSeeProcure    && <ProcureHub    TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="requests"   && REQUESTS_ENABLED   && canSeeRequests   && <ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="users"      && canSeeUsers        && <UsersTab TH={TH} lang={lang} isMobile={isMobile} />}
-        </main>
-      </div>
-    </div>
-  );
+          {tab==="pools" && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+          {tab==="procure" && PROCURE_ENABLED    && canSeeProcure    && <ProcureHub    TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+          {tab==="requests" && REQUESTS_ENABLED   && canSeeRequests   && <ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+          {tab==="users" && canSeeUsers        && <UsersTab TH={TH} lang={lang} isMobile={isMobile} />} </main></div></div>);
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -404,20 +316,16 @@ function LoginScreen({ TH, onSignedIn }) {
     }
   }
 
-  return (
-    <div style={{
+  return ( <div style={{
       minHeight:"100vh", background:TH.bg, color:TH.text,
       display:"flex", alignItems:"center", justifyContent:"center",
       padding:20, fontFamily:"'Inter',system-ui,sans-serif",
       backgroundImage: `radial-gradient(ellipse 800px 500px at 50% -10%, rgba(184,147,90,0.10), transparent 60%)`,
-    }}>
-      <form onSubmit={submit} style={{
+    }}><form onSubmit={submit} style={{
         background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16,
         padding:36, maxWidth:420, width:"100%",
         boxShadow: TH.shadowLg,
-      }}>
-        <div style={{textAlign:"center", marginBottom:28}}>
-          <div style={{
+      }}><div style={{textAlign:"center", marginBottom:28}}><div style={{
             width:72, height:72, margin:"0 auto 16px", borderRadius:18,
             background: "linear-gradient(135deg, #1a1814 0%, #0d0c0a 100%)",
             border:`1px solid ${TH.accentBorder}`,
@@ -425,45 +333,20 @@ function LoginScreen({ TH, onSignedIn }) {
             fontFamily:"'Playfair Display',Georgia,serif", fontSize:38, color:TH.accent, fontWeight:400,
             boxShadow: `0 0 0 1px rgba(184,147,90,.15) inset, 0 8px 24px rgba(184,147,90,.15)`,
             lineHeight:1,
-          }}>Ω</div>
-          <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:26, fontWeight:400, color:TH.text, letterSpacing:"-0.01em"}}>Omega Control System</div>
-          <div style={{fontSize:11, color:TH.textMuted, letterSpacing:"0.18em", marginTop:6, textTransform:"uppercase"}}>Caesar Projects · Internal</div>
-        </div>
-
-        <label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Email</label>
-        <input type="email" value={email} onChange={e=>setEmail(e.target.value)} required style={{
+          }}>Ω</div><div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:26, fontWeight:400, color:TH.text, letterSpacing:"-0.01em"}}>Omega Control System</div><div style={{fontSize:11, color:TH.textMuted, letterSpacing:"0.18em", marginTop:6, textTransform:"uppercase"}}>Caesar Projects · Internal</div></div><label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)} required style={{
           width:"100%", padding:"12px 14px", marginBottom:16,
           background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10,
           color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box",
-        }} />
-
-        <label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Password</label>
-        <input type="password" value={password} onChange={e=>setPass(e.target.value)} required style={{
+        }} /><label style={{display:"block", fontSize:11, fontWeight:600, color:TH.textMuted, marginBottom:6, textTransform:"uppercase", letterSpacing:"0.5px"}}>Password</label><input type="password" value={password} onChange={e=>setPass(e.target.value)} required style={{
           width:"100%", padding:"12px 14px", marginBottom:16,
           background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10,
           color:TH.text, fontSize:14, outline:"none", fontFamily:"inherit", boxSizing:"border-box",
-        }} />
-
-        {error && (
-          <div style={{background:"rgba(201,80,80,.08)", border:"1px solid rgba(201,80,80,.3)", borderRadius:8, padding:"10px 12px", color:"#d67373", fontSize:12, marginBottom:14}}>
-            {error}
-          </div>
-        )}
-
-        <button type="submit" disabled={busy} style={{
+        }} />{error && ( <div style={{background:"rgba(201,80,80,.08)", border:"1px solid rgba(201,80,80,.3)", borderRadius:8, padding:"10px 12px", color:"#d67373", fontSize:12, marginBottom:14}}>{error} </div>)} <button type="submit" disabled={busy} style={{
           width:"100%", padding:"14px",
           background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
           color:"#000", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
           letterSpacing:"0.02em",
           opacity: busy ? 0.6 : 1,
           boxShadow: "0 4px 14px rgba(184,147,90,.25)",
-        }}>{busy ? "Signing in…" : "Sign in"}</button>
-
-        <div style={{marginTop:20, padding:"12px 14px", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, textAlign:"center"}}>
-          <div style={{fontSize:11, color:TH.textMuted, marginBottom:2}}>To add new users, go to</div>
-          <div style={{fontSize:12, color:TH.accent, fontWeight:600}}>Team &amp; Roles · Admin only</div>
-        </div>
-      </form>
-    </div>
-  );
+        }}>{busy ? "Signing in…" : "Sign in"}</button><div style={{marginTop:20, padding:"12px 14px", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, textAlign:"center"}}><div style={{fontSize:11, color:TH.textMuted, marginBottom:2}}>To add new users, go to</div><div style={{fontSize:12, color:TH.accent, fontWeight:600}}>Team &amp; Roles · Admin only</div></div></form></div>);
 }

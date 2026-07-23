@@ -136,162 +136,42 @@ export default function DispenseModal({ TH, lang = "en", presetItemId = null, on
   const currentWhStock = stockRows.find(r => String(r.warehouse_id) === warehouseId);
   const insufficient = currentWhStock && Number(qty) > Number(currentWhStock.qty);
 
-  return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}>
-      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:560, maxHeight:"92vh", overflowY:"auto"}}>
-        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}>
-          <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
-            📤 {L.dispenseTitle || "Dispense consumable"}
-          </div>
-          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>✕</button>
-        </div>
-
-        {/* Item selector */}
-        <div style={{marginBottom:12}}>
-          <label style={lbl(TH)}>{L.item || "Item"} *</label>
-          {!selectedItem ? (
-            <div style={{position:"relative"}}>
-              <input
+  return ( <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}><div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:560, maxHeight:"92vh", overflowY:"auto"}}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}><div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>{L.dispenseTitle || "Dispense consumable"} </div><button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}></button></div>{/* Item selector */} <div style={{marginBottom:12}}><label style={lbl(TH)}>{L.item || "Item"} *</label>{!selectedItem ? ( <div style={{position:"relative"}}><input
                 value={itemSearch}
                 onChange={e => setItemSearch(e.target.value)}
                 placeholder={L.searchItem || "Start typing an item name…"}
                 autoFocus
                 style={inp(TH)}
-              />
-              {itemResults.length > 0 && (
-                <div style={{position:"absolute", top:"100%", left:0, right:0, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:8, marginTop:4, maxHeight:220, overflowY:"auto", zIndex:10}}>
-                  {itemResults.map(it => (
-                    <div key={it.id} onClick={() => selectItem(it)} style={{padding:"8px 12px", cursor:"pointer", borderBottom:`1px solid ${TH.border}`}}
+              />{itemResults.length > 0 && ( <div style={{position:"absolute", top:"100%", left:0, right:0, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:8, marginTop:4, maxHeight:220, overflowY:"auto", zIndex:10}}>{itemResults.map(it => ( <div key={it.id} onClick={() => selectItem(it)} style={{padding:"8px 12px", cursor:"pointer", borderBottom:`1px solid ${TH.border}`}}
                       onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
-                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                      <div style={{fontSize:13, fontWeight:700, color:TH.text}}>{it.name}</div>
-                      <div style={{fontSize:10, color:TH.textMuted}}>{it.category ? `${it.category} · ` : ''}Total: {it.current_qty} {it.unit}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{background:TH.bgInput, borderRadius:8, padding:"10px 12px", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-              <div>
-                <div style={{fontSize:13, fontWeight:700, color:TH.text}}>{selectedItem.name}</div>
-                <div style={{fontSize:10, color:TH.textMuted}}>{selectedItem.category ? `${selectedItem.category} · ` : ''}Unit: {selectedItem.unit} · Total: {selectedItem.current_qty}</div>
-              </div>
-              <button onClick={clearItem} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"4px 10px", cursor:"pointer", fontSize:11}}>{L.change || "Change"}</button>
-            </div>
-          )}
-        </div>
-
-        {/* Warehouse + qty */}
-        {selectedItem && (
-          <div style={{display:"grid", gridTemplateColumns:"2fr 1fr", gap:10, marginBottom:12}}>
-            <div>
-              <label style={lbl(TH)}>{L.warehouse || "Warehouse"} * <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>(sorted by stock)</span></label>
-              <select value={warehouseId} onChange={e => setWarehouseId(e.target.value)} disabled={busy} style={inp(TH)}>
-                {stockRows.length === 0 && <option value="">{L.noStock || "Out of stock in all warehouses"}</option>}
-                {stockRows.map(r => (
-                  <option key={r.warehouse_id} value={r.warehouse_id}>
-                    {r.warehouse_name} — {r.qty} {selectedItem.unit}{r.can_fulfill ? '' : ' ⚠'}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label style={lbl(TH)}>{L.qty || "Qty"} *</label>
-              <input type="number" step="0.01" min="0" value={qty} onChange={e => setQty(e.target.value)} disabled={busy}
-                style={{...inp(TH), borderColor: insufficient ? '#C43D3D' : TH.border}} />
-            </div>
-          </div>
-        )}
-        {insufficient && (
-          <div style={{fontSize:11, color:"#C43D3D", marginBottom:10, marginTop:-6}}>
-            ⚠ {L.insufficientStock || "Insufficient stock in this warehouse."}
-          </div>
-        )}
+                      onMouseLeave={e => e.currentTarget.style.background = "transparent"}><div style={{fontSize:13, fontWeight:700, color:TH.text}}>{it.name}</div><div style={{fontSize:10, color:TH.textMuted}}>{it.category ? `${it.category} · ` : ''}Total: {it.current_qty} {it.unit}</div></div>))} </div>)} </div>) : ( <div style={{background:TH.bgInput, borderRadius:8, padding:"10px 12px", display:"flex", justifyContent:"space-between", alignItems:"center"}}><div><div style={{fontSize:13, fontWeight:700, color:TH.text}}>{selectedItem.name}</div><div style={{fontSize:10, color:TH.textMuted}}>{selectedItem.category ? `${selectedItem.category} · ` : ''}Unit: {selectedItem.unit} · Total: {selectedItem.current_qty}</div></div><button onClick={clearItem} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"4px 10px", cursor:"pointer", fontSize:11}}>{L.change || "Change"}</button></div>)} </div>{/* Warehouse + qty */}
+        {selectedItem && ( <div style={{display:"grid", gridTemplateColumns:"2fr 1fr", gap:10, marginBottom:12}}><div><label style={lbl(TH)}>{L.warehouse || "Warehouse"} * <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>(sorted by stock)</span></label><select value={warehouseId} onChange={e => setWarehouseId(e.target.value)} disabled={busy} style={inp(TH)}>{stockRows.length === 0 && <option value="">{L.noStock || "Out of stock in all warehouses"}</option>}
+                {stockRows.map(r => ( <option key={r.warehouse_id} value={r.warehouse_id}>{r.warehouse_name} — {r.qty} {selectedItem.unit}{r.can_fulfill ? '' : ''} </option>))} </select></div><div><label style={lbl(TH)}>{L.qty || "Qty"} *</label><input type="number" step="0.01" min="0" value={qty} onChange={e => setQty(e.target.value)} disabled={busy}
+                style={{...inp(TH), borderColor: insufficient ? '#C43D3D' : TH.border}} /></div></div>)}
+        {insufficient && ( <div style={{fontSize:11, color:"#C43D3D", marginBottom:10, marginTop:-6}}>{L.insufficientStock || "Insufficient stock in this warehouse."} </div>)}
 
         {/* Destination type tabs */}
-        {selectedItem && (
-          <>
-            <div style={{marginBottom:8, fontSize:11, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.destination || "Destination"} *</div>
-            <div style={{display:"flex", gap:6, marginBottom:10, flexWrap:"wrap"}}>
-              {[
-                { k: "pool", icon: "🏊", label: L.pool || "Pool" },
-                { k: "department", icon: "🏢", label: L.department || "Department" },
-                { k: "user", icon: "👤", label: L.user || "User" },
-                { k: "other", icon: "📝", label: L.other || "Other" },
-              ].map(t => (
-                <button key={t.k} onClick={() => setDestType(t.k)} disabled={busy} style={{
+        {selectedItem && ( <><div style={{marginBottom:8, fontSize:11, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.destination || "Destination"} *</div><div style={{display:"flex", gap:6, marginBottom:10, flexWrap:"wrap"}}>{[
+                { k: "pool", icon: "", label: L.pool || "Pool" },
+                { k: "department", icon: "", label: L.department || "Department" },
+                { k: "user", icon: "", label: L.user || "User" },
+                { k: "other", icon: "", label: L.other || "Other" },
+              ].map(t => ( <button key={t.k} onClick={() => setDestType(t.k)} disabled={busy} style={{
                   flex:1, minWidth:80,
                   background: destType === t.k ? TH.accentBg : "transparent",
                   border:`1px solid ${destType === t.k ? TH.accentBorder : TH.border}`,
                   borderRadius:8, color: destType === t.k ? TH.accentText : TH.textMuted,
                   padding:"8px 6px", cursor:"pointer", fontSize:12, fontWeight:destType === t.k ? 700 : 500,
                   fontFamily:"inherit",
-                }}>{t.icon} {t.label}</button>
-              ))}
-            </div>
+                }}>{t.icon} {t.label}</button>))} </div>{/* Destination-specific selector */}
+            {destType === 'pool' && ( <div style={{marginBottom:12}}><select value={destPoolId} onChange={e => setDestPoolId(e.target.value)} disabled={busy} style={inp(TH)}><option value="">— Select pool —</option>{pools.map(p => <option key={p.id} value={p.id}>{p.code} — {p.name}</option>)} </select></div>)}
+            {destType === 'department' && ( <div style={{marginBottom:12}}><select value={destDeptId} onChange={e => setDestDeptId(e.target.value)} disabled={busy} style={inp(TH)}><option value="">— Select department —</option>{departments.map(d => <option key={d.id} value={d.id}>{d.icon} {d.name}</option>)} </select></div>)}
+            {destType === 'user' && ( <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:12}}><div><label style={miniLbl(TH)}>{L.selectUser || "System user"}</label><select value={destUserId} onChange={e => setDestUserId(e.target.value)} disabled={busy} style={inp(TH)}><option value="">— Or enter name </option>{users.map(u => <option key={u.user_id} value={u.user_id}>{u.display_name}</option>)} </select></div><div><label style={miniLbl(TH)}>{L.orName || "Or free-text name"}</label><input value={destPersonName} onChange={e => setDestPersonName(e.target.value)} disabled={busy} placeholder="Person's name" style={inp(TH)} /></div></div>)}
+            {destType === 'other' && ( <div style={{marginBottom:12}}><input value={destPersonName} onChange={e => setDestPersonName(e.target.value)} disabled={busy} placeholder={L.recipientPh || "Recipient / description"} style={inp(TH)} /></div>)}
 
-            {/* Destination-specific selector */}
-            {destType === 'pool' && (
-              <div style={{marginBottom:12}}>
-                <select value={destPoolId} onChange={e => setDestPoolId(e.target.value)} disabled={busy} style={inp(TH)}>
-                  <option value="">— Select pool —</option>
-                  {pools.map(p => <option key={p.id} value={p.id}>{p.code} — {p.name}</option>)}
-                </select>
-              </div>
-            )}
-            {destType === 'department' && (
-              <div style={{marginBottom:12}}>
-                <select value={destDeptId} onChange={e => setDestDeptId(e.target.value)} disabled={busy} style={inp(TH)}>
-                  <option value="">— Select department —</option>
-                  {departments.map(d => <option key={d.id} value={d.id}>{d.icon} {d.name}</option>)}
-                </select>
-              </div>
-            )}
-            {destType === 'user' && (
-              <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:12}}>
-                <div>
-                  <label style={miniLbl(TH)}>{L.selectUser || "System user"}</label>
-                  <select value={destUserId} onChange={e => setDestUserId(e.target.value)} disabled={busy} style={inp(TH)}>
-                    <option value="">— Or enter name →</option>
-                    {users.map(u => <option key={u.user_id} value={u.user_id}>{u.display_name}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={miniLbl(TH)}>{L.orName || "Or free-text name"}</label>
-                  <input value={destPersonName} onChange={e => setDestPersonName(e.target.value)} disabled={busy} placeholder="Person's name" style={inp(TH)} />
-                </div>
-              </div>
-            )}
-            {destType === 'other' && (
-              <div style={{marginBottom:12}}>
-                <input value={destPersonName} onChange={e => setDestPersonName(e.target.value)} disabled={busy} placeholder={L.recipientPh || "Recipient / description"} style={inp(TH)} />
-              </div>
-            )}
+            {/* Reason + notes */} <div style={{marginBottom:10}}><label style={lbl(TH)}>{L.reason || "Reason"}</label><input value={reason} onChange={e => setReason(e.target.value)} disabled={busy} placeholder={L.reasonPh || "e.g. daily pool treatment"} style={inp(TH)} /></div><div style={{marginBottom:14}}><label style={lbl(TH)}>{L.notes || "Notes"}</label><textarea value={notes} onChange={e => setNotes(e.target.value)} disabled={busy} rows={2} style={{...inp(TH), resize:"vertical"}} placeholder="Optional" /></div></>)}
 
-            {/* Reason + notes */}
-            <div style={{marginBottom:10}}>
-              <label style={lbl(TH)}>{L.reason || "Reason"}</label>
-              <input value={reason} onChange={e => setReason(e.target.value)} disabled={busy} placeholder={L.reasonPh || "e.g. daily pool treatment"} style={inp(TH)} />
-            </div>
-            <div style={{marginBottom:14}}>
-              <label style={lbl(TH)}>{L.notes || "Notes"}</label>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} disabled={busy} rows={2} style={{...inp(TH), resize:"vertical"}} placeholder="Optional" />
-            </div>
-          </>
-        )}
-
-        {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:10}}>{error}</div>}
-
-        <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || "Cancel"}</button>
-          <button onClick={submit} disabled={busy || !selectedItem || insufficient} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity: (busy || !selectedItem || insufficient) ? 0.6 : 1}}>
-            {busy ? (L.dispensing || "Dispensing…") : (L.confirmDispense || "Confirm dispense")}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+        {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:10}}>{error}</div>} <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}><button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || "Cancel"}</button><button onClick={submit} disabled={busy || !selectedItem || insufficient} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity: (busy || !selectedItem || insufficient) ? 0.6 : 1}}>{busy ? (L.dispensing || "Dispensing…") : (L.confirmDispense || "Confirm dispense")} </button></div></div></div>);
 }
 
 function lbl(TH)  { return { display:"block", color:TH.textMuted, fontSize:11, marginBottom:5, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.5px" }; }

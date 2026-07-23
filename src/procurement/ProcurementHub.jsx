@@ -79,64 +79,29 @@ export default function ProcurementHub({ TH, lang = "en", isMobile = false, isAd
   }
 
   const tabs = [
-    { key: "my",     icon: "📝", label: L.myRequests || "My Requests", badge: counts.my || 0 },
-    ...(isEdem  ? [{ key: "review", icon: "🔍", label: L.forReview     || "For Review",     badge: counts.forEdem || 0, alert: (counts.forEdem||0) > 0 }] : []),
-    ...(isHezi  ? [{ key: "final",  icon: "✍️", label: L.finalApproval || "Final Approval", badge: counts.forHezi || 0, alert: (counts.forHezi||0) > 0 }] : []),
-    ...(isAdminRole ? [{ key: "all", icon: "📚", label: L.allRequests || "All Requests" }] : []),
+    { key: "my", label: L.myRequests || "My Requests", badge: counts.my || 0 },
+    ...(isEdem  ? [{ key: "review", label: L.forReview     || "For Review",     badge: counts.forEdem || 0, alert: (counts.forEdem||0) > 0 }] : []),
+    ...(isHezi  ? [{ key: "final", label: L.finalApproval || "Final Approval", badge: counts.forHezi || 0, alert: (counts.forHezi||0) > 0 }] : []),
+    ...(isAdminRole ? [{ key: "all", label: L.allRequests || "All Requests" }] : []),
   ];
 
   const canCreate = isSupervisor || isAdminRole || isEdem || isHezi;
 
-  return (
-    <div>
-      {showNew && (
-        <NewRequestModal
+  return ( <div>{showNew && ( <NewRequestModal
           TH={TH} lang={lang}
           onClose={() => setShowNew(false)}
           onCreated={() => { setShowNew(false); bump(); }}
-        />
-      )}
-
-      <div style={{marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, flexWrap:"wrap"}}>
-        <div>
-          <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>
-            {L.procurementTitle || "Procurement Requests"}
-          </div>
-          <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-            {L.procurementSub || "Supervisor requests → Edem reviews → Hezi approves → Purchase"}
-            {role && displayName && (
-              <span style={{marginLeft:10, padding:"2px 8px", background:TH.bgInput, borderRadius:6, fontSize:11}}>
-                👤 {displayName} · {roleLabel(role)}
-              </span>
-            )}
-          </div>
-        </div>
-        {canCreate && (
-          <button
+        />)} <div style={{marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, flexWrap:"wrap"}}><div><div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{L.procurementTitle || "Procurement Requests"} </div><div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>{L.procurementSub || "Supervisor requests  Edem reviews  Hezi approves  Purchase"}
+            {role && displayName && ( <span style={{marginLeft:10, padding:"2px 8px", background:TH.bgInput, borderRadius:6, fontSize:11}}>{displayName} · {roleLabel(role)} </span>)} </div></div>{canCreate && ( <button
             onClick={() => setShowNew(true)}
             style={{
               background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
               color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer",
               fontFamily:"inherit", boxShadow:"0 2px 10px rgba(184,147,90,0.3)",
             }}
-          >📝 {L.newRequest || "New request"}</button>
-        )}
-      </div>
-
-      {loading ? (
-        <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading || 'Loading…'}</div>
-      ) : !role ? (
-        <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
-          <div style={{fontSize:14, fontWeight:700, marginBottom:8}}>{L.noRoleTitle || "No role assigned"}</div>
-          <div style={{fontSize:12}}>{L.noRoleDesc || "You don't have a procurement role. Contact an admin to be added as supervisor or approver."}</div>
-        </div>
-      ) : (
-        <>
-          <div style={{display:"flex", gap:6, marginBottom:20, borderBottom:`1px solid ${TH.border}`, paddingBottom:8, overflowX:"auto"}}>
-            {tabs.map(t => {
+          > {L.newRequest || "New request"}</button>)} </div>{loading ? ( <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading || 'Loading…'}</div>) : !role ? ( <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}><div style={{fontSize:14, fontWeight:700, marginBottom:8}}>{L.noRoleTitle || "No role assigned"}</div><div style={{fontSize:12}}>{L.noRoleDesc || "You don't have a procurement role. Contact an admin to be added as supervisor or approver."}</div></div>) : ( <><div style={{display:"flex", gap:6, marginBottom:20, borderBottom:`1px solid ${TH.border}`, paddingBottom:8, overflowX:"auto"}}>{tabs.map(t => {
               const active = t.key === tab;
-              return (
-                <button key={t.key} onClick={() => setTab(t.key)} style={{
+              return ( <button key={t.key} onClick={() => setTab(t.key)} style={{
                   background:   active ? TH.accentBg : "transparent",
                   border:       `1px solid ${active ? TH.accentBorder : "transparent"}`,
                   borderRadius: 9,
@@ -148,29 +113,15 @@ export default function ProcurementHub({ TH, lang = "en", isMobile = false, isAd
                   fontFamily:   "inherit",
                   whiteSpace:   "nowrap",
                   display:      "flex", alignItems:"center", gap: 6,
-                }}>
-                  {t.icon} {t.label}
-                  {t.badge > 0 && (
-                    <span style={{background: t.alert ? "#C43D3D" : "#8B7040", color:"#fff", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>
-                      {t.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          <RequestsListTab
+                }}>{t.label}
+                  {t.badge > 0 && ( <span style={{background: t.alert ? "#C43D3D" : "#8B7040", color:"#fff", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{t.badge} </span>)} </button>);
+            })} </div><RequestsListTab
             key={tab + refreshKey}
             TH={TH} lang={lang} isMobile={isMobile}
             mode={tab}
             role={role}
             onOpen={(id) => setOpenId(id)}
-          />
-        </>
-      )}
-    </div>
-  );
+          /></>)} </div>);
 }
 
 function roleLabel(role) {

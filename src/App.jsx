@@ -92,7 +92,7 @@ export default function App() {
 
       <div style={{position:"absolute",top:20,right:20}}>
         <button onClick={()=>{const newT=isDark?"light":"dark";setTheme(newT);localStorage.setItem("stocktrack-theme",newT);}} style={{background:cardBg,border:`1px solid ${border}`,borderRadius:20,color:text,padding:"7px 16px",cursor:"pointer",fontSize:12,fontFamily:"inherit",fontWeight:600}}>
-          {isDark?"☀ Light":"🌙 Dark"}
+          {isDark?"Light":"Dark"}
         </button>
       </div>
 
