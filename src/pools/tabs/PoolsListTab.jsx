@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabase";
+import PoolDetailModal from "../components/PoolDetailModal";
 import {
  POOL_TYPES, CHEMICAL_PURPOSES,
  recommendedDose, estimatedCost,
@@ -103,6 +104,7 @@ function PoolDetail({ TH, isMobile, isAdmin, pool, chemicals, propMap, onClose }
  const [busy, setBusy] = useState(false);
  const [error, setError] = useState(null);
  const [editMode, setEditMode] = useState(false);
+ const [showEquipment, setShowEquipment] = useState(false);
  const [form, setForm] = useState({
  name: pool.name, volume_m3: pool.volume_m3,
  depth_m: pool.depth_m || '', surface_m2: pool.surface_m2 || '',
@@ -148,12 +150,26 @@ function PoolDetail({ TH, isMobile, isAdmin, pool, chemicals, propMap, onClose }
  const totalTreatmentCost = chemicals.reduce((s, c) => s + estimatedCost(c, recommendedDose(c, pool.volume_m3)), 0);
  return (
     <div>
+      {showEquipment && (
+        <PoolDetailModal
+          TH={TH} isMobile={isMobile} isAdmin={isAdmin}
+          poolId={pool.id}
+          onClose={() => { setShowEquipment(false); onClose?.(); }}
+        />
+      )}
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, gap:8, flexWrap:"wrap"}}>
-        <button onClick={onClose} style={ghostBtn(TH)}>Back</button> {isAdmin && !editMode && (
-          <div style={{display:"flex", gap:6}}>
-            <button onClick={() => setEditMode(true)} style={ghostBtn(TH)}>Edit</button>
-            <button onClick={deletePool} style={{...ghostBtn(TH), color:"#8f8f8f"}}>Delete</button>
-          </div> )}
+        <button onClick={onClose} style={ghostBtn(TH)}>Back</button>
+        <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
+          <button onClick={() => setShowEquipment(true)} style={{background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:8, color:"#000", padding:"8px 14px", fontSize:12, fontWeight:800, cursor:"pointer", fontFamily:"inherit"}}>
+            🔧 Equipment & Operations
+          </button>
+          {isAdmin && !editMode && (
+            <>
+              <button onClick={() => setEditMode(true)} style={ghostBtn(TH)}>Edit</button>
+              <button onClick={deletePool} style={{...ghostBtn(TH), color:"#8f8f8f"}}>Delete</button>
+            </>
+          )}
+        </div>
       </div> {error && <ErrBox TH={TH}>{error}</ErrBox>}
  {/* Header card */}
       <div style={{
