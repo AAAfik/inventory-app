@@ -290,12 +290,12 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
                   const title = bf(p.title);
                   const pct = Math.round(Number(p.progress) * 100);
                   return (
-                    <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, fontSize: 13 }}>
-                      <div style={{ width: isMobile ? 110 : 160, flexShrink: 0, color: P.textDim, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={title}>{title}</div>
-                      <div style={{ flex: 1, height: 8, background: P.bgInput, borderRadius: 99, overflow: "hidden", border: `1px solid ${P.line}` }}>
+                    <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, fontSize: 14 }}>
+                      <div style={{ width: isMobile ? 120 : 200, flexShrink: 0, color: P.textDim, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 13.5 }} title={title}>{title}</div>
+                      <div style={{ flex: 1, height: 16, background: P.bgInput, borderRadius: 99, overflow: "hidden", border: `1px solid ${P.line}` }}>
                         <div style={{ height: "100%", width: `${pct}%`, borderRadius: 99, background: progressColor(pct), transition: "width .4s ease, background .3s ease" }} />
                       </div>
-                      <div style={{ width: 38, textAlign: rtl ? "left" : "right", color: progressColor(pct), fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
+                      <div style={{ width: 52, textAlign: rtl ? "left" : "right", color: progressColor(pct), fontWeight: 800, fontSize: 15, fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
                     </div>
                   );
                 })}
