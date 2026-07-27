@@ -86,6 +86,20 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
   function statusLabel(k, rl) { return STATUS[k]?.label[rl] || k || ""; }
   function priLabel(k, rl) { return PRIORITY[k]?.label[rl] || k || ""; }
 
+  // Progress color: 0% = red -> 50% = yellow -> 100% = green
+  function progressColor(pct) {
+    const t = Math.max(0, Math.min(100, pct)) / 100;
+    let r, g;
+    if (t < 0.5) {           // red -> yellow
+      r = 217; g = Math.round(75 + (200 - 75) * (t / 0.5));
+    } else {                 // yellow -> green
+      r = Math.round(217 - (217 - 111) * ((t - 0.5) / 0.5));
+      g = Math.round(200 - (200 - 174) * ((t - 0.5) / 0.5));
+    }
+    const b = 75;
+    return `rgb(${r},${g},${b})`;
+  }
+
   const activeCount = inProgress.length;
   const inProgressCount = inProgress.filter(p => p.status === 'inprogress').length;
   const quotesCount = inProgress.filter(p => p.status === 'quotes').length;
@@ -279,9 +293,9 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
                     <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, fontSize: 13 }}>
                       <div style={{ width: isMobile ? 110 : 160, flexShrink: 0, color: P.textDim, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }} title={title}>{title}</div>
                       <div style={{ flex: 1, height: 8, background: P.bgInput, borderRadius: 99, overflow: "hidden", border: `1px solid ${P.line}` }}>
-                        <div style={{ height: "100%", width: `${pct}%`, borderRadius: 99, background: `linear-gradient(90deg, ${P.goldSoft}, ${P.gold})`, transition: "width .4s ease" }} />
+                        <div style={{ height: "100%", width: `${pct}%`, borderRadius: 99, background: progressColor(pct), transition: "width .4s ease, background .3s ease" }} />
                       </div>
-                      <div style={{ width: 38, textAlign: rtl ? "left" : "right", color: P.textDim, fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
+                      <div style={{ width: 38, textAlign: rtl ? "left" : "right", color: progressColor(pct), fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
                     </div>
                   );
                 })}
@@ -325,8 +339,8 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
                         {notes && <div style={{ marginTop: 10, fontSize: 12.5, color: P.textDim, lineHeight: 1.5, [rtl ? "borderRight" : "borderLeft"]: `2px solid ${P.line}`, [rtl ? "paddingRight" : "paddingLeft"]: 10 }}>{notes}</div>}
                         <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 12 }}>
                           <span style={{ fontSize: 12, color: P.textDim, flexShrink: 0 }}>{tr("progressT")}</span>
-                          <input type="range" min="0" max="100" value={Math.round((Number(p.progress) || 0) * 100)} onChange={e => updateProgress(p.id, Number(e.target.value))} style={{ flex: 1, accentColor: P.gold }} />
-                          <span style={{ fontSize: 12, color: P.gold, width: 36, fontVariantNumeric: "tabular-nums" }}>{p.progress != null ? Math.round(Number(p.progress) * 100) + "%" : "—"}</span>
+                          <input type="range" min="0" max="100" value={Math.round((Number(p.progress) || 0) * 100)} onChange={e => updateProgress(p.id, Number(e.target.value))} style={{ flex: 1, accentColor: progressColor(Math.round((Number(p.progress) || 0) * 100)) }} />
+                          <span style={{ fontSize: 12, color: p.progress != null ? progressColor(Math.round(Number(p.progress) * 100)) : P.textDim, fontWeight: 700, width: 36, fontVariantNumeric: "tabular-nums" }}>{p.progress != null ? Math.round(Number(p.progress) * 100) + "%" : "—"}</span>
                         </div>
                         <div style={{ display: "flex", gap: 8, marginTop: 14, justifyContent: "flex-end" }}>
                           <IconBtn onClick={() => setEditing({ row: p })}>&#9998;</IconBtn>
