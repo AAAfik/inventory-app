@@ -7,6 +7,7 @@ import InspectionHub from "./inspection/InspectionHub";
 import PoolControlHub from "./pools/PoolControlHub";
 import ProcureHub from "./procurement/ProcureHub";
 import ProcurementHub from "./procurement/ProcurementHub";
+import MaintenanceTracker from "./maintenance/MaintenanceTracker";
 import PWAInstall from "./PWAInstall";
 import { tr } from "./i18n";
 
@@ -16,6 +17,10 @@ const INSPECTION_ENABLED = true;
 const POOLS_ENABLED      = true;
 const PROCURE_ENABLED    = true;
 const REQUESTS_ENABLED   = true;
+const MAINTENANCE_ENABLED = true;
+
+// Hezi's account (maintenance tracker is gated to him + admin)
+const HEZI_EMAILS = ["hezicaesar@gmail.com"];
 
 // Superadmin bootstrap: only YOU. Never locked out even if DB roles fail.
 // Everyone else (including Hezi, Anzhela) is controlled purely by DB roles.
@@ -87,6 +92,7 @@ const NAV_GROUPS = [
   ...(POOLS_ENABLED      ? [{ key: "poolGroup",       items: ["pools"] }]      : []),
   ...(PROCURE_ENABLED    ? [{ key: "procurement",     items: ["procure"] }]    : []),
   ...(REQUESTS_ENABLED   ? [{ key: "requestsGroup",   items: ["requests"] }]   : []),
+  ...(MAINTENANCE_ENABLED ? [{ key: "maintenanceGroup", items: ["maintenance"] }] : []),
   { key: "adminGroup",   items: ["users"] },
 ];
 
@@ -97,6 +103,7 @@ const TAB_ICONS = {
   pools:      "≋",
   procure:    "◈",
   requests:   "▤",
+  maintenance:"⚒",
   users:      "◍",
 };
 
@@ -104,10 +111,12 @@ const TAB_ICONS = {
 const LABEL_OVERRIDES = {
   warehouse: "Asset Management",
   requests:  "Requests",
+  maintenance: "Maintenance Tracker",
 };
 const GROUP_LABEL_OVERRIDES = {
   warehouseGroup: "ASSET MANAGEMENT",
   requestsGroup:  "REQUESTS",
+  maintenanceGroup: "MAINTENANCE",
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -146,6 +155,10 @@ export default function InventorySystem() {
   const canSeeUsers      = isOwner;
   // Requests visible to everyone signed in — hub itself handles no-role state
   const canSeeRequests   = true;
+  // Maintenance tracker: only Hezi (approver_level_2) + admin
+  const canSeeMaintenance = isAdmin
+    || HEZI_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
+    || userRoles.includes("approver_level_2");
 
   const allTabs = [
     ...(canSeeDashboard                        ? ["dashboard"]  : []),
@@ -154,6 +167,7 @@ export default function InventorySystem() {
     ...(POOLS_ENABLED      && canSeePools      ? ["pools"]      : []),
     ...(PROCURE_ENABLED    && canSeeProcure    ? ["procure"]    : []),
     ...(REQUESTS_ENABLED   && canSeeRequests   ? ["requests"]   : []),
+    ...(MAINTENANCE_ENABLED && canSeeMaintenance ? ["maintenance"] : []),
     ...(canSeeUsers                            ? ["users"]      : []),
   ];
 
@@ -271,7 +285,7 @@ export default function InventorySystem() {
                   return ( <button key={k} onClick={()=>{ setTab(k); if(isMobile) setSidebarOpen(false); }} style={{
                       display:"flex", alignItems:"center", gap:11, width:"100%",
                       padding:"10px 12px", marginBottom:2,
-                      background: active ? "linear-gradient(135deg, rgba(184,147,90,.16), rgba(139,112,64,.08))" : "transparent",
+                      background: active ? "linear-gradient(135deg, rgba(184,147,90,.16), rgba(139,122,68,.08))" : "transparent",
                       border: active ? "1px solid rgba(184,147,90,.35)" : "1px solid transparent",
                       borderRadius:11,
                       color: active ? TH.accent : TH.textMuted,
@@ -290,6 +304,7 @@ export default function InventorySystem() {
           {tab==="pools" && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="procure" && PROCURE_ENABLED    && canSeeProcure    && <ProcureHub    TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="requests" && REQUESTS_ENABLED   && canSeeRequests   && <ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+          {tab==="maintenance" && MAINTENANCE_ENABLED && canSeeMaintenance && <MaintenanceTracker TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="users" && canSeeUsers        && <UsersTab TH={TH} lang={lang} isMobile={isMobile} />} </main></div></div>);
 }
 
