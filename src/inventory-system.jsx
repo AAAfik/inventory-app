@@ -139,26 +139,28 @@ export default function InventorySystem() {
   const isRTL = lang === 'he' || lang === 'fa';
 
   const email    = session?.user?.email || "";
-  const isAdmin  = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
-                   || userRoles.includes("owner") || userRoles.includes("auditor");
+  const isHezi   = HEZI_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
+                   || userRoles.includes("approver_level_2");
+  const isAdmin  = (ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
+                   || userRoles.includes("owner") || userRoles.includes("auditor"))
+                   && !isHezi;   // Hezi is never treated as admin, even if also listed
   const isOwner  = isAdmin;
 
-  // Role-based access
-  const canSeeDashboard  = isOwner;
-  const canSeeWarehouse  = isOwner || userRoles.includes("warehouse_keeper");
-  const canSeeInspection = isOwner || userRoles.includes("inspector");
-  const canSeePools      = isOwner || userRoles.includes("pool_operator");
-  const canSeeProcure    = isOwner || [
+  // Role-based access.
+  // Hezi sees ONLY the Maintenance Tracker; everyone else never sees it.
+  const canSeeDashboard  = isOwner && !isHezi;
+  const canSeeWarehouse  = (isOwner || userRoles.includes("warehouse_keeper")) && !isHezi;
+  const canSeeInspection = (isOwner || userRoles.includes("inspector")) && !isHezi;
+  const canSeePools      = (isOwner || userRoles.includes("pool_operator")) && !isHezi;
+  const canSeeProcure    = (isOwner || [
     "procurement_officer","deputy_officer","dept_head","operator",
     "finance_officer","approver_mid","approver_high",
-  ].some(r => userRoles.includes(r));
-  const canSeeUsers      = isOwner;
-  // Requests visible to everyone signed in — hub itself handles no-role state
-  const canSeeRequests   = true;
-  // Maintenance tracker: only Hezi (approver_level_2) + admin
-  const canSeeMaintenance = isAdmin
-    || HEZI_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
-    || userRoles.includes("approver_level_2");
+  ].some(r => userRoles.includes(r))) && !isHezi;
+  const canSeeUsers      = isOwner && !isHezi;
+  // Requests visible to everyone signed in EXCEPT Hezi (who only gets maintenance)
+  const canSeeRequests   = !isHezi;
+  // Maintenance tracker: ONLY Hezi
+  const canSeeMaintenance = isHezi;
 
   const allTabs = [
     ...(canSeeDashboard                        ? ["dashboard"]  : []),
