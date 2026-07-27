@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
+import * as XLSX from "xlsx";
 
 const PRIORITY = {
   urgent: { label: { he: "דחוף", en: "Urgent" },  color: "#D9634B" },
@@ -78,6 +79,136 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
     } catch (e) { setError(e.message || String(e)); }
   }
 
+  // ── Export helpers ──
+  function bfL(obj, rl) {
+    if (!obj) return "";
+    if (typeof obj === "string") return obj;
+    return obj[rl] || obj[rl === "he" ? "en" : "he"] || "";
+  }
+  function statusLabel(k, rl) { return STATUS[k]?.label[rl] || k || ""; }
+  function priLabel(k, rl) { return PRIORITY[k]?.label[rl] || k || ""; }
+
+  function exportPdf(rl = L) {
+    const now = new Date().toLocaleDateString(rl === "he" ? "he-IL" : "en-GB");
+    const dir = rl === "he" ? "rtl" : "ltr";
+    const withP = inProgress.filter(p => typeof p.progress === "number");
+    const avg = withP.length ? Math.round(withP.reduce((s, p) => s + Number(p.progress), 0) / withP.length * 100) : 0;
+    const TT = {
+      title: { he: "דוח פרויקטי אחזקה", en: "Maintenance Projects Report" },
+      gen: { he: "הופק בתאריך", en: "Generated" },
+      summary: { he: "סיכום", en: "Summary" },
+      sec1: { he: "פרויקטים בביצוע", en: "In-Progress Projects" },
+      sec2: { he: "עבודות שוטפות", en: "Routine Tasks" },
+      sec3: { he: "פרויקטים עתידיים", en: "Future Projects" },
+      cNum: { he: "מס'", en: "#" }, cDesc: { he: "תיאור", en: "Description" },
+      cOwner: { he: "אחראי", en: "Owner" }, cStatus: { he: "סטטוס", en: "Status" },
+      cDue: { he: "תאריך יעד", en: "Due" }, cPri: { he: "עדיפות", en: "Priority" },
+      cProg: { he: "התקדמות", en: "Progress" }, cNotes: { he: "הערות", en: "Notes" },
+      cFreq: { he: "תדירות", en: "Frequency" }, cTeam: { he: "צוות", en: "Team" },
+      cContractor: { he: "קבלן", en: "Contractor" }, cTarget: { he: "יעד", en: "Target" },
+      active: { he: "פרויקטים פעילים", en: "Active projects" }, avg: { he: "התקדמות ממוצעת", en: "Avg progress" },
+      urgent: { he: "דחוף", en: "Urgent" }, quotes: { he: "איסוף הצעות", en: "Quotes" },
+      done: { he: "הושלמו", en: "Completed" }, future: { he: "עתידיים", en: "Future" },
+      internal: { he: "פנימי", en: "Internal" }, external: { he: "חיצוני", en: "External" },
+      footer: { he: "Caesar Projects — מסמך פנימי", en: "Caesar Projects — Internal document" },
+    };
+    const G = k => TT[k]?.[rl] || k;
+    const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    const ipRows = inProgress.map(p => `<tr><td>${esc(p.sort_order)}</td><td>${esc(bfL(p.title, rl)) || "—"}</td><td>${esc(bfL(p.owner, rl)) || "—"}</td><td>${statusLabel(p.status, rl)}</td><td>${esc(p.due_date) || "—"}</td><td>${priLabel(p.priority, rl)}</td><td>${p.progress != null ? Math.round(Number(p.progress) * 100) + "%" : "—"}</td><td>${esc(bfL(p.notes, rl))}</td></tr>`).join("");
+    const rtRows = routine.map(r => `<tr><td>${esc(bfL(r.title, rl))}</td><td>${esc(bfL(r.owner, rl)) || "—"}</td><td>${esc(bfL(r.freq, rl)) || "—"}</td><td>${esc(bfL(r.team, rl)) || "—"}</td><td>${esc(bfL(r.notes, rl))}</td></tr>`).join("");
+    const ftRows = future.map(f => `<tr><td>${esc(bfL(f.title, rl))}</td><td>${esc(bfL(f.owner, rl)) || "—"}</td><td>${f.contractor === "internal" ? G("internal") : G("external")}</td><td>${priLabel(f.priority, rl)}</td><td>${esc(f.target_date) || "—"}</td><td>${esc(bfL(f.notes, rl))}</td></tr>`).join("");
+
+    const html = `<!DOCTYPE html><html lang="${rl}" dir="${dir}"><head><meta charset="utf-8"><title>${G("title")}</title>
+      <style>
+        body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#111;padding:24px;}
+        .rpt-header{border-bottom:3px solid #B8935A;padding-bottom:12px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;}
+        .rpt-header h1{font-size:22px;margin:0;} .rpt-header .sub{font-size:12px;color:#666;margin-top:4px;} .rpt-header .date{font-size:12px;color:#444;}
+        h2{font-size:15px;margin:22px 0 8px;padding-bottom:5px;border-bottom:1.5px solid #B8935A;color:#111;}
+        table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:10px;}
+        th{background:#f5f0e2;text-align:start;padding:6px 8px;border:1px solid #d8d2c0;font-weight:700;}
+        td{padding:6px 8px;border:1px solid #ddd;vertical-align:top;}
+        tr{page-break-inside:avoid;}
+        .rpt-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+        .rpt-stat{border:1px solid #d8d2c0;border-radius:6px;padding:8px 14px;font-size:11px;}
+        .rpt-stat b{display:block;font-size:17px;color:#8f6f1f;}
+        .rpt-footer{margin-top:26px;font-size:10px;color:#888;border-top:1px solid #ddd;padding-top:8px;}
+        @media print{@page{margin:14mm;}}
+      </style></head><body>
+      <div class="rpt-header"><div><h1>${G("title")}</h1><div class="sub">Caesar Projects</div></div><div class="date">${G("gen")}: ${now}</div></div>
+      <h2>${G("summary")}</h2>
+      <div class="rpt-stats">
+        <div class="rpt-stat"><b>${inProgress.length}</b>${G("active")}</div>
+        <div class="rpt-stat"><b>${avg}%</b>${G("avg")}</div>
+        <div class="rpt-stat"><b>${urgentCount}</b>${G("urgent")}</div>
+        <div class="rpt-stat"><b>${quotesCount}</b>${G("quotes")}</div>
+        <div class="rpt-stat"><b>${doneCount}</b>${G("done")}</div>
+        <div class="rpt-stat"><b>${future.length}</b>${G("future")}</div>
+      </div>
+      <h2>${G("sec1")}</h2>
+      <table><thead><tr><th style="width:24px">${G("cNum")}</th><th>${G("cDesc")}</th><th>${G("cOwner")}</th><th>${G("cStatus")}</th><th>${G("cDue")}</th><th>${G("cPri")}</th><th style="width:44px">${G("cProg")}</th><th>${G("cNotes")}</th></tr></thead><tbody>${ipRows}</tbody></table>
+      <h2>${G("sec2")}</h2>
+      <table><thead><tr><th>${G("cDesc")}</th><th>${G("cOwner")}</th><th>${G("cFreq")}</th><th>${G("cTeam")}</th><th>${G("cNotes")}</th></tr></thead><tbody>${rtRows}</tbody></table>
+      <h2>${G("sec3")}</h2>
+      <table><thead><tr><th>${G("cDesc")}</th><th>${G("cOwner")}</th><th>${G("cContractor")}</th><th>${G("cPri")}</th><th>${G("cTarget")}</th><th>${G("cNotes")}</th></tr></thead><tbody>${ftRows}</tbody></table>
+      <div class="rpt-footer">${G("footer")} · ${now}</div>
+      <script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>
+      </body></html>`;
+
+    const w = window.open("", "_blank");
+    if (!w) { alert(L === "he" ? "אנא אפשר חלונות קופצים" : "Please allow pop-ups"); return; }
+    w.document.write(html);
+    w.document.close();
+  }
+
+  function exportExcel(rl = L) {
+    try {
+      const now = new Date().toLocaleDateString(rl === "he" ? "he-IL" : "en-GB");
+      const withP = inProgress.filter(p => typeof p.progress === "number");
+      const avg = withP.length ? Math.round(withP.reduce((s, p) => s + Number(p.progress), 0) / withP.length * 100) : 0;
+
+      const dashAoa = [
+        [tr("title")], [(L === "he" ? "הופק" : "Generated") + ": " + now], [],
+        [L === "he" ? "מדד" : "Metric", L === "he" ? "ערך" : "Value"],
+        [tr("cActive"), inProgress.length],
+        [tr("cInProgress"), inProgress.filter(p => p.status === "inprogress").length],
+        [tr("cQuotes"), quotesCount],
+        [tr("cDone"), doneCount],
+        [tr("cAvg"), avg + "%"],
+        [tr("cUrgent"), urgentCount],
+        [tr("cFuture"), future.length],
+        [tr("cRoutine"), routine.length],
+      ];
+      const ipAoa = [
+        ["#", "Description", "Owner", "Status", "Due", "Priority", "Progress", "Notes"],
+        ...inProgress.map(p => [p.sort_order, bfL(p.title, rl), bfL(p.owner, rl), statusLabel(p.status, rl), p.due_date || "", priLabel(p.priority, rl), p.progress != null ? Math.round(Number(p.progress) * 100) + "%" : "", bfL(p.notes, rl)]),
+      ];
+      const rtAoa = [
+        ["Description", "Owner", "Frequency", "Team", "Notes"],
+        ...routine.map(r => [bfL(r.title, rl), bfL(r.owner, rl), bfL(r.freq, rl), bfL(r.team, rl), bfL(r.notes, rl)]),
+      ];
+      const ftAoa = [
+        ["Description", "Owner", "Contractor", "Priority", "Target", "Notes"],
+        ...future.map(f => [bfL(f.title, rl), bfL(f.owner, rl), f.contractor === "internal" ? "Internal" : "External", priLabel(f.priority, rl), f.target_date || "", bfL(f.notes, rl)]),
+      ];
+
+      const wb = XLSX.utils.book_new();
+      if (rl === "he") wb.Workbook = { Views: [{ RTL: true }] };
+      const addSheet = (aoa, name, widths) => {
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        ws["!cols"] = widths.map(w => ({ wch: w }));
+        XLSX.utils.book_append_sheet(wb, ws, name.slice(0, 31));
+      };
+      addSheet(dashAoa, "Dashboard", [38, 14]);
+      addSheet(ipAoa, "In Progress", [5, 55, 22, 24, 13, 10, 9, 40]);
+      addSheet(rtAoa, "Routine", [55, 22, 14, 22, 40]);
+      addSheet(ftAoa, "Future", [55, 22, 18, 10, 13, 40]);
+      XLSX.writeFile(wb, "caesar-maintenance-report-" + new Date().toISOString().slice(0, 10) + ".xlsx");
+    } catch (e) {
+      setError(e.message || String(e));
+    }
+  }
+
   // ── Dashboard stats ──
   const activeCount = inProgress.length;
   const inProgressCount = inProgress.filter(p => p.status === 'inprogress').length;
@@ -116,6 +247,8 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
     empty:       { he: "אין פריטים", en: "No items" },
     internal:    { he: "פנימי", en: "Internal" },
     external:    { he: "חיצוני", en: "External" },
+    exportPdf:   { he: "ייצוא PDF", en: "Export PDF" },
+    exportExcel: { he: "ייצוא Excel", en: "Export Excel" },
   };
   const tr = (k) => T[k]?.[L] || k;
 
@@ -149,11 +282,21 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
       )}
 
       {/* Header */}
-      <div style={{ marginBottom: 14 }}>
-        <div style={{ fontSize: isMobile ? 20 : 26, fontWeight: 400, color: TH.text, fontFamily: "'Playfair Display', Georgia, serif" }}>
-          {tr("title")}
+      <div style={{ marginBottom: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap" }}>
+        <div>
+          <div style={{ fontSize: isMobile ? 20 : 26, fontWeight: 400, color: TH.text, fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {tr("title")}
+          </div>
+          <div style={{ fontSize: 13, color: TH.textMuted, marginTop: 2 }}>{tr("sub")}</div>
         </div>
-        <div style={{ fontSize: 13, color: TH.textMuted, marginTop: 2 }}>{tr("sub")}</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <button onClick={() => exportPdf()} style={{ background: "transparent", border: `1px solid ${TH.border}`, borderRadius: 9, color: TH.text, padding: "9px 16px", cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "inherit" }}>
+            {tr("exportPdf")}
+          </button>
+          <button onClick={() => exportExcel()} style={{ background: "linear-gradient(135deg,#B8935A,#8B7040)", border: "none", borderRadius: 9, color: "#000", padding: "9px 18px", cursor: "pointer", fontSize: 13, fontWeight: 800, fontFamily: "inherit" }}>
+            {tr("exportExcel")}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
