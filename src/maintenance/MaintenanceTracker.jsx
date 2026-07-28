@@ -90,14 +90,34 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
   function progressColor(pct) {
     const t = Math.max(0, Math.min(100, pct)) / 100;
     let r, g;
-    if (t < 0.5) {           // red -> yellow
+    if (t < 0.5) {
       r = 217; g = Math.round(75 + (200 - 75) * (t / 0.5));
-    } else {                 // yellow -> green
+    } else {
       r = Math.round(217 - (217 - 111) * ((t - 0.5) / 0.5));
       g = Math.round(200 - (200 - 174) * ((t - 0.5) / 0.5));
     }
-    const b = 75;
-    return `rgb(${r},${g},${b})`;
+    return `rgb(${r},${g},75)`;
+  }
+
+  // Parse DD/MM/YYYY -> timestamp (Infinity if empty = sorts last)
+  function dueTs(p) {
+    const d = p.due_date;
+    if (!d || !d.trim()) return Infinity;
+    const m = d.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (!m) return Infinity;
+    let [, dd, mm, yy] = m;
+    yy = yy.length === 2 ? "20" + yy : yy;
+    const t = new Date(Number(yy), Number(mm) - 1, Number(dd)).getTime();
+    return isNaN(t) ? Infinity : t;
+  }
+  // Sort by urgency: soonest/overdue due date first, then by priority
+  const PRI_RANK = { urgent: 0, high: 1, med: 2, medF: 2 };
+  function byUrgency(a, b) {
+    const ta = dueTs(a), tb = dueTs(b);
+    if (ta !== tb) return ta - tb;               // sooner due date first
+    const pa = PRI_RANK[a.priority] ?? 3, pb = PRI_RANK[b.priority] ?? 3;
+    if (pa !== pb) return pa - pb;               // then higher priority
+    return (a.sort_order || 0) - (b.sort_order || 0);
   }
 
   const activeCount = inProgress.length;
@@ -216,7 +236,7 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
       if (!hay.includes(search.toLowerCase())) return false;
     }
     return true;
-  });
+  }).sort(byUrgency);
 
   const tabs = [
     { k: "dashboard", label: tr("dashboard") },
@@ -286,13 +306,13 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
                 <h2 style={panelH2()}>{tr("progressT")}</h2>
                 {withProgress.filter(p => bf(p.title)).length === 0 ? (
                   <p style={{ color: P.textDim, fontSize: 13 }}>{tr("noProgress")}</p>
-                ) : withProgress.filter(p => bf(p.title)).map(p => {
+                ) : [...withProgress].filter(p => bf(p.title)).sort(byUrgency).map(p => {
                   const title = bf(p.title);
                   const pct = Math.round(Number(p.progress) * 100);
                   return (
                     <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, fontSize: 14 }}>
-                      <div style={{ width: isMobile ? 120 : 200, flexShrink: 0, color: P.textDim, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 13.5 }} title={title}>{title}</div>
-                      <div style={{ flex: 1, height: 16, background: P.bgInput, borderRadius: 99, overflow: "hidden", border: `1px solid ${P.line}` }}>
+                      <div style={{ width: isMobile ? 140 : 320, flexShrink: 0, color: P.textDim, fontSize: 13, lineHeight: 1.3 }} title={title}>{title}</div>
+                      <div style={{ flex: 1, height: 14, background: P.bgInput, borderRadius: 99, overflow: "hidden", border: `1px solid ${P.line}` }}>
                         <div style={{ height: "100%", width: `${pct}%`, borderRadius: 99, background: progressColor(pct), transition: "width .4s ease, background .3s ease" }} />
                       </div>
                       <div style={{ width: 52, textAlign: rtl ? "left" : "right", color: progressColor(pct), fontWeight: 800, fontSize: 15, fontVariantNumeric: "tabular-nums" }}>{pct}%</div>
