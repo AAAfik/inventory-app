@@ -110,6 +110,25 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
     const t = new Date(Number(yy), Number(mm) - 1, Number(dd)).getTime();
     return isNaN(t) ? Infinity : t;
   }
+  // Days until due (negative = overdue). null if no date.
+  function daysUntilDue(p) {
+    const ts = dueTs(p);
+    if (ts === Infinity) return null;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    return Math.round((ts - today.getTime()) / 86400000);
+  }
+  // Colored deadline chip text + color
+  function deadlineInfo(p) {
+    const days = daysUntilDue(p);
+    if (days === null) return null;
+    let color, text;
+    if (days < 0)      { color = P.urgent; text = (L === "he" ? `${Math.abs(days)} ימים באיחור` : `${Math.abs(days)}d overdue`); }
+    else if (days === 0) { color = P.urgent; text = (L === "he" ? "היום" : "Due today"); }
+    else if (days <= 3)  { color = P.high;   text = (L === "he" ? `בעוד ${days} ימים` : `${days}d left`); }
+    else if (days <= 7)  { color = P.high;   text = (L === "he" ? `בעוד ${days} ימים` : `${days}d left`); }
+    else                 { color = P.med;    text = (L === "he" ? `בעוד ${days} ימים` : `${days}d left`); }
+    return { color, text, days };
+  }
   // Sort by urgency: soonest/overdue due date first, then by priority
   const PRI_RANK = { urgent: 0, high: 1, med: 2, medF: 2 };
   function byUrgency(a, b) {
@@ -309,9 +328,17 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
                 ) : [...withProgress].filter(p => bf(p.title)).sort(byUrgency).map(p => {
                   const title = bf(p.title);
                   const pct = Math.round(Number(p.progress) * 100);
+                  const dl = deadlineInfo(p);
                   return (
                     <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16, fontSize: 14 }}>
-                      <div style={{ width: isMobile ? 140 : 320, flexShrink: 0, color: P.textDim, fontSize: 13, lineHeight: 1.3 }} title={title}>{title}</div>
+                      <div style={{ width: isMobile ? 130 : 280, flexShrink: 0, color: P.textDim, fontSize: 13, lineHeight: 1.3 }} title={title}>{title}</div>
+                      <div style={{ width: isMobile ? 78 : 108, flexShrink: 0, display: "flex", justifyContent: "flex-start" }}>
+                        {dl ? (
+                          <span style={{ fontSize: 11, fontWeight: 700, color: dl.color, background: `${dl.color}22`, border: `1px solid ${dl.color}55`, padding: "3px 8px", borderRadius: 99, whiteSpace: "nowrap" }} title={p.due_date}>{dl.text}</span>
+                        ) : (
+                          <span style={{ fontSize: 11, color: P.textDim, opacity: 0.5 }}>—</span>
+                        )}
+                      </div>
                       <div style={{ flex: 1, height: 14, background: P.bgInput, borderRadius: 99, overflow: "hidden", border: `1px solid ${P.line}` }}>
                         <div style={{ height: "100%", width: `${pct}%`, borderRadius: 99, background: progressColor(pct), transition: "width .4s ease, background .3s ease" }} />
                       </div>
@@ -351,6 +378,7 @@ export default function MaintenanceTracker({ TH, lang = "en", isMobile = false, 
                         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginTop: 8 }}>
                           {st && <Badge color={st.color}>{st.label[L]}</Badge>}
                           {pr && <Badge color={pr.color}>{pr.label[L]}</Badge>}
+                          {(() => { const dl = deadlineInfo(p); return dl ? <Badge color={dl.color}>{dl.text}</Badge> : null; })()}
                         </div>
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginTop: 10, fontSize: 12.5, color: P.textDim }}>
                           <span>{tr("owner")}: <b style={{ color: P.text, fontWeight: 600 }}>{bf(p.owner) || "—"}</b></span>
@@ -503,7 +531,7 @@ function ProjectEditor({ L, tr, row, category, nextSort, onClose, onSaved }) {
             <div style={{ display: "flex", gap: 12 }}>
               <div style={{ flex: 1, marginBottom: 14 }}><label style={fieldLabel()}>Status</label><select value={status} onChange={e => setStatus(e.target.value)} style={modalInput()}>{Object.entries(STATUS).map(([k, v]) => <option key={k} value={k}>{v.label.en}</option>)}</select></div>
               <div style={{ flex: 1, marginBottom: 14 }}><label style={fieldLabel()}>Priority</label><select value={priority} onChange={e => setPriority(e.target.value)} style={modalInput()}>{["urgent", "high", "med"].map(k => <option key={k} value={k}>{PRIORITY[k].label.en}</option>)}</select></div>
-              <div style={{ flex: 1, marginBottom: 14 }}><label style={fieldLabel()}>Due (DD/MM/YYYY)</label><input value={dueDate} onChange={e => setDueDate(e.target.value)} placeholder="30/07/2026" style={modalInput()} /></div>
+              <div style={{ flex: 1, marginBottom: 14 }}><label style={fieldLabel()}>Due date</label><input type="date" value={toISODate(dueDate)} onChange={e => setDueDate(fromISODate(e.target.value))} style={modalInput()} /></div>
             </div>
             <div style={{ marginBottom: 14 }}><label style={fieldLabel()}>Progress: {progress}%</label><input type="range" min="0" max="100" value={progress} onChange={e => setProgress(Number(e.target.value))} style={{ width: "100%", accentColor: P.gold }} /></div>
           </>
@@ -566,8 +594,25 @@ function Field({ label, children }) {
   );
 }
 
-function panel() { return { background: P.bgPanel, border: `1px solid ${P.line}`, borderRadius: P.radius, padding: 20, marginBottom: 18 }; }
-function panelH2() { return { fontFamily: P.serif, fontSize: 17, marginBottom: 14, color: P.text, fontWeight: 700 }; }
+// Convert stored "DD/MM/YYYY" -> "YYYY-MM-DD" for <input type=date>
+function toISODate(ddmmyyyy) {
+  if (!ddmmyyyy) return "";
+  const m = String(ddmmyyyy).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+  if (!m) return "";
+  let [, dd, mm, yy] = m;
+  yy = yy.length === 2 ? "20" + yy : yy;
+  return `${yy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+}
+// Convert "YYYY-MM-DD" from the date input -> stored "DD/MM/YYYY"
+function fromISODate(iso) {
+  if (!iso) return "";
+  const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return "";
+  const [, yy, mm, dd] = m;
+  return `${dd}/${mm}/${yy}`;
+}
+
+function panel() { return { background: P.bgPanel, border: `1px solid ${P.line}`, borderRadius: P.radius, padding: 20, marginBottom: 18 }; }function panelH2() { return { fontFamily: P.serif, fontSize: 17, marginBottom: 14, color: P.text, fontWeight: 700 }; }
 function projCard() { return { background: P.bgPanel, border: `1px solid ${P.line}`, borderRadius: P.radius, padding: "16px 18px" }; }
 function inputStyle() { return { background: P.bgRaised, border: `1px solid ${P.line}`, color: P.text, padding: "9px 14px", borderRadius: 10, fontSize: 13.5, fontFamily: P.sans, outline: "none" }; }
 function modalInput() { return { width: "100%", background: P.bgInput, border: `1px solid ${P.line}`, color: P.text, padding: "10px 12px", borderRadius: 9, fontSize: 13.5, fontFamily: P.sans, outline: "none", colorScheme: "dark", boxSizing: "border-box" }; }
