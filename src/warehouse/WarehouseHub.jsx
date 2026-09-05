@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════════
 // WarehouseHub.jsx — Asset Management
 // Tabs: Scan · QuickAdd · Assets · CheckInOut · Consumables ·
-//       Packages · Loans · Warehouses · Activity
-// + Dispense button in header
+//       Loans · Packages · Warehouses · Activity
+// + Receive + Dispense buttons in header (consumable quick actions)
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
@@ -19,6 +19,7 @@ import ActivityTab from "./tabs/ActivityTab";
 import PackagesTab from "./tabs/PackagesTab";
 import LoansTab from "./tabs/LoansTab";
 import DispenseModal from "./components/DispenseModal";
+import ReceiveModal from "./components/ReceiveModal";
 
 export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmin = false }) {
   const L = tr(lang);
@@ -26,6 +27,7 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(null);
   const [showDispense, setShowDispense] = useState(false);
+  const [showReceive, setShowReceive] = useState(false);
 
   useEffect(() => { loadStats(); }, [refreshKey]);
 
@@ -75,20 +77,54 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
   const title = L.assetMgmtTitle || "Asset Management";
   const subtitle = L.assetMgmtSub || "Vehicles, machinery, tools, consumables, loans and packages — all in one system";
 
-  return ( <div>{showDispense && ( <DispenseModal
-          TH={TH} lang={lang}
+  return (
+    <div>
+      {showDispense && (
+        <DispenseModal TH={TH} lang={lang}
           onClose={() => setShowDispense(false)}
-          onDone={() => { setShowDispense(false); bump(); }}
-        />)} <div style={{marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, flexWrap:"wrap"}}><div><div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{title}</div>{!isMobile && subtitle && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>{subtitle}</div>} </div><button
-          onClick={() => setShowDispense(true)}
-          style={{
+          onDone={() => { setShowDispense(false); bump(); }} />
+      )}
+      {showReceive && (
+        <ReceiveModal TH={TH} lang={lang}
+          onClose={() => setShowReceive(false)}
+          onDone={() => { setShowReceive(false); bump(); }} />
+      )}
+
+      <div style={{marginBottom:14, display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, flexWrap:"wrap"}}>
+        <div>
+          <div style={{fontSize:isMobile?18:24, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{title}</div>
+          {!isMobile && subtitle && <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>{subtitle}</div>}
+        </div>
+        <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
+          <button onClick={() => setShowReceive(true)} title={L.receiveTitle || "Receive stock"} style={{
+            background:"linear-gradient(135deg,#7A9A5B,#5B7A44)", border:"none", borderRadius:10,
+            color:"#fff", padding:"10px 18px", fontSize:13, fontWeight:800, cursor:"pointer",
+            fontFamily:"inherit", boxShadow:"0 2px 10px rgba(122,154,91,0.3)",
+          }}>↓ {L.receiveBtn || "Receive"}</button>
+          <button onClick={() => setShowDispense(true)} title={L.dispenseTitle || "Dispense consumable"} style={{
             background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
             color:"#000", padding:"10px 18px", fontSize:13, fontWeight:800, cursor:"pointer",
             fontFamily:"inherit", boxShadow:"0 2px 10px rgba(184,147,90,0.3)",
-          }}
-        > {L.dispenseBtn || "Dispense"}</button></div>{stats && ( <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(6,1fr)", gap:8, marginBottom:16}}><Stat TH={TH} label={L.assets} value={stats.total} /><Stat TH={TH} label={L.totalValue} value={fmtMoney(stats.totalValue)} /><Stat TH={TH} label={L.checkedOutK} value={stats.checkedOut} onClick={() => setTab("loans")} /><Stat TH={TH} label={L.overdueReturns} value={stats.overdueReturns} alert={stats.overdueReturns > 0} onClick={() => setTab("loans")} /><Stat TH={TH} label={L.serviceDue7} value={stats.serviceDue} alert={stats.serviceDue > 0} onClick={() => setTab("assets")} /><Stat TH={TH} label={L.pendingPackages || "Pending pkgs"} value={stats.pendingPackages} alert={stats.pendingPackages > 0} onClick={() => setTab("packages")} /></div>)} <div style={{display:"flex", gap:6, marginBottom:20, borderBottom:`1px solid ${TH.border}`, paddingBottom:8, overflowX:"auto"}}>{tabs.map(t => {
+          }}>↑ {L.dispenseBtn || "Dispense"}</button>
+        </div>
+      </div>
+
+      {stats && (
+        <div style={{display:"grid", gridTemplateColumns:isMobile?"repeat(2,1fr)":"repeat(6,1fr)", gap:8, marginBottom:16}}>
+          <Stat TH={TH} label={L.assets} value={stats.total} />
+          <Stat TH={TH} label={L.totalValue} value={fmtMoney(stats.totalValue)} />
+          <Stat TH={TH} label={L.checkedOutK} value={stats.checkedOut} onClick={() => setTab("loans")} />
+          <Stat TH={TH} label={L.overdueReturns} value={stats.overdueReturns} alert={stats.overdueReturns > 0} onClick={() => setTab("loans")} />
+          <Stat TH={TH} label={L.serviceDue7} value={stats.serviceDue} alert={stats.serviceDue > 0} onClick={() => setTab("assets")} />
+          <Stat TH={TH} label={L.pendingPackages || "Pending pkgs"} value={stats.pendingPackages} alert={stats.pendingPackages > 0} onClick={() => setTab("packages")} />
+        </div>
+      )}
+
+      <div style={{display:"flex", gap:6, marginBottom:20, borderBottom:`1px solid ${TH.border}`, paddingBottom:8, overflowX:"auto"}}>
+        {tabs.map(t => {
           const active = t.key === tab;
-          return ( <button key={t.key} onClick={() => setTab(t.key)} style={{
+          return (
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
               background:   active ? TH.accentBg : "transparent",
               border:       `1px solid ${active ? TH.accentBorder : "transparent"}`,
               borderRadius: 9,
@@ -101,23 +137,35 @@ export default function WarehouseHub({ TH, lang = "en", isMobile = false, isAdmi
               whiteSpace:   "nowrap",
               display:      "flex", alignItems: "center", gap: 6,
             }}>{t.label}
-              {t.badge > 0 && <span style={{background: t.alert ? "#C43D3D" : "#8B7040", color:"#fff", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{t.badge}</span>} </button>);
-        })} </div>{tab === "scan" && <ScanTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
-      {tab === "quickadd" && <QuickAddTab TH={TH} lang={lang} isMobile={isMobile} onSaved={() => { bump(); setTab("assets"); }} />}
-      {tab === "assets" && <AssetsTab key={refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
-      {tab === "checkinout" && <CheckInOutTab key={"co-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
-      {tab === "consumables" && <ConsumablesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-      {tab === "loans" && <LoansTab key={"lo-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
-      {tab === "packages" && <PackagesTab key={"pkg-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-      {tab === "warehouses" && <WarehousesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-      {tab === "activity" && <ActivityTab key={"act-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} />} </div>);
+              {t.badge > 0 && <span style={{background: t.alert ? "#C43D3D" : "#8B7040", color:"#fff", borderRadius:10, padding:"1px 7px", fontSize:10, fontWeight:700}}>{t.badge}</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      {tab === "scan"        && <ScanTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
+      {tab === "quickadd"    && <QuickAddTab TH={TH} lang={lang} isMobile={isMobile} onSaved={() => { bump(); setTab("assets"); }} />}
+      {tab === "assets"      && <AssetsTab key={refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onChanged={bump} />}
+      {tab === "checkinout"  && <CheckInOutTab key={"co-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
+      {tab === "consumables" && <ConsumablesTab key={"cn-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "loans"       && <LoansTab key={"lo-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} onChanged={bump} />}
+      {tab === "packages"    && <PackagesTab key={"pkg-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "warehouses"  && <WarehousesTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
+      {tab === "activity"    && <ActivityTab key={"act-"+refreshKey} TH={TH} lang={lang} isMobile={isMobile} />}
+    </div>
+  );
 }
 
 function Stat({ TH, label, value, alert, onClick }) {
-  return ( <div onClick={onClick} style={{
+  return (
+    <div onClick={onClick} style={{
       background: alert ? "rgba(196,61,61,0.15)" : TH.bgCard,
       border: `1px solid ${alert ? "rgba(196,61,61,0.4)" : TH.border}`,
       borderRadius: 10, padding: "10px 12px",
       cursor: onClick ? "pointer" : "default",
-    }}><div style={{fontSize:9, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:4}}>{label}</div><div style={{fontSize:20, fontWeight:800, color: alert ? "#C43D3D" : TH.text, lineHeight:1}}>{value}</div></div>);
+    }}>
+      <div style={{fontSize:9, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:4}}>{label}</div>
+      <div style={{fontSize:20, fontWeight:800, color: alert ? "#C43D3D" : TH.text, lineHeight:1}}>{value}</div>
+    </div>
+  );
 }
