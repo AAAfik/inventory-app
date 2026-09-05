@@ -36,7 +36,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
     setLoading(true); setError(null);
     try {
       const itemsQ = supabase.from('items')
-        .select('id, code, name, description, category, unit, min_stock, last_unit_cost, currency, current_qty, default_supplier_id, is_active')
+        .select('id, code, name, description, category, unit, min_qty, last_unit_cost, currency, current_qty, default_supplier_id, is_active')
         .order('name');
       if (!showInactive) itemsQ.eq('is_active', true);
 
@@ -66,7 +66,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
     if (search && !`${item.name} ${item.code || ''} ${item.category || ''}`.toLowerCase().includes(search.toLowerCase())) return;
     whList.forEach(w => {
       const qty = stockMap[`${item.id}-${w.id}`] ?? 0;
-      const low = item.min_stock != null && qty < Number(item.min_stock);
+      const low = item.min_qty != null && qty < Number(item.min_qty);
       if (lowOnly && !low) return;
       if (whFilter === "all" && qty === 0 && !low) return;
       rows.push({ item, warehouse: w, qty, low });
@@ -158,7 +158,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
                 <div style={{fontSize:18, fontWeight:800, color: low ? "#B8935A" : TH.text, lineHeight:1}}>
                   {qty} <span style={{fontSize:10, color:TH.textDim, fontWeight:500}}>{item.unit || ''}</span>
                 </div>
-                {low && <div style={{fontSize:9, color:"#B8935A", fontWeight:700}}>{L.low || "LOW"} ({L.min || "min"} {item.min_stock})</div>}
+                {low && <div style={{fontSize:9, color:"#B8935A", fontWeight:700}}>{L.low || "LOW"} ({L.min || "min"} {item.min_qty})</div>}
               </div>
               <div style={{display:"flex", gap:4, flexShrink:0}}>
                 <button onClick={() => setReceivePreset(item.id)} title="Receive stock" style={{background:"transparent", border:`1px solid rgba(122,154,91,0.4)`, borderRadius:6, color:"#7A9A5B", padding:"6px 10px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit"}}>↓</button>
@@ -202,7 +202,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
               <div style={{display:"flex", gap:6, flexWrap:"wrap", marginTop:8}}>
                 <span style={chip(TH)}>Unit: <b style={{color:TH.text}}>{item.unit}</b></span>
                 {item.current_qty != null && <span style={chip(TH)}>Total: <b style={{color:TH.text}}>{item.current_qty}</b></span>}
-                {item.min_stock != null && <span style={chip(TH)}>Min: {item.min_stock}</span>}
+                {item.min_qty != null && <span style={chip(TH)}>Min: {item.min_qty}</span>}
                 {item.last_unit_cost != null && <span style={{...chip(TH), color:TH.accent}}>€{item.last_unit_cost}/{item.unit}</span>}
               </div>
               <div style={{display:"flex", gap:4, marginTop:10}}>

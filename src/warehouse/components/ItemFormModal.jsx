@@ -32,7 +32,7 @@ export default function ItemFormModal({ TH, lang = "en", item = null, onClose, o
     description:         item?.description || "",
     category:            item?.category || "Chemicals",
     unit:                item?.unit || "pcs",
-    min_stock:           item?.min_stock ?? "",
+    min_qty:           item?.min_qty ?? "",
     last_unit_cost:      item?.last_unit_cost ?? "",
     currency:            item?.currency || "EUR",
     default_supplier_id: item?.default_supplier_id || "",
@@ -60,7 +60,7 @@ export default function ItemFormModal({ TH, lang = "en", item = null, onClose, o
         description:         form.description.trim() || null,
         category:            form.category || null,
         unit:                form.unit,
-        min_stock:           form.min_stock === "" ? null : Number(form.min_stock),
+        min_qty:           form.min_qty === "" ? null : Number(form.min_qty),
         last_unit_cost:      form.last_unit_cost === "" ? null : Number(form.last_unit_cost),
         currency:            form.currency || 'EUR',
         default_supplier_id: form.default_supplier_id ? Number(form.default_supplier_id) : null,
@@ -136,7 +136,7 @@ export default function ItemFormModal({ TH, lang = "en", item = null, onClose, o
           </div>
           <div>
             <label style={lbl(TH)}>Min stock</label>
-            <input type="number" step="0.01" min="0" value={form.min_stock} onChange={e => set('min_stock', e.target.value)} placeholder="Alert if below" style={inp(TH)} />
+            <input type="number" step="0.01" min="0" value={form.min_qty} onChange={e => set('min_qty', e.target.value)} placeholder="Alert if below" style={inp(TH)} />
           </div>
         </div>
 
