@@ -38,7 +38,7 @@ const THEMES = {
     header:"rgba(10,16,32,0.94)", headerBorder:"#212D47",
     accent:"#C9A960", accentText:"#D8BE84",
     accentBg:"rgba(201,169,96,.12)", accentBorder:"rgba(201,169,96,.30)",
-    deep:"#16233D", deepBorder:"#26365A", onDeep:"#FFFFFF", onDeepMuted:"#95A1B8",
+    deep:"#16233D", deepAlt:"#0E1830", deepBorder:"#26365A", onDeep:"#FFFFFF", onDeepMuted:"#95A1B8",
     shadow:"0 1px 3px rgba(0,0,0,.55)", shadowLg:"0 16px 48px rgba(0,0,0,.60)",
     cardGlow:"0 0 0 1px rgba(201,169,96,.06), 0 8px 30px rgba(0,0,0,.40)",
     ok:"#7FB069", okBg:"rgba(127,176,105,.14)",
@@ -54,7 +54,7 @@ const THEMES = {
     header:"rgba(255,255,255,0.94)", headerBorder:"#E2E0D8",
     accent:"#A8894A", accentText:"#8C7139",
     accentBg:"rgba(168,137,74,.10)", accentBorder:"rgba(168,137,74,.30)",
-    deep:"#16233D", deepBorder:"#26365A", onDeep:"#FFFFFF", onDeepMuted:"#9AA5BC",
+    deep:"#16233D", deepAlt:"#1D2E4E", deepBorder:"#26365A", onDeep:"#FFFFFF", onDeepMuted:"#9AA5BC",
     shadow:"0 1px 2px rgba(22,35,61,.06)", shadowLg:"0 16px 48px rgba(22,35,61,.16)",
     cardGlow:"0 1px 2px rgba(22,35,61,.04), 0 6px 24px rgba(22,35,61,.06)",
     ok:"#4E7B3A", okBg:"rgba(78,123,58,.10)",
@@ -139,6 +139,14 @@ export default function InventorySystem() {
   const isRTL = lang === 'he' || lang === 'fa';
 
   const email    = session?.user?.email || "";
+  const userName = (() => {
+    const meta = session?.user?.user_metadata || {};
+    const full = meta.full_name || meta.name || "";
+    if (full) return full.split(" ")[0];
+    const local = email.split("@")[0] || "";
+    const first = local.split(/[._-]+/)[0] || "";
+    return first ? first.charAt(0).toUpperCase() + first.slice(1) : "";
+  })();
   const isHezi   = HEZI_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
                    || userRoles.includes("approver_level_2");
   const isAdmin  = (ADMIN_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())
@@ -300,7 +308,7 @@ export default function InventorySystem() {
                 })} </div>))} <div style={{flex:1}} /><div style={{padding:"12px"}}><PWAInstall TH={TH} isMobile={isMobile} /></div></aside>)}
 
         {/* ═══ MAIN ═══ */} <main style={{flex:1, minWidth:0, padding: isMobile?"14px 12px":"22px 26px", overflow:"auto"}}>{allTabs.length === 0 && ( <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}><div style={{fontSize:38, marginBottom:12, color:TH.accent, fontFamily:"'Playfair Display',Georgia,serif"}}>⊘</div><div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:400, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div><div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>{t.noAccessDesc} </div><div style={{marginTop:16, fontSize:12, color:TH.textDim}}>{email}</div></div>)}
-          {tab==="dashboard" && canSeeDashboard   && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} />}
+          {tab==="dashboard" && canSeeDashboard   && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} userName={userName} />}
           {tab==="warehouse" && WAREHOUSE_ENABLED  && canSeeWarehouse  && <WarehouseHub  TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="inspection" && INSPECTION_ENABLED && canSeeInspection && <InspectionHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
           {tab==="pools" && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
