@@ -8,9 +8,9 @@ const GOLD_DARK  = '#8B7A44';
 const GRAY       = '#8f8f8f';
 
 export const ASSET_KINDS = {
-  equipment: { label: 'Equipment', icon: '🏭', prefix: 'EQP' },
-  tool:      { label: 'Tool',      icon: '🔧', prefix: 'TOL' },
-  vehicle:   { label: 'Vehicle',   icon: '🚗', prefix: 'VHC' },
+  equipment: { label: 'Equipment', icon: 'factory', prefix: 'EQP' },
+  tool:      { label: 'Tool',      icon: 'wrench',  prefix: 'TOL' },
+  vehicle:   { label: 'Vehicle',   icon: 'car',     prefix: 'VHC' },
 };
 
 export const ASSET_STATUS = {
@@ -23,18 +23,18 @@ export const ASSET_STATUS = {
 };
 
 export const MOVEMENT_TYPES = {
-  register:  { label: 'Registered',   icon: '➕', dir: 'in',  color: GOLD_LIGHT },
-  restock:   { label: 'Stock IN',     icon: '↓',  dir: 'in',  color: '#5DCAA5' },
-  issue:     { label: 'Issued OUT',   icon: '↑',  dir: 'out', color: '#EF9F27' },
-  checkout:  { label: 'Checked OUT',  icon: '↗',  dir: 'out', color: '#EF9F27' },
-  checkin:   { label: 'Checked IN',   icon: '↩',  dir: 'in',  color: '#5DCAA5' },
-  transfer:  { label: 'Transferred',  icon: '⇄',  dir: 'move', color: GOLD },
-  service:   { label: 'Service',      icon: '🔧', dir: 'move', color: GRAY },
-  damage:    { label: 'Damaged',      icon: '⚠',  dir: 'out', color: '#d67373' },
-  loss:      { label: 'Loss',         icon: '✕',  dir: 'out', color: '#d67373' },
-  found:     { label: 'Found',        icon: '✓',  dir: 'in',  color: GOLD },
-  retire:    { label: 'Retired',      icon: '⏹',  dir: 'out', color: '#5c5c5c' },
-  adjustment:{ label: 'Adjustment',   icon: '±',  dir: 'move', color: GRAY },
+  register:  { label: 'Registered',   icon: 'plus', dir: 'in',  color: GOLD_LIGHT },
+  restock:   { label: 'Stock IN',     icon: 'arrowDown',  dir: 'in',  color: '#5DCAA5' },
+  issue:     { label: 'Issued OUT',   icon: 'arrowUp',  dir: 'out', color: '#EF9F27' },
+  checkout:  { label: 'Checked OUT',  icon: 'arrowUp',  dir: 'out', color: '#EF9F27' },
+  checkin:   { label: 'Checked IN',   icon: 'returnIn',  dir: 'in',  color: '#5DCAA5' },
+  transfer:  { label: 'Transferred',  icon: 'transfer',  dir: 'move', color: GOLD },
+  service:   { label: 'Service',      icon: 'wrench', dir: 'move', color: GRAY },
+  damage:    { label: 'Damaged',      icon: 'warning',  dir: 'out', color: '#d67373' },
+  loss:      { label: 'Loss',         icon: 'close',  dir: 'out', color: '#d67373' },
+  found:     { label: 'Found',        icon: 'check',  dir: 'in',  color: GOLD },
+  retire:    { label: 'Retired',      icon: 'box',  dir: 'out', color: '#5c5c5c' },
+  adjustment:{ label: 'Adjustment',   icon: 'transfer',  dir: 'move', color: GRAY },
 };
 
 // ─── Destination taxonomy: where the stock is GOING or COMING FROM ─
@@ -44,15 +44,15 @@ export const DESTINATION_TYPES = {
   department:  { label_en: 'For a department',         label_fa: 'برای یک بخش',          label_he: 'למחלקה',            icon: '👥' },
   inspection:  { label_en: 'For an inspection issue',  label_fa: 'برای یک بازرسی',       label_he: 'לביקורת',           icon: '🔍' },
   supplier:    { label_en: 'From a supplier',          label_fa: 'از تأمین‌کننده',        label_he: 'מספק',              icon: '🏢' },
-  transfer:    { label_en: 'Warehouse transfer',       label_fa: 'انتقال بین انبار',      label_he: 'העברה בין מחסנים',   icon: '⇄' },
-  adjustment:  { label_en: 'Stock count correction',   label_fa: 'اصلاح موجودی',         label_he: 'תיקון מלאי',        icon: '±' },
+  transfer:    { label_en: 'Warehouse transfer',       label_fa: 'انتقال بین انبار',      label_he: 'העברה בין מחסנים',   icon: 'transfer' },
+  adjustment:  { label_en: 'Stock count correction',   label_fa: 'اصلاح موجودی',         label_he: 'תיקון מלאי',        icon: 'transfer' },
   waste:       { label_en: 'Damaged / Lost / Expired', label_fa: 'خسارت / گم شدن / انقضاء', label_he: 'נזק / אובדן / פג', icon: '🗑' },
   other:       { label_en: 'Other',                    label_fa: 'موارد دیگر',           label_he: 'אחר',               icon: '•' },
 };
 
 // ─── Departments taxonomy ────────────────────────────────────────
 export const DEPARTMENTS = [
-  { key: 'maintenance',  label_en: 'Maintenance',       label_fa: 'تعمیرات',          label_he: 'תחזוקה',      icon: '🔧' },
+  { key: 'maintenance',  label_en: 'Maintenance',       label_fa: 'تعمیرات',          label_he: 'תחזוקה',      icon: 'wrench' },
   { key: 'housekeeping', label_en: 'Housekeeping',      label_fa: 'خانه‌داری',         label_he: 'משק בית',     icon: '🧹' },
   { key: 'pool_ops',     label_en: 'Pool operations',   label_fa: 'عملیات استخر',      label_he: 'תפעול בריכה', icon: '🏊' },
   { key: 'beach',        label_en: 'Beach',             label_fa: 'ساحل',             label_he: 'חוף',        icon: '🏖' },

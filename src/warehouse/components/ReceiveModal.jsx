@@ -4,9 +4,9 @@
 // Uses RPC: receive_consumable
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from"react";
-import { supabase } from"../../supabase";
-import { tr } from"../../i18n";
+import { useState, useEffect } from "react";
+import { supabase } from "../../supabase";
+import { tr } from "../../i18n";
 
 const SOURCE_TYPES = [
   { key: "supplier",   labelEn: "From supplier",     labelFa: "از تامین‌کننده",     icon: "" },
@@ -179,38 +179,65 @@ export default function ReceiveModal({ TH, lang = "en", presetItemId = null, onC
   const total = (qty && unitCost) ? (Number(qty) * Number(unitCost)).toFixed(2) : null;
 
   return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}><div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:600, maxHeight:"92vh", overflowY:"auto"}}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}><div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
-            <span style={{display:"inline-flex", alignItems:"center", gap:8}}><Icon name="arrowDown" size={17} />{L.receiveTitle || "Receive stock"}</span>
-          </div><button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>×</button></div>
+    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}>
+      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:600, maxHeight:"92vh", overflowY:"auto"}}>
+
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}>
+          <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
+             {L.receiveTitle || "Receive stock"}
+          </div>
+          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>×</button>
+        </div>
 
         {/* Item selector */}
-        <div style={{marginBottom:12}}><label style={lbl(TH)}>{L.item || "Item"} *</label>
+        <div style={{marginBottom:12}}>
+          <label style={lbl(TH)}>{L.item || "Item"} *</label>
           {!selectedItem ? (
-            <div style={{position:"relative"}}><input value={itemSearch} onChange={e => setItemSearch(e.target.value)} placeholder={L.searchItem || "Start typing an item name…"} autoFocus style={inp(TH)} />
+            <div style={{position:"relative"}}>
+              <input value={itemSearch} onChange={e => setItemSearch(e.target.value)} placeholder={L.searchItem || "Start typing an item name…"} autoFocus style={inp(TH)} />
               {itemResults.length > 0 && (
                 <div style={{position:"absolute", top:"100%", left:0, right:0, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:8, marginTop:4, maxHeight:220, overflowY:"auto", zIndex:10}}>
                   {itemResults.map(it => (
                     <div key={it.id} onClick={() => selectItem(it)} style={{padding:"8px 12px", cursor:"pointer", borderBottom:`1px solid ${TH.border}`}}
                          onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
-                         onMouseLeave={e => e.currentTarget.style.background = "transparent"}><div style={{fontSize:13, fontWeight:700, color:TH.text}}>{it.name}</div><div style={{fontSize:10, color:TH.textMuted}}>{it.category ? `${it.category} · ` : ''}Current: {it.current_qty} {it.unit}{it.last_unit_cost ? ` · Last: €${it.last_unit_cost}` : ''}</div></div>
+                         onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+                      <div style={{fontSize:13, fontWeight:700, color:TH.text}}>{it.name}</div>
+                      <div style={{fontSize:10, color:TH.textMuted}}>{it.category ? `${it.category} · ` : ''}Current: {it.current_qty} {it.unit}{it.last_unit_cost ? ` · Last: €${it.last_unit_cost}` : ''}</div>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
           ) : (
-            <div style={{background:TH.bgInput, borderRadius:8, padding:"10px 12px", display:"flex", justifyContent:"space-between", alignItems:"center"}}><div><div style={{fontSize:13, fontWeight:700, color:TH.text}}>{selectedItem.name}</div><div style={{fontSize:10, color:TH.textMuted}}>{selectedItem.code ? `${selectedItem.code} · ` : ''}Unit: {selectedItem.unit} · Current: {selectedItem.current_qty}</div></div><button onClick={clearItem} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"4px 10px", cursor:"pointer", fontSize:11}}>{L.change || "Change"}</button></div>
+            <div style={{background:TH.bgInput, borderRadius:8, padding:"10px 12px", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+              <div>
+                <div style={{fontSize:13, fontWeight:700, color:TH.text}}>{selectedItem.name}</div>
+                <div style={{fontSize:10, color:TH.textMuted}}>{selectedItem.code ? `${selectedItem.code} · ` : ''}Unit: {selectedItem.unit} · Current: {selectedItem.current_qty}</div>
+              </div>
+              <button onClick={clearItem} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"4px 10px", cursor:"pointer", fontSize:11}}>{L.change || "Change"}</button>
+            </div>
           )}
         </div>
 
         {selectedItem && (<>
 
           {/* Warehouse + qty */}
-          <div style={{display:"grid", gridTemplateColumns:"2fr 1fr", gap:10, marginBottom:12}}><div><label style={lbl(TH)}>{L.warehouse || "Warehouse"} *</label><select value={warehouseId} onChange={e => setWarehouseId(e.target.value)} disabled={busy} style={inp(TH)}>
+          <div style={{display:"grid", gridTemplateColumns:"2fr 1fr", gap:10, marginBottom:12}}>
+            <div>
+              <label style={lbl(TH)}>{L.warehouse || "Warehouse"} *</label>
+              <select value={warehouseId} onChange={e => setWarehouseId(e.target.value)} disabled={busy} style={inp(TH)}>
                 {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-              </select></div><div><label style={lbl(TH)}>{L.qty || "Qty"} * <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>{selectedItem.unit}</span></label><input type="number"step="0.01"min="0"value={qty} onChange={e => setQty(e.target.value)} disabled={busy} style={inp(TH)} /></div></div>
+              </select>
+            </div>
+            <div>
+              <label style={lbl(TH)}>{L.qty || "Qty"} * <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>{selectedItem.unit}</span></label>
+              <input type="number" step="0.01" min="0" value={qty} onChange={e => setQty(e.target.value)} disabled={busy} style={inp(TH)} />
+            </div>
+          </div>
 
           {/* Source type */}
-          <div style={{marginBottom:8, fontSize:11, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.source || "Source"} *</div><div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(110px, 1fr))", gap:6, marginBottom:12}}>
+          <div style={{marginBottom:8, fontSize:11, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px"}}>{L.source || "Source"} *</div>
+          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(110px, 1fr))", gap:6, marginBottom:12}}>
             {SOURCE_TYPES.map(s => (
               <button key={s.key} onClick={() => setSourceType(s.key)} disabled={busy} style={{
                 background: sourceType === s.key ? TH.accentBg : "transparent",
@@ -224,55 +251,111 @@ export default function ReceiveModal({ TH, lang = "en", presetItemId = null, onC
 
           {/* Source-specific fields */}
           {sourceType === 'supplier' && (
-            <div style={{marginBottom:12}}><label style={lbl(TH)}>{L.supplier || "Supplier"}</label><div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8}}><select value={supplierId} onChange={e => { setSupplierId(e.target.value); setSupplierName(""); }} disabled={busy} style={inp(TH)}><option value="">— Pick from list —</option>
+            <div style={{marginBottom:12}}>
+              <label style={lbl(TH)}>{L.supplier || "Supplier"}</label>
+              <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8}}>
+                <select value={supplierId} onChange={e => { setSupplierId(e.target.value); setSupplierName(""); }} disabled={busy} style={inp(TH)}>
+                  <option value="">— Pick from list —</option>
                   {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select><input value={supplierName} onChange={e => { setSupplierName(e.target.value); setSupplierId(""); }} disabled={busy} placeholder="Or type name"style={inp(TH)} /></div></div>
+                </select>
+                <input value={supplierName} onChange={e => { setSupplierName(e.target.value); setSupplierId(""); }} disabled={busy} placeholder="Or type name" style={inp(TH)} />
+              </div>
+            </div>
           )}
 
           {sourceType === 'return' && (
-            <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:12}}><div><label style={miniLbl(TH)}>Return from pool</label><select value={returnPoolId} onChange={e => { setReturnPoolId(e.target.value); setReturnDeptId(""); }} disabled={busy} style={inp(TH)}><option value="">— none —</option>
+            <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:12}}>
+              <div>
+                <label style={miniLbl(TH)}>Return from pool</label>
+                <select value={returnPoolId} onChange={e => { setReturnPoolId(e.target.value); setReturnDeptId(""); }} disabled={busy} style={inp(TH)}>
+                  <option value="">— none —</option>
                   {pools.map(p => <option key={p.id} value={p.id}>{p.code} — {p.name}</option>)}
-                </select></div><div><label style={miniLbl(TH)}>Return from dept</label><select value={returnDeptId} onChange={e => { setReturnDeptId(e.target.value); setReturnPoolId(""); }} disabled={busy} style={inp(TH)}><option value="">— none —</option>
+                </select>
+              </div>
+              <div>
+                <label style={miniLbl(TH)}>Return from dept</label>
+                <select value={returnDeptId} onChange={e => { setReturnDeptId(e.target.value); setReturnPoolId(""); }} disabled={busy} style={inp(TH)}>
+                  <option value="">— none —</option>
                   {departments.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                </select></div></div>
+                </select>
+              </div>
+            </div>
           )}
 
           {sourceType === 'transfer' && (
-            <div style={{marginBottom:12}}><label style={lbl(TH)}>Transfer from warehouse</label><select value={transferFromWh} onChange={e => setTransferFromWh(e.target.value)} disabled={busy} style={inp(TH)}><option value="">— pick source —</option>
+            <div style={{marginBottom:12}}>
+              <label style={lbl(TH)}>Transfer from warehouse</label>
+              <select value={transferFromWh} onChange={e => setTransferFromWh(e.target.value)} disabled={busy} style={inp(TH)}>
+                <option value="">— pick source —</option>
                 {warehouses.filter(w => String(w.id) !== warehouseId).map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-              </select><div style={{fontSize:10, color:TH.textDim, marginTop:4}}>Note: this only records the IN side. You must also dispense from the source warehouse manually.</div></div>
+              </select>
+              <div style={{fontSize:10, color:TH.textDim, marginTop:4}}>Note: this only records the IN side. You must also dispense from the source warehouse manually.</div>
+            </div>
           )}
 
           {/* Reference + cost */}
-          <div style={{display:"grid", gridTemplateColumns:"2fr 1fr", gap:10, marginBottom:12}}><div><label style={lbl(TH)}>{L.referenceNo || "PO / delivery note"}</label><input value={referenceNo} onChange={e => setReferenceNo(e.target.value)} disabled={busy} placeholder="e.g. PO-2026-042"style={inp(TH)} /></div><div><label style={lbl(TH)}>{L.unitCost || "Unit cost"} <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>€</span></label><input type="number"step="0.0001"min="0"value={unitCost} onChange={e => setUnitCost(e.target.value)} disabled={busy} style={inp(TH)} /></div></div>
+          <div style={{display:"grid", gridTemplateColumns:"2fr 1fr", gap:10, marginBottom:12}}>
+            <div>
+              <label style={lbl(TH)}>{L.referenceNo || "PO / delivery note"}</label>
+              <input value={referenceNo} onChange={e => setReferenceNo(e.target.value)} disabled={busy} placeholder="e.g. PO-2026-042" style={inp(TH)} />
+            </div>
+            <div>
+              <label style={lbl(TH)}>{L.unitCost || "Unit cost"} <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>€</span></label>
+              <input type="number" step="0.0001" min="0" value={unitCost} onChange={e => setUnitCost(e.target.value)} disabled={busy} style={inp(TH)} />
+            </div>
+          </div>
 
           {total && (
             <div style={{background:TH.bgInput, border:`1px dashed ${TH.border}`, borderRadius:8, padding:"8px 12px", marginBottom:12, fontSize:12, color:TH.textMuted, textAlign:"right"}}>
-              Total: <span style={{color:TH.accent, fontWeight:800, fontSize:14}}>€{total}</span></div>
+              Total: <span style={{color:TH.accent, fontWeight:800, fontSize:14}}>€{total}</span>
+            </div>
           )}
 
           {/* Batch / expiry (chemicals) */}
-          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:12}}><div><label style={lbl(TH)}>{L.batchNo || "Batch / Lot"}</label><input value={batchNo} onChange={e => setBatchNo(e.target.value)} disabled={busy} placeholder="Optional"style={inp(TH)} /></div><div><label style={lbl(TH)}>{L.expiresAt || "Expires"}</label><input type="date"value={expiresAt} onChange={e => setExpiresAt(e.target.value)} disabled={busy} style={inp(TH)} /></div></div>
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:12}}>
+            <div>
+              <label style={lbl(TH)}>{L.batchNo || "Batch / Lot"}</label>
+              <input value={batchNo} onChange={e => setBatchNo(e.target.value)} disabled={busy} placeholder="Optional" style={inp(TH)} />
+            </div>
+            <div>
+              <label style={lbl(TH)}>{L.expiresAt || "Expires"}</label>
+              <input type="date" value={expiresAt} onChange={e => setExpiresAt(e.target.value)} disabled={busy} style={inp(TH)} />
+            </div>
+          </div>
 
           {/* Photo */}
-          <div style={{marginBottom:12}}><label style={lbl(TH)}>{L.invoicePhoto || "Invoice / delivery photo"}</label>
+          <div style={{marginBottom:12}}>
+            <label style={lbl(TH)}>{L.invoicePhoto || "Invoice / delivery photo"}</label>
             {photoPreview ? (
-              <div style={{position:"relative", display:"inline-block"}}><img src={photoPreview} alt="preview"style={{width:120, height:120, objectFit:"cover", borderRadius:8, border:`1px solid ${TH.border}`}} /><button onClick={() => { setPhotoFile(null); setPhotoPreview(null); }} disabled={busy} style={{position:"absolute", top:-6, right:-6, background:TH.danger, color:"#fff", border:"none", borderRadius:"50%", width:22, height:22, cursor:"pointer", fontSize:11, fontWeight:800}}>×</button></div>
+              <div style={{position:"relative", display:"inline-block"}}>
+                <img src={photoPreview} alt="preview" style={{width:120, height:120, objectFit:"cover", borderRadius:8, border:`1px solid ${TH.border}`}} />
+                <button onClick={() => { setPhotoFile(null); setPhotoPreview(null); }} disabled={busy} style={{position:"absolute", top:-6, right:-6, background:"#C43D3D", color:"#fff", border:"none", borderRadius:"50%", width:22, height:22, cursor:"pointer", fontSize:11, fontWeight:800}}>×</button>
+              </div>
             ) : (
               <label style={{display:"inline-block", cursor:"pointer", background:"transparent", border:`1px dashed ${TH.border}`, borderRadius:8, padding:"14px 20px", color:TH.textMuted, fontSize:12}}>
-                <span style={{display:"inline-flex", alignItems:"center", gap:7}}><Icon name="camera" size={15} />Take or choose photo</span>
-                <input type="file"accept="image/*"capture="environment"onChange={onPhotoChange} style={{display:"none"}} /></label>
+                 Take / choose photo
+                <input type="file" accept="image/*" capture="environment" onChange={onPhotoChange} style={{display:"none"}} />
+              </label>
             )}
           </div>
 
           {/* Notes */}
-          <div style={{marginBottom:14}}><label style={lbl(TH)}>{L.notes || "Notes"}</label><textarea value={notes} onChange={e => setNotes(e.target.value)} disabled={busy} rows={2} style={{...inp(TH), resize:"vertical"}} placeholder="Optional" /></div></>)}
+          <div style={{marginBottom:14}}>
+            <label style={lbl(TH)}>{L.notes || "Notes"}</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} disabled={busy} rows={2} style={{...inp(TH), resize:"vertical"}} placeholder="Optional" />
+          </div>
+        </>)}
 
-        {error && <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:8, padding:"10px 12px", color:TH.danger, fontSize:12, marginBottom:10}}>{error}</div>}
+        {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:10}}>{error}</div>}
 
-        <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}><button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || "Cancel"}</button><button onClick={submit} disabled={busy || !selectedItem} style={{background:TH.ok, border:"none", borderRadius:9, color:TH.onDeep, padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:(busy || !selectedItem)?0.6:1}}>
+        <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
+          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || "Cancel"}</button>
+          <button onClick={submit} disabled={busy || !selectedItem} style={{background:"linear-gradient(135deg,#7A9A5B,#5B7A44)", border:"none", borderRadius:9, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:(busy || !selectedItem)?0.6:1}}>
             {busy ? (uploadingPhoto ? "Uploading photo…" : (L.receiving || "Receiving…")) : (L.confirmReceive || "Confirm receive")}
-          </button></div></div></div>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -3,8 +3,8 @@
 // Admin-only: warehouse_keeper / owner / auditor
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from"react";
-import { supabase } from"../../supabase";
+import { useState, useEffect } from "react";
+import { supabase } from "../../supabase";
 
 const UNITS = ["pcs", "kg", "g", "L", "ml", "m", "box", "pack", "bottle", "bag", "roll"];
 const CATEGORIES = [
@@ -82,7 +82,7 @@ export default function ItemFormModal({ TH, lang = "en", item = null, onClose, o
   }
 
   async function doDelete() {
-    if (!confirm(`Delete item"${item.name}"? This is a soft delete — records are preserved but the item becomes inactive.`)) return;
+    if (!confirm(`Delete item "${item.name}"? This is a soft delete — records are preserved but the item becomes inactive.`)) return;
     setBusy(true); setError(null);
     try {
       const { error: e } = await supabase.from('items').update({ is_active: false }).eq('id', item.id);
@@ -95,31 +95,101 @@ export default function ItemFormModal({ TH, lang = "en", item = null, onClose, o
   }
 
   return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}><div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:560, maxHeight:"92vh", overflowY:"auto"}}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}><div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
+    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}>
+      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:560, maxHeight:"92vh", overflowY:"auto"}}>
+
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}>
+          <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
             {isEdit ? "Edit item" : "New item"}
-          </div><button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>×</button></div><div style={{display:"grid", gridTemplateColumns:"1fr 2fr", gap:10, marginBottom:10}}><div><label style={lbl(TH)}>Code</label><input value={form.code} onChange={e => set('code', e.target.value)} placeholder="e.g. CHL-90"style={inp(TH)} /></div><div><label style={lbl(TH)}>Name *</label><input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Chlorine tablets 90%"style={inp(TH)} /></div></div><div style={{marginBottom:10}}><label style={lbl(TH)}>Description</label><textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} placeholder="Optional"style={{...inp(TH), resize:"vertical"}} /></div><div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10, marginBottom:10}}><div><label style={lbl(TH)}>Category</label><select value={form.category} onChange={e => set('category', e.target.value)} style={inp(TH)}>
+          </div>
+          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>×</button>
+        </div>
+
+        <div style={{display:"grid", gridTemplateColumns:"1fr 2fr", gap:10, marginBottom:10}}>
+          <div>
+            <label style={lbl(TH)}>Code</label>
+            <input value={form.code} onChange={e => set('code', e.target.value)} placeholder="e.g. CHL-90" style={inp(TH)} />
+          </div>
+          <div>
+            <label style={lbl(TH)}>Name *</label>
+            <input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Chlorine tablets 90%" style={inp(TH)} />
+          </div>
+        </div>
+
+        <div style={{marginBottom:10}}>
+          <label style={lbl(TH)}>Description</label>
+          <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} placeholder="Optional" style={{...inp(TH), resize:"vertical"}} />
+        </div>
+
+        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10, marginBottom:10}}>
+          <div>
+            <label style={lbl(TH)}>Category</label>
+            <select value={form.category} onChange={e => set('category', e.target.value)} style={inp(TH)}>
               {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select></div><div><label style={lbl(TH)}>Unit *</label><select value={form.unit} onChange={e => set('unit', e.target.value)} style={inp(TH)}>
+            </select>
+          </div>
+          <div>
+            <label style={lbl(TH)}>Unit *</label>
+            <select value={form.unit} onChange={e => set('unit', e.target.value)} style={inp(TH)}>
               {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
-            </select></div><div><label style={lbl(TH)}>Min stock</label><input type="number"step="0.01"min="0"value={form.min_qty} onChange={e => set('min_qty', e.target.value)} placeholder="Alert if below"style={inp(TH)} /></div></div><div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10}}><div><label style={lbl(TH)}>Last unit cost <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>{form.currency}</span></label><input type="number"step="0.0001"min="0"value={form.last_unit_cost} onChange={e => set('last_unit_cost', e.target.value)} placeholder="e.g. 3.80"style={inp(TH)} /></div><div><label style={lbl(TH)}>Currency</label><select value={form.currency} onChange={e => set('currency', e.target.value)} style={inp(TH)}><option value="EUR">EUR (€)</option><option value="USD">USD ($)</option><option value="TRY">TRY (₺)</option><option value="ILS">ILS (₪)</option></select></div></div><div style={{marginBottom:14}}><label style={lbl(TH)}>Default supplier</label><select value={form.default_supplier_id} onChange={e => set('default_supplier_id', e.target.value)} style={inp(TH)}><option value="">— none —</option>
+            </select>
+          </div>
+          <div>
+            <label style={lbl(TH)}>Min stock</label>
+            <input type="number" step="0.01" min="0" value={form.min_qty} onChange={e => set('min_qty', e.target.value)} placeholder="Alert if below" style={inp(TH)} />
+          </div>
+        </div>
+
+        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:10}}>
+          <div>
+            <label style={lbl(TH)}>Last unit cost <span style={{color:TH.textDim, fontSize:9, textTransform:"none"}}>{form.currency}</span></label>
+            <input type="number" step="0.0001" min="0" value={form.last_unit_cost} onChange={e => set('last_unit_cost', e.target.value)} placeholder="e.g. 3.80" style={inp(TH)} />
+          </div>
+          <div>
+            <label style={lbl(TH)}>Currency</label>
+            <select value={form.currency} onChange={e => set('currency', e.target.value)} style={inp(TH)}>
+              <option value="EUR">EUR (€)</option>
+              <option value="USD">USD ($)</option>
+              <option value="TRY">TRY (₺)</option>
+              <option value="ILS">ILS (₪)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={{marginBottom:14}}>
+          <label style={lbl(TH)}>Default supplier</label>
+          <select value={form.default_supplier_id} onChange={e => set('default_supplier_id', e.target.value)} style={inp(TH)}>
+            <option value="">— none —</option>
             {suppliers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-          </select></div>
+          </select>
+        </div>
 
         {isEdit && (
-          <label style={{display:"flex", alignItems:"center", gap:8, marginBottom:14, cursor:"pointer"}}><input type="checkbox"checked={form.is_active} onChange={e => set('is_active', e.target.checked)} /><span style={{fontSize:12, color:TH.textMuted}}>Active (uncheck to disable — will hide from lists)</span></label>
+          <label style={{display:"flex", alignItems:"center", gap:8, marginBottom:14, cursor:"pointer"}}>
+            <input type="checkbox" checked={form.is_active} onChange={e => set('is_active', e.target.checked)} />
+            <span style={{fontSize:12, color:TH.textMuted}}>Active (uncheck to disable — will hide from lists)</span>
+          </label>
         )}
 
-        {error && <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:8, padding:"10px 12px", color:TH.danger, fontSize:12, marginBottom:10}}>{error}</div>}
+        {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:10}}>{error}</div>}
 
-        <div style={{display:"flex", gap:8, justifyContent:"space-between", alignItems:"center"}}><div>
+        <div style={{display:"flex", gap:8, justifyContent:"space-between", alignItems:"center"}}>
+          <div>
             {isEdit && (
-              <button onClick={doDelete} disabled={busy} style={{background:"transparent", border:"1px solid rgba(196,61,61,0.4)", borderRadius:9, color:TH.danger, padding:"10px 16px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>
-                Delete
+              <button onClick={doDelete} disabled={busy} style={{background:"transparent", border:"1px solid rgba(196,61,61,0.4)", borderRadius:9, color:"#C43D3D", padding:"10px 16px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit"}}>
+                 Delete
               </button>
             )}
-          </div><div style={{display:"flex", gap:8}}><button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button><button onClick={submit} disabled={busy} style={{background:TH.deep, border:"none", borderRadius:9, color:TH.onDeep, padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
+          </div>
+          <div style={{display:"flex", gap:8}}>
+            <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>Cancel</button>
+            <button onClick={submit} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
               {busy ? "Saving…" : (isEdit ? "Save changes" : "Create item")}
-            </button></div></div></div></div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -4,10 +4,11 @@
 //   <AssetHistoryPanel TH={TH} lang={lang} assetId={asset.id} />
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from"react";
-import { supabase } from"../../supabase";
-import { tr } from"../../i18n";
-import { formatDate } from"../../inspection/lib/inspectionUtils";
+import { useState, useEffect } from "react";
+import { supabase } from "../../supabase";
+import { tr } from "../../i18n";
+import { formatDate } from "../../inspection/lib/inspectionUtils";
+import { Icon } from "../lib/icons";
 
 const EVENT_META = {
   created:          { icon: "", color: "#7A9A5B", label: "Created" },
@@ -72,18 +73,21 @@ export default function AssetHistoryPanel({ TH, lang = "en", assetId }) {
   }
 
   return (
-    <div><div style={{fontSize:13, fontWeight:700, color:TH.text, marginBottom:10}}>
-        {L.historyTitle || 'History'} ({rows.length})
+    <div>
+      <div style={{fontSize:13, fontWeight:700, color:TH.text, marginBottom:10}}>
+         {L.historyTitle || 'History'} ({rows.length})
       </div>
 
       {/* Add note */}
-      <div style={{display:"flex", gap:6, marginBottom:14}}><input
+      <div style={{display:"flex", gap:6, marginBottom:14}}>
+        <input
           value={newNote}
           onChange={e => setNewNote(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter') addNote(); }}
           placeholder={L.historyNotePh || 'Add a note about this asset…'}
           style={{flex:1, background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit"}}
-        /><button
+        />
+        <button
           onClick={addNote}
           disabled={!newNote.trim() || saving}
           style={{
@@ -92,9 +96,10 @@ export default function AssetHistoryPanel({ TH, lang = "en", assetId }) {
             padding:"9px 16px", fontSize:13, fontWeight:700, cursor: newNote.trim() ? "pointer" : "not-allowed",
             fontFamily:"inherit",
           }}
-        >{saving ? '…' : (L.add || 'Add')}</button></div>
+        >{saving ? '…' : (L.add || 'Add')}</button>
+      </div>
 
-      {error && <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:8, padding:"10px 12px", color:TH.danger, fontSize:12, marginBottom:10}}>{error}</div>}
+      {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:10}}>{error}</div>}
 
       {loading ? (
         <div style={{padding:20, textAlign:"center", color:TH.textMuted, fontSize:12}}>{L.loading || 'Loading…'}</div>
@@ -113,18 +118,24 @@ export default function AssetHistoryPanel({ TH, lang = "en", assetId }) {
               <div key={r.id} style={{position:"relative", marginBottom:12, paddingLeft:20}}>
                 {/* Dot */}
                 <div style={{position:"absolute", left:-16, top:6, width:16, height:16, background:em.color, borderRadius:8, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9}}>
-                  {em.icon}
-                </div><div style={{background:TH.bgInput, borderRadius:8, padding:"10px 12px", borderLeft:`2px solid ${em.color}`}}><div style={{display:"flex", justifyContent:"space-between", gap:8, flexWrap:"wrap", marginBottom:4}}><div style={{fontSize:12, fontWeight:700, color:TH.text}}>
+                  <Icon name={em.icon} size={15} />
+                </div>
+                <div style={{background:TH.bgInput, borderRadius:8, padding:"10px 12px", borderLeft:`2px solid ${em.color}`}}>
+                  <div style={{display:"flex", justifyContent:"space-between", gap:8, flexWrap:"wrap", marginBottom:4}}>
+                    <div style={{fontSize:12, fontWeight:700, color:TH.text}}>
                       {em.label}{r.field_name && <span style={{fontSize:10, color:TH.textMuted, fontWeight:400}}> · {r.field_name}</span>}
-                    </div><div style={{fontSize:10, color:TH.textDim, whiteSpace:"nowrap"}}>{formatDate(r.performed_at)}</div></div>
+                    </div>
+                    <div style={{fontSize:10, color:TH.textDim, whiteSpace:"nowrap"}}>{formatDate(r.performed_at)}</div>
+                  </div>
                   {(r.old_value || r.new_value) && (
                     <div style={{fontSize:11, color:TH.textMuted, marginTop:4}}>
-                      {r.old_value && <div><span style={{color:TH.danger}}>−</span> {jsonPreview(r.old_value)}</div>}
-                      {r.new_value && <div><span style={{color:TH.ok}}>+</span> {jsonPreview(r.new_value)}</div>}
+                      {r.old_value && <div><span style={{color:"#C43D3D"}}>−</span> {jsonPreview(r.old_value)}</div>}
+                      {r.new_value && <div><span style={{color:"#7A9A5B"}}>+</span> {jsonPreview(r.new_value)}</div>}
                     </div>
                   )}
-                  {r.notes && <div style={{fontSize:11, color:TH.text, marginTop:4, fontStyle:"italic"}}>{r.notes}</div>}
-                </div></div>
+                  {r.notes && <div style={{fontSize:11, color:TH.text, marginTop:4, fontStyle:"italic"}}> {r.notes}</div>}
+                </div>
+              </div>
             );
           })}
         </div>

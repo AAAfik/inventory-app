@@ -3,10 +3,11 @@
 // Shows recent activity across ALL assets with filters.
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from"react";
-import { supabase } from"../../supabase";
-import { tr } from"../../i18n";
-import { formatDate } from"../../inspection/lib/inspectionUtils";
+import { useState, useEffect } from "react";
+import { supabase } from "../../supabase";
+import { tr } from "../../i18n";
+import { formatDate } from "../../inspection/lib/inspectionUtils";
+import { Icon } from "../lib/icons";
 
 const EVENT_META = {
   created:          { icon: "", color: "#7A9A5B", label: "Created" },
@@ -70,14 +71,21 @@ export default function ActivityTab({ TH, lang = "en", isMobile }) {
   Object.keys(EVENT_META).forEach(k => { eventCounts[k] = rows.filter(r => r.event_type === k).length; });
 
   return (
-    <div><div style={{marginBottom:12}}><div style={{fontSize:14, fontWeight:800, color:TH.text, marginBottom:4}}>{L.activityTitle || 'Activity Feed'}</div><div style={{fontSize:12, color:TH.textMuted}}>{L.activityDesc || 'All asset events across the system.'}</div></div>
+    <div>
+      <div style={{marginBottom:12}}>
+        <div style={{fontSize:14, fontWeight:800, color:TH.text, marginBottom:4}}>{L.activityTitle || 'Activity Feed'}</div>
+        <div style={{fontSize:12, color:TH.textMuted}}>{L.activityDesc || 'All asset events across the system.'}</div>
+      </div>
 
       {/* Filter pills — event types */}
-      <div style={{display:"flex", gap:6, marginBottom:10, overflowX:"auto", paddingBottom:4}}><button onClick={() => setEventFilter("all")} style={pill(TH, eventFilter === "all")}>
-          {L.allEvents || 'All'} <Count on={eventFilter === "all"}>{eventCounts.all || 0}</Count></button>
+      <div style={{display:"flex", gap:6, marginBottom:10, overflowX:"auto", paddingBottom:4}}>
+        <button onClick={() => setEventFilter("all")} style={pill(TH, eventFilter === "all")}>
+          {L.allEvents || 'All'} <Count on={eventFilter === "all"}>{eventCounts.all || 0}</Count>
+        </button>
         {Object.entries(EVENT_META).filter(([k]) => (eventCounts[k] || 0) > 0).map(([k, m]) => (
           <button key={k} onClick={() => setEventFilter(k)} style={pill(TH, eventFilter === k)}>
-            {m.icon} {m.label} <Count on={eventFilter === k}>{eventCounts[k]}</Count></button>
+            <Icon name={m.icon} size={15} /> {m.label} <Count on={eventFilter === k}>{eventCounts[k]}</Count>
+          </button>
         ))}
       </div>
 
@@ -89,7 +97,7 @@ export default function ActivityTab({ TH, lang = "en", isMobile }) {
         style={{width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box", marginBottom:14}}
       />
 
-      {error && <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:10, padding:"12px 14px", color:TH.danger, fontSize:13, marginBottom:14}}>{error}</div>}
+      {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:10, padding:"12px 14px", color:"#C43D3D", fontSize:13, marginBottom:14}}>{error}</div>}
 
       {loading ? (
         <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading || 'Loading…'}</div>
@@ -105,21 +113,34 @@ export default function ActivityTab({ TH, lang = "en", isMobile }) {
               <div key={r.id} style={{
                 background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:10,
                 borderLeft:`3px solid ${em.color}`, padding:"10px 14px",
-              }}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, flexWrap:"wrap"}}><div style={{display:"flex", alignItems:"center", gap:8}}><span style={{fontSize:16}}>{em.icon}</span><div><div style={{fontSize:13, fontWeight:700, color:TH.text}}>
+              }}>
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:8, flexWrap:"wrap"}}>
+                  <div style={{display:"flex", alignItems:"center", gap:8}}>
+                    <span style={{fontSize:16}}><Icon name={em.icon} size={15} /></span>
+                    <div>
+                      <div style={{fontSize:13, fontWeight:700, color:TH.text}}>
                         {em.label}
                         {r.field_name && <span style={{fontSize:11, color:TH.textMuted, fontWeight:400}}> · {r.field_name}</span>}
-                      </div><div style={{fontSize:11, color:TH.textDim, marginTop:2}}>
+                      </div>
+                      <div style={{fontSize:11, color:TH.textDim, marginTop:2}}>
                         {r.asset ? (
-                          <><b style={{color:TH.textMuted}}>{r.asset.name}</b><span style={{fontFamily:"monospace", marginLeft:6}}>{r.asset.asset_no}{r.asset.barcode ? ` · ${r.asset.barcode}` : ''}</span></>
-                        ) : <span style={{color:TH.danger}}>{L.assetDeleted || 'Asset deleted'}</span>}
-                      </div></div></div><div style={{fontSize:10, color:TH.textDim, whiteSpace:"nowrap"}}>{formatDate(r.performed_at)}</div></div>
+                          <>
+                            <b style={{color:TH.textMuted}}>{r.asset.name}</b>
+                            <span style={{fontFamily:"monospace", marginLeft:6}}>{r.asset.asset_no}{r.asset.barcode ? ` · ${r.asset.barcode}` : ''}</span>
+                          </>
+                        ) : <span style={{color:"#C43D3D"}}>{L.assetDeleted || 'Asset deleted'}</span>}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{fontSize:10, color:TH.textDim, whiteSpace:"nowrap"}}>{formatDate(r.performed_at)}</div>
+                </div>
                 {(r.old_value || r.new_value) && (
                   <div style={{fontSize:11, color:TH.textMuted, marginTop:6, padding:8, background:TH.bgInput, borderRadius:6}}>
-                    {r.old_value && <div><span style={{color:TH.danger}}>−</span> {jsonPreview(r.old_value)}</div>}
-                    {r.new_value && <div><span style={{color:TH.ok}}>+</span> {jsonPreview(r.new_value)}</div>}
+                    {r.old_value && <div><span style={{color:"#C43D3D"}}>−</span> {jsonPreview(r.old_value)}</div>}
+                    {r.new_value && <div><span style={{color:"#7A9A5B"}}>+</span> {jsonPreview(r.new_value)}</div>}
                   </div>
                 )}
-                {r.notes && <div style={{fontSize:11, color:TH.textMuted, marginTop:4, fontStyle:"italic"}}>{r.notes}</div>}
+                {r.notes && <div style={{fontSize:11, color:TH.textMuted, marginTop:4, fontStyle:"italic"}}> {r.notes}</div>}
               </div>
             );
           })}

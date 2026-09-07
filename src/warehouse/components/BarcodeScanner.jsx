@@ -8,8 +8,9 @@
 //   <BarcodeScanner TH={TH} lang={lang} onDetected={(code) => ...} onClose={...} />
 // ═══════════════════════════════════════════════════════════════════
 
-import { useEffect, useRef, useState } from"react";
-import { tr } from"../../i18n";
+import { useEffect, useRef, useState } from "react";
+import { tr } from "../../i18n";
+import { Icon } from "../lib/icons";
 
 export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, title }) {
   const L = tr(lang);
@@ -105,43 +106,56 @@ export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, t
     <div style={{
       position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)",
       zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
-    }}><div style={{
+    }}>
+      <div style={{
         background: TH.bgCard, border: `1px solid ${TH.border}`, borderRadius: 14,
         padding: 20, width: "100%", maxWidth: 460,
-      }}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: 14}}><div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
-            {title || L.scannerTitle || 'Scan barcode / QR'}
-          </div><button onClick={handleClose} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", lineHeight:1, padding:4}}></button></div>
+      }}>
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: 14}}>
+          <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
+             {title || L.scannerTitle || 'Scan barcode / QR'}
+          </div>
+          <button onClick={handleClose} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", lineHeight:1, padding:4}}></button>
+        </div>
 
         {/* Mode switcher */}
-        <div style={{display:"flex", gap:6, marginBottom:12}}><button
+        <div style={{display:"flex", gap:6, marginBottom:12}}>
+          <button
             onClick={() => { stopCamera(); setMode("manual"); }}
             style={modeBtn(TH, mode === "manual")}
-          >⌨{L.scannerManual || 'Manual / USB'}</button><button
+          >⌨ {L.scannerManual || 'Manual / USB'}</button>
+          <button
             onClick={() => startCamera()}
             style={modeBtn(TH, mode === "camera")}
-          >{L.scannerCamera || 'Camera'}</button></div>
+          > {L.scannerCamera || 'Camera'}</button>
+        </div>
 
         {error && (
-          <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:8, padding:"10px 12px", color:TH.danger, fontSize:12, marginBottom:12}}>
+          <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:12}}>
             {error}
           </div>
         )}
 
         {mode === "manual" && (
-          <form onSubmit={submitManual}><div style={{fontSize:11, color:TH.textMuted, marginBottom:6}}>
+          <form onSubmit={submitManual}>
+            <div style={{fontSize:11, color:TH.textMuted, marginBottom:6}}>
               {L.scannerManualHint || 'Type or scan with USB scanner. Press Enter to submit.'}
-            </div><input
+            </div>
+            <input
               ref={inputRef}
               value={manualValue}
               onChange={e => setManualValue(e.target.value)}
-              placeholder="CP-VH-00001 …"autoFocus
+              placeholder="CP-VH-00001 …"
+              autoFocus
               style={{
                 width:"100%", background:TH.bgInput, border:`2px solid ${TH.accent || '#B8935A'}`,
                 borderRadius:10, padding:"14px 16px", color:TH.text, fontSize:18,
                 fontFamily:"monospace", letterSpacing:"0.08em", outline:"none", boxSizing:"border-box",
               }}
-            /><button
-              type="submit"disabled={!manualValue.trim()}
+            />
+            <button
+              type="submit"
+              disabled={!manualValue.trim()}
               style={{
                 width:"100%", marginTop:10,
                 background: manualValue.trim() ? "linear-gradient(135deg,#B8935A,#8B7040)" : TH.bgInput,
@@ -149,11 +163,14 @@ export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, t
                 padding:"12px 16px", fontSize:14, fontWeight:800, cursor: manualValue.trim() ? "pointer" : "not-allowed",
                 fontFamily:"inherit",
               }}
-            >{L.scannerSubmit || 'Search'}</button></form>
+            >{L.scannerSubmit || 'Search'}</button>
+          </form>
         )}
 
         {mode === "camera" && (
-          <div><div style={{position:"relative", background:"#000", borderRadius:10, overflow:"hidden", aspectRatio:"4/3"}}><video ref={videoRef} playsInline muted style={{width:"100%", height:"100%", objectFit:"cover", display:"block"}} />
+          <div>
+            <div style={{position:"relative", background:"#000", borderRadius:10, overflow:"hidden", aspectRatio:"4/3"}}>
+              <video ref={videoRef} playsInline muted style={{width:"100%", height:"100%", objectFit:"cover", display:"block"}} />
               {!cameraReady && (
                 <div style={{position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:13}}>
                   {L.scannerStarting || 'Starting camera…'}
@@ -163,17 +180,19 @@ export default function BarcodeScanner({ TH, lang = "en", onDetected, onClose, t
               {cameraReady && (
                 <div style={{position:"absolute", inset:20, border:"3px solid #B8935A", borderRadius:10, pointerEvents:"none", boxShadow:"0 0 0 4000px rgba(0,0,0,0.4)"}} />
               )}
-            </div><div style={{fontSize:11, color:TH.textMuted, textAlign:"center", marginTop:8}}>
+            </div>
+            <div style={{fontSize:11, color:TH.textMuted, textAlign:"center", marginTop:8}}>
               {L.scannerAlignHint || 'Point the camera at the barcode. It will detect automatically.'}
             </div>
             {!detectorSupported && (
-              <div style={{fontSize:11, color:TH.danger, marginTop:6}}>
+              <div style={{fontSize:11, color:"#C43D3D", marginTop:6}}>
                 {L.scannerNoDetectorMsg || 'Your browser does not support live detection.'}
               </div>
             )}
           </div>
         )}
-      </div></div>
+      </div>
+    </div>
   );
 }
 
