@@ -1,29 +1,44 @@
 // ═══════════════════════════════════════════════════════════════════
-// DashboardTab.jsx — Caesar dashboard: KPIs + live feeds + detail modal
-// Click any feed item → full details with photos
+// DashboardTab.jsx — Caesar dashboard
+// Palette: navy · white · gold. No icons, no emoji.
+// KPIs + live feeds + detail modal (click any row for full details)
 // ═══════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import { tr } from "./i18n";
 
+const SERIF = "'Playfair Display', Georgia, 'Times New Roman', serif";
+
+// Status → theme role. Colours resolve from TH so both modes work.
 const INS_STATUS = {
-  ok:            { label: 'OK',       color: '#B8935A' },
-  minor_issue:   { label: 'Minor',    color: '#D4A853' },
-  major_issue:   { label: 'Major',    color: '#8B7040' },
-  critical:      { label: 'Critical', color: '#8f8f8f' },
-  needs_repair:  { label: 'Repair',   color: '#8B7040' },
-  fixed:         { label: 'Fixed',    color: '#B8935A' },
+  ok:            { label: 'OK',       role: 'ok'     },
+  minor_issue:   { label: 'Minor',    role: 'warn'   },
+  major_issue:   { label: 'Major',    role: 'danger' },
+  critical:      { label: 'Critical', role: 'danger' },
+  needs_repair:  { label: 'Repair',   role: 'warn'   },
+  fixed:         { label: 'Fixed',    role: 'ok'     },
 };
 const AST_STATUS = {
-  available:   { label: 'Available',   color: '#B8935A' },
-  checked_out: { label: 'Checked out', color: '#8B7040' },
-  in_service:  { label: 'In service',  color: '#8f8f8f' },
-  damaged:     { label: 'Damaged',     color: '#8f8f8f' },
-  lost:        { label: 'Lost',        color: '#8f8f8f' },
-  retired:     { label: 'Retired',     color: '#5c5c5c' },
+  available:   { label: 'Available',   role: 'ok'      },
+  checked_out: { label: 'Checked out', role: 'warn'    },
+  in_service:  { label: 'In service',  role: 'info'    },
+  damaged:     { label: 'Damaged',     role: 'danger'  },
+  lost:        { label: 'Lost',        role: 'danger'  },
+  retired:     { label: 'Retired',     role: 'neutral' },
 };
-const KIND_ICON = { equipment: '🏭', tool: '🔧', vehicle: '🚗' };
+const KIND_LABEL = { equipment: 'Equipment', tool: 'Tool', vehicle: 'Vehicle' };
+const KIND_ABBR  = { equipment: 'EQ', tool: 'TL', vehicle: 'VH' };
+
+function roleColors(TH, role) {
+  switch (role) {
+    case 'ok':     return { fg: TH.ok,        bg: TH.okBg };
+    case 'warn':   return { fg: TH.warn,      bg: TH.warnBg };
+    case 'danger': return { fg: TH.danger,    bg: TH.dangerBg };
+    case 'info':   return { fg: TH.info,      bg: TH.infoBg };
+    default:       return { fg: TH.textMuted, bg: TH.bgInput };
+  }
+}
 
 function fdt(s) {
   if (!s) return '—';
@@ -50,8 +65,7 @@ export default function DashboardTab({ TH, lang = "en", isMobile, isAdmin, onNav
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Detail modal state
-  const [modal, setModal] = useState(null); // { type: 'inspection'|'asset', data }
+  const [modal, setModal] = useState(null);
   const [photoZoom, setPhotoZoom] = useState(null);
 
   useEffect(() => { load(); }, []);
@@ -96,7 +110,7 @@ export default function DashboardTab({ TH, lang = "en", isMobile, isAdmin, onNav
     }
   }
 
-  if (loading) return <div style={{padding:40, textAlign:"center", color:TH.textMuted}}>Loading dashboard...</div>;
+  if (loading) return <div style={{padding:48, textAlign:"center", color:TH.textMuted, fontSize:13}}>{L.loading || "Loading…"}</div>;
 
   const s = stats || { totalAssets: 0, assetsByKind: {equipment:0,tool:0,vehicle:0}, warehouses: 0, openIssues: 0, criticalCount: 0, pendingRequisitions: 0 };
   const propMap = Object.fromEntries(properties.map(p => [p.id, p]));
@@ -105,21 +119,21 @@ export default function DashboardTab({ TH, lang = "en", isMobile, isAdmin, onNav
 
   return (
     <div>
-      {/* ═══ Photo zoom (top layer) ═══ */}
+      {/* ═══ Photo zoom ═══ */}
       {photoZoom && (
-        <div onClick={() => setPhotoZoom(null)} style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.96)", zIndex:10001, display:"flex", alignItems:"center", justifyContent:"center", padding:16, cursor:"pointer"}}>
-          <img src={photoZoom} alt="" style={{maxWidth:"100%", maxHeight:"100%", objectFit:"contain"}} />
+        <div onClick={() => setPhotoZoom(null)} style={{position:"fixed", inset:0, background:"rgba(8,12,22,0.96)", zIndex:10001, display:"flex", alignItems:"center", justifyContent:"center", padding:16, cursor:"pointer"}}>
+          <img src={photoZoom} alt="" style={{maxWidth:"100%", maxHeight:"100%", objectFit:"contain", borderRadius:8}} />
         </div>
       )}
 
       {/* ═══ Detail modal ═══ */}
       {modal && (
-        <div onClick={() => setModal(null)} style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:10000, display:"flex", alignItems:isMobile?"flex-end":"center", justifyContent:"center", padding:isMobile?0:20}}>
+        <div onClick={() => setModal(null)} style={{position:"fixed", inset:0, background:"rgba(8,12,22,0.62)", backdropFilter:"blur(3px)", zIndex:10000, display:"flex", alignItems:isMobile?"flex-end":"center", justifyContent:"center", padding:isMobile?0:24}}>
           <div onClick={e => e.stopPropagation()} style={{
             background:TH.bgCard, border:`1px solid ${TH.border}`,
-            borderRadius:isMobile?"16px 16px 0 0":16,
-            width:"100%", maxWidth:640, maxHeight:isMobile?"92vh":"88vh", overflowY:"auto",
-            padding:20, boxSizing:"border-box",
+            borderRadius:isMobile?"16px 16px 0 0":14,
+            width:"100%", maxWidth:660, maxHeight:isMobile?"92vh":"88vh", overflowY:"auto",
+            padding:24, boxSizing:"border-box", boxShadow:TH.shadowLg,
           }}>
             {modal.type === 'inspection' ? (
               <InspectionModal TH={TH} L={L} isMobile={isMobile} ins={modal.data} propMap={propMap} areaMap={areaMap}
@@ -132,107 +146,221 @@ export default function DashboardTab({ TH, lang = "en", isMobile, isAdmin, onNav
         </div>
       )}
 
-      <div style={{marginBottom:20}}>
-        <div style={{fontSize:isMobile?20:26, fontWeight:700, color:TH.text, letterSpacing:"-0.3px", fontFamily:"'Playfair Display', Georgia, serif"}}>{L.dashboard}</div>
-        <div style={{fontSize:13, color:TH.textMuted, marginTop:2}}>
-          {L.dashSub}
+      {/* ═══ Page header ═══ */}
+      <div style={{marginBottom:22}}>
+        <div style={{fontSize:10, letterSpacing:"0.18em", textTransform:"uppercase", color:TH.accent, fontWeight:600, marginBottom:6}}>
+          Caesar Projects
         </div>
+        <div style={{fontSize:isMobile?22:28, fontWeight:500, color:TH.textHeading, letterSpacing:"-0.01em", fontFamily:SERIF, lineHeight:1.1}}>
+          {L.dashboard}
+        </div>
+        <div style={{fontSize:13, color:TH.textMuted, marginTop:5, maxWidth:560}}>{L.dashSub}</div>
       </div>
 
-      {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
+      {error && (
+        <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}44`, borderRadius:10, padding:"11px 14px", color:TH.danger, fontSize:13, marginBottom:16}}>{error}</div>
+      )}
 
-      {/* KPI grid */}
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4, 1fr)", gap:14, marginBottom:24}}>
-        <KPI TH={TH} onClick={() => onNav?.("warehouse")}
+      {/* ═══ KPI grid ═══ */}
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr 1fr":"repeat(4, 1fr)", gap:12, marginBottom:20}}>
+        <KPI TH={TH} deep onClick={() => onNav?.("warehouse")}
           label={L.totalAssets} value={s.totalAssets}
-          sub={`${s.assetsByKind.equipment} ${L.equip} · ${s.assetsByKind.tool} ${L.tools} · ${s.assetsByKind.vehicle} ${L.vehicles}`} gradient />
+          sub={`${s.assetsByKind.equipment} ${L.equip} · ${s.assetsByKind.tool} ${L.tools} · ${s.assetsByKind.vehicle} ${L.vehicles}`} />
         <KPI TH={TH} onClick={() => onNav?.("warehouse")}
           label={L.warehousesK} value={s.warehouses} sub={L.acrossProps} />
         <KPI TH={TH} onClick={() => onNav?.("inspection")}
           label={L.openIssues} value={s.openIssues}
-          sub={s.criticalCount > 0 ? `${s.criticalCount} ${L.critical}` : L.underReview} highlight={s.criticalCount > 0} />
+          sub={s.criticalCount > 0 ? `${s.criticalCount} ${L.critical}` : L.underReview}
+          alert={s.criticalCount > 0} />
         <KPI TH={TH} onClick={() => onNav?.("procure")}
           label={L.pendingReqs} value={s.pendingRequisitions}
           sub={s.pendingRequisitions > 0 ? L.awaitingApproval : L.queueClear} />
       </div>
 
-      {/* Feeds */}
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:14}}>
+      {/* ═══ Feeds ═══ */}
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:12}}>
+
         <FeedCard TH={TH} title={L.recentInspections} viewAllLabel={L.viewAll} onNavAll={() => onNav?.("inspection")}>
           {recentInspections.length === 0 ? (
-            <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>{L.noInspYet}</div>
-          ) : recentInspections.map(i => {
-            const meta = INS_STATUS[i.status] || { label: i.status, color: TH.textMuted };
+            <Empty TH={TH}>{L.noInspYet}</Empty>
+          ) : recentInspections.map((i, idx) => {
+            const meta = INS_STATUS[i.status] || { label: i.status, role: 'neutral' };
+            const c = roleColors(TH, meta.role);
             const cover = i.photos?.[0];
             return (
-              <div key={i.id} onClick={() => setModal({ type: 'inspection', data: i })} style={feedRow(TH)}
-                onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <FeedRow key={i.id} TH={TH} last={idx === recentInspections.length - 1}
+                onClick={() => setModal({ type: 'inspection', data: i })}>
                 {cover ? (
-                  <img src={cover} alt="" style={{width:44, height:44, objectFit:"cover", borderRadius:8, flexShrink:0, background:"#000"}} loading="lazy" />
+                  <img src={cover} alt="" style={{width:38, height:38, objectFit:"cover", borderRadius:7, flexShrink:0, background:TH.bgInput}} loading="lazy" />
                 ) : (
-                  <div style={{width:44, height:44, borderRadius:8, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18}}>🔍</div>
+                  <Swatch TH={TH} accent>{(i.inspection_no || '').slice(-2) || '—'}</Swatch>
                 )}
                 <div style={{flex:1, minWidth:0}}>
-                  <div style={{fontSize:13, color:TH.text, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{i.title}</div>
+                  <div style={{fontSize:13, color:TH.text, fontWeight:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{i.title}</div>
                   <div style={{fontSize:11, color:TH.textDim, marginTop:2}}>{fdt(i.created_at)}</div>
                 </div>
-                <span style={{padding:"3px 8px", borderRadius:5, background:meta.color+"22", color:meta.color, fontSize:10, fontWeight:700, whiteSpace:"nowrap", flexShrink:0}}>{meta.label}</span>
-              </div>
+                <Pill fg={c.fg} bg={c.bg}>{meta.label}</Pill>
+              </FeedRow>
             );
           })}
         </FeedCard>
 
         <FeedCard TH={TH} title={L.recentAssets} viewAllLabel={L.viewAll} onNavAll={() => onNav?.("warehouse")}>
           {recentAssets.length === 0 ? (
-            <div style={{padding:20, color:TH.textDim, fontSize:13, textAlign:"center"}}>{L.noAssetsYet}</div>
-          ) : recentAssets.map(a => {
-            const meta = AST_STATUS[a.status] || { label: a.status, color: TH.textMuted };
+            <Empty TH={TH}>{L.noAssetsYet}</Empty>
+          ) : recentAssets.map((a, idx) => {
+            const meta = AST_STATUS[a.status] || { label: a.status, role: 'neutral' };
+            const c = roleColors(TH, meta.role);
             return (
-              <div key={a.id} onClick={() => setModal({ type: 'asset', data: a })} style={feedRow(TH)}
-                onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
-                onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+              <FeedRow key={a.id} TH={TH} last={idx === recentAssets.length - 1}
+                onClick={() => setModal({ type: 'asset', data: a })}>
                 {a.photo_url ? (
-                  <img src={a.photo_url} alt="" style={{width:44, height:44, objectFit:"cover", borderRadius:8, flexShrink:0, background:"#000"}} loading="lazy" />
+                  <img src={a.photo_url} alt="" style={{width:38, height:38, objectFit:"cover", borderRadius:7, flexShrink:0, background:TH.bgInput}} loading="lazy" />
                 ) : (
-                  <div style={{width:44, height:44, borderRadius:8, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:18}}>{KIND_ICON[a.kind] || '📦'}</div>
+                  <Swatch TH={TH}>{KIND_ABBR[a.kind] || '—'}</Swatch>
                 )}
                 <div style={{flex:1, minWidth:0}}>
-                  <div style={{fontSize:13, color:TH.text, fontWeight:600, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
-                  <div style={{fontSize:10, color:TH.textDim, marginTop:2, fontFamily:"monospace"}}>{a.asset_no}</div>
+                  <div style={{fontSize:13, color:TH.text, fontWeight:500, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
+                  <div style={{fontSize:10, color:TH.textDim, marginTop:2, fontFamily:"ui-monospace, monospace", letterSpacing:"0.02em"}}>{a.asset_no}</div>
                 </div>
-                <span style={{padding:"3px 8px", borderRadius:5, background:meta.color+"22", color:meta.color, fontSize:10, fontWeight:700, whiteSpace:"nowrap", flexShrink:0}}>{meta.label}</span>
-              </div>
+                <Pill fg={c.fg} bg={c.bg}>{meta.label}</Pill>
+              </FeedRow>
             );
           })}
         </FeedCard>
+
       </div>
     </div>
   );
 }
 
-// ═══ Inspection detail modal ═══
+// ═══════════════════════════════════════════════════════════════════
+// KPI + feed shells
+// ═══════════════════════════════════════════════════════════════════
+function KPI({ TH, label, value, sub, deep, alert, onClick }) {
+  const isDeep = !!deep;
+  return (
+    <div onClick={onClick} style={{
+      position:"relative", overflow:"hidden",
+      background: isDeep ? TH.deep : TH.bgCard,
+      border: `1px solid ${isDeep ? TH.deepBorder : (alert ? TH.danger + "44" : TH.border)}`,
+      borderRadius: 12, padding: "16px 18px",
+      cursor: onClick ? "pointer" : "default",
+      transition: "transform .15s ease, box-shadow .15s ease",
+      boxShadow: isDeep ? TH.shadow : TH.cardGlow,
+    }}
+    onMouseEnter={e => { if (onClick) { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = TH.shadowLg; } }}
+    onMouseLeave={e => { if (onClick) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = isDeep ? TH.shadow : TH.cardGlow; } }}>
+
+      {isDeep && <div style={{position:"absolute", top:0, left:0, right:0, height:2, background:TH.accent}} />}
+      {alert && <div style={{position:"absolute", top:15, right:16, width:6, height:6, borderRadius:"50%", background:TH.danger}} />}
+
+      <div style={{
+        fontSize:10, fontWeight:600, letterSpacing:"0.11em", textTransform:"uppercase",
+        color: isDeep ? TH.onDeepMuted : TH.textMuted, marginBottom:9,
+      }}>{label}</div>
+
+      <div style={{
+        fontSize:34, fontWeight:500, lineHeight:1, fontFamily:SERIF,
+        color: isDeep ? TH.onDeep : TH.textHeading,
+      }}>{value}</div>
+
+      <div style={{
+        fontSize:11, marginTop:7,
+        color: isDeep ? TH.onDeepMuted : (alert ? TH.danger : TH.textMuted),
+        fontWeight: alert ? 600 : 400,
+      }}>{sub}</div>
+    </div>
+  );
+}
+
+function FeedCard({ TH, title, children, onNavAll, viewAllLabel = "View all" }) {
+  return (
+    <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, overflow:"hidden", boxShadow:TH.cardGlow}}>
+      <div style={{
+        display:"flex", justifyContent:"space-between", alignItems:"center",
+        padding:"14px 18px", borderBottom:`1px solid ${TH.divider}`,
+      }}>
+        <div style={{fontSize:13, fontWeight:600, color:TH.textHeading, letterSpacing:"-0.005em"}}>{title}</div>
+        {onNavAll && (
+          <button onClick={onNavAll} style={{
+            background:"transparent", border:"none", color:TH.accentText,
+            cursor:"pointer", fontSize:11, fontWeight:600, fontFamily:"inherit", padding:0,
+          }}>{viewAllLabel}</button>
+        )}
+      </div>
+      <div>{children}</div>
+    </div>
+  );
+}
+
+function FeedRow({ TH, children, onClick, last }) {
+  return (
+    <div onClick={onClick} style={{
+      padding:"11px 18px",
+      borderBottom: last ? "none" : `1px solid ${TH.divider}`,
+      display:"flex", alignItems:"center", gap:11, cursor:"pointer",
+      transition:"background .12s ease",
+    }}
+    onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
+    onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
+      {children}
+    </div>
+  );
+}
+
+function Swatch({ TH, children, accent }) {
+  return (
+    <div style={{
+      width:38, height:38, borderRadius:7, flexShrink:0,
+      background: accent ? TH.accentBg : TH.bgInput,
+      border:`1px solid ${accent ? TH.accentBorder : TH.border}`,
+      display:"flex", alignItems:"center", justifyContent:"center",
+      fontSize:11, fontWeight:600, letterSpacing:"0.03em",
+      color: accent ? TH.accentText : TH.textMuted,
+      fontFamily:"ui-monospace, monospace",
+    }}>{children}</div>
+  );
+}
+
+function Pill({ fg, bg, children }) {
+  return (
+    <span style={{
+      padding:"3px 9px", borderRadius:4, background:bg, color:fg,
+      fontSize:10, fontWeight:600, whiteSpace:"nowrap", flexShrink:0,
+      letterSpacing:"0.01em",
+    }}>{children}</span>
+  );
+}
+
+function Empty({ TH, children }) {
+  return <div style={{padding:"28px 18px", color:TH.textDim, fontSize:12, textAlign:"center"}}>{children}</div>;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// Inspection detail modal
+// ═══════════════════════════════════════════════════════════════════
 function InspectionModal({ TH, L, isMobile, ins, propMap, areaMap, onZoom, onClose, onOpenModule }) {
-  const meta = INS_STATUS[ins.status] || { label: ins.status, color: '#8f8f8f' };
+  const meta = INS_STATUS[ins.status] || { label: ins.status, role: 'neutral' };
+  const c = roleColors(TH, meta.role);
   const wh = propMap[ins.property_id];
   const area = ins.area_id ? areaMap[ins.area_id] : null;
   return (
     <div>
       <ModalHeader TH={TH} onClose={onClose}
-        eyebrow={<span style={{color:meta.color}}>● {meta.label}</span>}
+        eyebrow={<span style={{color:c.fg}}>{meta.label}</span>}
         title={ins.title} mono={ins.inspection_no} />
 
-      {/* Photos gallery */}
       {ins.photos?.length > 0 && (
-        <div style={{display:"grid", gridTemplateColumns: ins.photos.length === 1 ? "1fr" : "repeat(2, 1fr)", gap:8, marginBottom:14}}>
+        <div style={{display:"grid", gridTemplateColumns: ins.photos.length === 1 ? "1fr" : "repeat(2, 1fr)", gap:8, marginBottom:16}}>
           {ins.photos.map((url, i) => (
             <img key={i} src={url} alt="" onClick={() => onZoom(url)}
-              style={{width:"100%", height: ins.photos.length === 1 ? 260 : 150, objectFit:"cover", borderRadius:10, cursor:"pointer", background:"#000"}} />
+              style={{width:"100%", height: ins.photos.length === 1 ? 260 : 150, objectFit:"cover", borderRadius:10, cursor:"pointer", background:TH.bgInput}} />
           ))}
         </div>
       )}
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14}}>
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:16}}>
         <MInfo TH={TH} label={L.property.replace(" *","")}>{wh?.name || '—'}</MInfo>
         <MInfo TH={TH} label={L.area}>{area?.name || '—'}</MInfo>
         <MInfo TH={TH} label={L.severity}>{['None','Low','Medium','High','Critical'][ins.severity] || '—'}</MInfo>
@@ -243,7 +371,7 @@ function InspectionModal({ TH, L, isMobile, ins, propMap, areaMap, onZoom, onClo
 
       {ins.location_note && <MBlock TH={TH} label={L.location}>{ins.location_note}</MBlock>}
       {ins.report && <MBlock TH={TH} label={L.reportBlock} accent>{ins.report}</MBlock>}
-      {ins.action_required && <MBlock TH={TH} label={"⚡ "+L.actionRequired} gold>{ins.action_required}</MBlock>}
+      {ins.action_required && <MBlock TH={TH} label={L.actionRequired} gold>{ins.action_required}</MBlock>}
       {ins.resolution_note && <MBlock TH={TH} label={L.resolution} gold>{ins.resolution_note}</MBlock>}
 
       <ModalFooter TH={TH} onClose={onClose} onOpenModule={onOpenModule} moduleLabel={L.openInspections} closeLabel={L.close} />
@@ -251,22 +379,25 @@ function InspectionModal({ TH, L, isMobile, ins, propMap, areaMap, onZoom, onClo
   );
 }
 
-// ═══ Asset detail modal ═══
+// ═══════════════════════════════════════════════════════════════════
+// Asset detail modal
+// ═══════════════════════════════════════════════════════════════════
 function AssetModal({ TH, L, isMobile, asset, whMap, onZoom, onClose, onOpenModule }) {
-  const meta = AST_STATUS[asset.status] || { label: asset.status, color: '#8f8f8f' };
+  const meta = AST_STATUS[asset.status] || { label: asset.status, role: 'neutral' };
+  const c = roleColors(TH, meta.role);
   const wh = whMap[asset.warehouse_id];
   return (
     <div>
       <ModalHeader TH={TH} onClose={onClose}
-        eyebrow={<span style={{color:meta.color}}>● {meta.label} · {KIND_ICON[asset.kind] || '📦'} {asset.kind}</span>}
+        eyebrow={<span><span style={{color:c.fg}}>{meta.label}</span><span style={{color:TH.textDim, margin:"0 6px"}}>·</span><span style={{color:TH.textMuted}}>{KIND_LABEL[asset.kind] || asset.kind}</span></span>}
         title={asset.name} mono={asset.asset_no} />
 
       {asset.photo_url && (
         <img src={asset.photo_url} alt="" onClick={() => onZoom(asset.photo_url)}
-          style={{width:"100%", height:240, objectFit:"cover", borderRadius:10, cursor:"pointer", background:"#000", marginBottom:14}} />
+          style={{width:"100%", height:240, objectFit:"cover", borderRadius:10, cursor:"pointer", background:TH.bgInput, marginBottom:16}} />
       )}
 
-      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:14}}>
+      <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:14, marginBottom:16}}>
         {asset.brand && <MInfo TH={TH} label={L.brandModel}>{asset.brand} {asset.model || ''}</MInfo>}
         {asset.serial_number && <MInfo TH={TH} label={L.serial}>{asset.serial_number}</MInfo>}
         {asset.plate_number && <MInfo TH={TH} label={L.plate}>{asset.plate_number}</MInfo>}
@@ -281,9 +412,9 @@ function AssetModal({ TH, L, isMobile, asset, whMap, onZoom, onClose, onOpenModu
       </div>
 
       {asset.status === 'checked_out' && asset.holder_name && (
-        <MBlock TH={TH} label="👤 Currently with" gold>
-          {asset.holder_name}{asset.holder_phone ? ` · 📞 ${asset.holder_phone}` : ''}
-          {asset.expected_return_at ? ` · Return: ${fd(asset.expected_return_at)}` : ''}
+        <MBlock TH={TH} label={L.currentlyWith || "Currently with"} gold>
+          {asset.holder_name}{asset.holder_phone ? ` · ${asset.holder_phone}` : ''}
+          {asset.expected_return_at ? ` · ${L.returnLbl || "Return:"} ${fd(asset.expected_return_at)}` : ''}
         </MBlock>
       )}
       {asset.current_location && <MBlock TH={TH} label={L.location}>{asset.current_location}</MBlock>}
@@ -294,82 +425,61 @@ function AssetModal({ TH, L, isMobile, asset, whMap, onZoom, onClose, onOpenModu
   );
 }
 
-// ═══ Shared modal pieces ═══
+// ═══════════════════════════════════════════════════════════════════
+// Shared modal pieces
+// ═══════════════════════════════════════════════════════════════════
 function ModalHeader({ TH, eyebrow, title, mono, onClose }) {
   return (
-    <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:14}}>
+    <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:14, marginBottom:16, paddingBottom:14, borderBottom:`1px solid ${TH.divider}`}}>
       <div style={{flex:1, minWidth:0}}>
-        <div style={{fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:4}}>{eyebrow}</div>
-        <div style={{fontSize:19, fontWeight:800, color:TH.text, lineHeight:1.25}}>{title}</div>
-        {mono && <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginTop:3}}>{mono}</div>}
+        <div style={{fontSize:10, fontWeight:600, textTransform:"uppercase", letterSpacing:"0.11em", marginBottom:6}}>{eyebrow}</div>
+        <div style={{fontSize:20, fontWeight:500, color:TH.textHeading, lineHeight:1.25, fontFamily:SERIF}}>{title}</div>
+        {mono && <div style={{fontSize:10, color:TH.textDim, fontFamily:"ui-monospace, monospace", marginTop:5, letterSpacing:"0.03em"}}>{mono}</div>}
       </div>
-      <button onClick={onClose} style={{background:TH.bgInput, border:"none", borderRadius:16, width:32, height:32, color:TH.textMuted, cursor:"pointer", fontSize:15, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", padding:0}}>✕</button>
-    </div>
-  );
-}
-function ModalFooter({ TH, onClose, onOpenModule, moduleLabel, closeLabel = "Close" }) {
-  return (
-    <div style={{display:"flex", gap:8, marginTop:16}}>
-      <button onClick={onClose} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"12px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{closeLabel}</button>
-      <button onClick={onOpenModule} style={{flex:1, background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"12px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit"}}>{moduleLabel}</button>
-    </div>
-  );
-}
-function MInfo({ TH, label, children }) {
-  return (
-    <div>
-      <div style={{fontSize:9, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:2}}>{label}</div>
-      <div style={{fontSize:13, color:TH.text}}>{children}</div>
-    </div>
-  );
-}
-function MBlock({ TH, label, children, accent, gold }) {
-  return (
-    <div style={{
-      padding:12, borderRadius:10, marginBottom:10,
-      background: gold ? "rgba(184,147,90,0.08)" : TH.bgInput,
-      border: gold ? "1px solid rgba(184,147,90,0.3)" : "none",
-      borderLeft: accent ? `3px solid #B8935A` : undefined,
-    }}>
-      <div style={{fontSize:10, fontWeight:700, color: gold ? "#B8935A" : TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:5}}>{label}</div>
-      <div style={{fontSize:13, color:TH.text, whiteSpace:"pre-wrap", lineHeight:1.5}}>{children}</div>
+      <button onClick={onClose} aria-label={TH.close || "Close"} style={{
+        background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8,
+        width:30, height:30, color:TH.textMuted, cursor:"pointer", fontSize:16,
+        flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center",
+        padding:0, lineHeight:1, fontFamily:"inherit",
+      }}>×</button>
     </div>
   );
 }
 
-// ═══ KPI + feed shells ═══
-function KPI({ TH, label, value, sub, gradient, highlight, onClick }) {
+function ModalFooter({ TH, onClose, onOpenModule, moduleLabel, closeLabel = "Close" }) {
   return (
-    <div onClick={onClick} style={{
-      background: gradient ? "linear-gradient(135deg, rgba(184,147,90,0.15), rgba(139,112,64,0.08))"
-                            : highlight ? "linear-gradient(135deg, rgba(143,143,143,0.10), rgba(92,92,92,0.05))"
-                                        : TH.bgCard,
-      border:`1px solid ${highlight ? "rgba(143,143,143,0.3)" : gradient ? "rgba(184,147,90,0.3)" : TH.border}`,
-      borderRadius:14, padding:18, cursor: onClick ? "pointer" : "default", transition:"transform 0.15s, box-shadow 0.15s", boxShadow: TH.cardGlow || "0 4px 20px rgba(0,0,0,0.08)",
-    }}
-    onMouseEnter={e => onClick && (e.currentTarget.style.transform = "translateY(-2px)")}
-    onMouseLeave={e => onClick && (e.currentTarget.style.transform = "translateY(0)")}>
-      <div style={{fontSize:10, fontWeight:700, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:8}}>{label}</div>
-      <div style={{fontSize:32, fontWeight:800, color:TH.text, lineHeight:1, marginBottom:6}}>{value}</div>
-      <div style={{fontSize:11, color:TH.textMuted}}>{sub}</div>
+    <div style={{display:"flex", gap:8, marginTop:18, paddingTop:16, borderTop:`1px solid ${TH.divider}`}}>
+      <button onClick={onClose} style={{
+        flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9,
+        color:TH.textMuted, padding:"11px", cursor:"pointer", fontSize:13, fontWeight:500, fontFamily:"inherit",
+      }}>{closeLabel}</button>
+      <button onClick={onOpenModule} style={{
+        flex:1, background:TH.deep, border:`1px solid ${TH.deepBorder}`, borderRadius:9,
+        color:TH.onDeep, padding:"11px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit",
+      }}>{moduleLabel}</button>
     </div>
   );
 }
-function FeedCard({ TH, title, children, onNavAll, viewAllLabel = "View all →" }) {
+
+function MInfo({ TH, label, children }) {
   return (
-    <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:18, boxShadow: TH.cardGlow || "0 4px 20px rgba(0,0,0,0.06)"}}>
-      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10}}>
-        <div style={{fontSize:14, fontWeight:700, color:TH.text}}>{title}</div>
-        {onNavAll && <button onClick={onNavAll} style={{background:"transparent", border:"none", color:TH.accent, cursor:"pointer", fontSize:12, fontWeight:600, fontFamily:"inherit"}}>{viewAllLabel}</button>}
-      </div>
-      <div>{children}</div>
+    <div>
+      <div style={{fontSize:9, fontWeight:600, color:TH.textMuted, textTransform:"uppercase", letterSpacing:"0.11em", marginBottom:4}}>{label}</div>
+      <div style={{fontSize:13, color:TH.text}}>{children}</div>
     </div>
   );
 }
-function feedRow(TH) {
-  return {
-    padding:"9px 8px", margin:"0 -8px", borderRadius:10,
-    display:"flex", alignItems:"center", gap:10, cursor:"pointer",
-    borderBottom:`1px solid ${TH.border}`,
-  };
+
+function MBlock({ TH, label, children, accent, gold }) {
+  return (
+    <div style={{
+      padding:"12px 14px", borderRadius: (accent || gold) ? 0 : 10, marginBottom:10,
+      background: gold ? TH.accentBg : TH.bgInput,
+      border: gold ? `1px solid ${TH.accentBorder}` : "none",
+      borderLeft: accent ? `2px solid ${TH.accent}` : (gold ? `2px solid ${TH.accent}` : undefined),
+    }}>
+      <div style={{fontSize:9, fontWeight:600, color: gold ? TH.accentText : TH.textMuted, textTransform:"uppercase", letterSpacing:"0.11em", marginBottom:6}}>{label}</div>
+      <div style={{fontSize:13, color:TH.text, whiteSpace:"pre-wrap", lineHeight:1.55}}>{children}</div>
+    </div>
+  );
 }
