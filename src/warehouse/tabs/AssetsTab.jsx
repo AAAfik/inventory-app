@@ -3,12 +3,12 @@
 // + barcode search (includes barcode field) + inline scan button
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from "react";
-import { supabase } from "../../supabase";
-import { ASSET_KINDS, ASSET_STATUS, fmtMoney, serviceStatus } from "../lib/warehouseUtils";
-import { tr } from "../../i18n";
-import AssetDetail from "./AssetDetail";
-import BarcodeScanner from "../components/BarcodeScanner";
+import { useState, useEffect } from"react";
+import { supabase } from"../../supabase";
+import { ASSET_KINDS, ASSET_STATUS, fmtMoney, serviceStatus } from"../lib/warehouseUtils";
+import { tr } from"../../i18n";
+import AssetDetail from"./AssetDetail";
+import BarcodeScanner from"../components/BarcodeScanner";
 
 export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChanged }) {
   const L = tr(lang);
@@ -101,7 +101,7 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
 
       {/* Kind pills */}
       <div style={{display:"flex", gap:8, marginBottom:12, overflowX:"auto"}}>
-        {[["all", { label: L.all, icon: "📦" }], ...Object.entries(ASSET_KINDS).map(([k,v]) => [k, {...v, label: L[k] || v.label}])].map(([k, meta]) => {
+        {[["all", { label: L.all, icon: "" }], ...Object.entries(ASSET_KINDS).map(([k,v]) => [k, {...v, label: L[k] || v.label}])].map(([k, meta]) => {
           const on = kindFilter === k;
           return (
             <button key={k} onClick={() => setKindFilter(k)} style={{
@@ -112,8 +112,7 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
               fontFamily: "inherit", whiteSpace: "nowrap", display:"flex", alignItems:"center", gap:6,
             }}>
               {meta.icon} {meta.label}
-              <span style={{background: on ? "#B8935A" : TH.bgInput, color: on ? "#000" : TH.textMuted, borderRadius:10, padding:"1px 8px", fontSize:11, fontWeight:700}}>{kindCounts[k] || 0}</span>
-            </button>
+              <span style={{background: on ? "#B8935A" : TH.bgInput, color: on ? "#000" : TH.textMuted, borderRadius:10, padding:"1px 8px", fontSize:11, fontWeight:700}}>{kindCounts[k] || 0}</span></button>
           );
         })}
         <button onClick={() => setServiceFilter(v => !v)} style={{
@@ -122,41 +121,28 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
           borderRadius: 20, color: serviceFilter ? "#B8935A" : TH.textMuted,
           padding: "8px 16px", cursor: "pointer", fontSize: 13, fontWeight: serviceFilter ? 700 : 500,
           fontFamily: "inherit", whiteSpace: "nowrap",
-        }}>{L.serviceDueBtn}</button>
-      </div>
+        }}>{L.serviceDueBtn}</button></div>
 
       {/* Search + filters (with scan button) */}
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr auto":"2fr auto 1fr 1fr", gap:8, marginBottom:16}}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchAssetsPh || L.searchAssets || "Search name / barcode / serial…"} style={inputStyle(TH)} />
-        <button onClick={() => setScanning(true)} title={L.scanBtn || 'Scan'} style={{
-          background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:8,
-          color:"#000", padding:"9px 14px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit",
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr auto":"2fr auto 1fr 1fr", gap:8, marginBottom:16}}><input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.searchAssetsPh || L.searchAssets || "Search name / barcode / serial…"} style={inputStyle(TH)} /><button onClick={() => setScanning(true)} title={L.scanBtn || 'Scan'} style={{
+          background:TH.deep, border:"none", borderRadius:8,
+          color:TH.onDeep, padding:"9px 14px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit",
           display:"flex", alignItems:"center", gap:5,
-        }}>📷 {isMobile ? '' : (L.scanBtn || 'Scan')}</button>
+        }}>{isMobile ? '' : (L.scanBtn || 'Scan')}</button>
         {!isMobile && (
-          <>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
-              <option value="all">{L.allStatuses}</option>
+          <><select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}><option value="all">{L.allStatuses}</option>
               {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{({available:L.available,checked_out:L.checkedOut,in_service:L.inService,damaged:L.damaged,lost:L.lost,retired:L.retired})[k] || v.label}</option>)}
-            </select>
-            <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}>
-              <option value="all">{L.allWarehouses}</option>
+            </select><select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}><option value="all">{L.allWarehouses}</option>
               {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-            </select>
-          </>
+            </select></>
         )}
       </div>
       {isMobile && (
-        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:16}}>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}>
-            <option value="all">{L.allStatuses}</option>
+        <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:16}}><select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={inputStyle(TH)}><option value="all">{L.allStatuses}</option>
             {Object.entries(ASSET_STATUS).map(([k, v]) => <option key={k} value={k}>{({available:L.available,checked_out:L.checkedOut,in_service:L.inService,damaged:L.damaged,lost:L.lost,retired:L.retired})[k] || v.label}</option>)}
-          </select>
-          <select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}>
-            <option value="all">{L.allWarehouses}</option>
+          </select><select value={whFilter} onChange={e => setWhFilter(e.target.value)} style={inputStyle(TH)}><option value="all">{L.allWarehouses}</option>
             {warehouses.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
-          </select>
-        </div>
+          </select></div>
       )}
 
       {error && <div style={{background:"rgba(143,143,143,.08)", border:"1px solid rgba(143,143,143,.3)", borderRadius:10, padding:"12px 14px", color:"#8f8f8f", fontSize:13, marginBottom:14}}>{error}</div>}
@@ -180,37 +166,28 @@ export default function AssetsTab({ TH, lang = "en", isMobile, isAdmin, onChange
                 borderLeft:`3px solid ${statusMeta.color}`, overflow:"hidden",
               }}
               onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
-              onMouseLeave={e => e.currentTarget.style.background = TH.bgCard}>
-                <div style={{display:"flex", gap:12, padding:14}}>
+              onMouseLeave={e => e.currentTarget.style.background = TH.bgCard}><div style={{display:"flex", gap:12, padding:14}}>
                   {a.photo_url ? (
-                    <img src={a.photo_url} alt="" style={{width:76, height:76, objectFit:"cover", borderRadius:10, flexShrink:0, background:"#000"}} loading="lazy" />
+                    <img src={a.photo_url} alt=""style={{width:76, height:76, objectFit:"cover", borderRadius:10, flexShrink:0, background:"#000"}} loading="lazy" />
                   ) : (
-                    <div style={{width:76, height:76, borderRadius:10, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:30}}>{kindMeta.icon || '📦'}</div>
+                    <div style={{width:76, height:76, borderRadius:10, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:30}}>{kindMeta.icon || ''}</div>
                   )}
-                  <div style={{flex:1, minWidth:0}}>
-                    <div style={{display:"flex", justifyContent:"space-between", gap:8, marginBottom:4}}>
-                      <div style={{fontSize:14, fontWeight:700, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
-                      <span style={{fontSize:9, color:statusMeta.color, fontWeight:700, textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0}}>● {statusMeta.label}</span>
-                    </div>
-                    <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginBottom:6}}>
+                  <div style={{flex:1, minWidth:0}}><div style={{display:"flex", justifyContent:"space-between", gap:8, marginBottom:4}}><div style={{fontSize:14, fontWeight:700, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div><span style={{fontSize:9, color:statusMeta.color, fontWeight:700, textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0}}>{statusMeta.label}</span></div><div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginBottom:6}}>
                       {a.asset_no}{a.barcode ? ` · ${a.barcode}` : ''}
-                    </div>
-                    <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
+                    </div><div style={{display:"flex", flexWrap:"wrap", gap:4}}>
                       {a.brand && <Chip TH={TH}>{a.brand}{a.model ? ` ${a.model}` : ''}</Chip>}
-                      {a.plate_number && <Chip TH={TH}>🚗 {a.plate_number}</Chip>}
-                      {wh && <Chip TH={TH}>📍 {wh.code}</Chip>}
-                      {a.condition && <Chip TH={TH}>🔧 {a.condition}</Chip>}
-                      {a.holder_name && a.status === 'checked_out' && <Chip TH={TH} gold>👤 {a.holder_name}</Chip>}
+                      {a.plate_number && <Chip TH={TH}>{a.plate_number}</Chip>}
+                      {wh && <Chip TH={TH}>{wh.code}</Chip>}
+                      {a.condition && <Chip TH={TH}>{a.condition}</Chip>}
+                      {a.holder_name && a.status === 'checked_out' && <Chip TH={TH} gold>{a.holder_name}</Chip>}
                       {a.purchase_price != null && <Chip TH={TH}>{fmtMoney(a.purchase_price, a.currency)}</Chip>}
                     </div>
                     {svc && (
                       <div style={{marginTop:6, fontSize:10, fontWeight:700, color:svc.color}}>
-                        🔧 {svc.label}
+                        {svc.label}
                       </div>
                     )}
-                  </div>
-                </div>
-              </div>
+                  </div></div></div>
             );
           })}
         </div>

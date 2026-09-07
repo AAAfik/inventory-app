@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════════════════════════════════
-// NewPackageModal.jsx — quick "receive package" flow
-// Camera-first: photo → recipient name → property + unit → save.
+// NewPackageModal.jsx — quick"receive package"flow
+// Camera-first: photo recipient name property + unit save.
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useRef, useEffect } from "react";
-import { supabase } from "../../supabase";
-import { tr } from "../../i18n";
+import { useState, useRef, useEffect } from"react";
+import { supabase } from"../../supabase";
+import { tr } from"../../i18n";
 
 const MAX_PHOTO_MB = 15;
 
@@ -88,74 +88,39 @@ export default function NewPackageModal({ TH, lang = "en", properties, onClose, 
   }
 
   return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}>
-      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:500, maxHeight:"92vh", overflowY:"auto"}}>
-        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}>
-          <div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
-            📦 {L.newPackage || 'New package'}
-          </div>
-          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}>✕</button>
-        </div>
+    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.85)", zIndex:9999, display:"flex", alignItems:"center", justifyContent:"center", padding:20}}><div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:20, width:"100%", maxWidth:500, maxHeight:"92vh", overflowY:"auto"}}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14}}><div style={{fontSize:16, fontWeight:800, color:TH.text, fontFamily:"'Playfair Display', Georgia, serif"}}>
+            {L.newPackage || 'New package'}
+          </div><button onClick={onClose} disabled={busy} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:22, cursor:"pointer", padding:4, lineHeight:1}}></button></div>
 
         {/* Photos */}
-        <div style={{marginBottom:12}}>
-          <label style={lbl(TH)}>{L.pkgPhotos || 'Photos'} * ({files.length})</label>
-          <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
+        <div style={{marginBottom:12}}><label style={lbl(TH)}>{L.pkgPhotos || 'Photos'} * ({files.length})</label><div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
             {previews.map((src, i) => (
-              <div key={i} style={{position:"relative", flexShrink:0, borderRadius:8, overflow:"hidden", border:`1px solid ${TH.border}`, background:"#000"}}>
-                <img src={src} alt="" style={{width:70, height:70, objectFit:"cover", display:"block"}} />
-                <button onClick={() => removePhoto(i)} disabled={busy} style={{position:"absolute", top:2, right:2, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:12, width:20, height:20, color:"#fff", cursor:"pointer", fontSize:11, padding:0, lineHeight:1}}>✕</button>
-              </div>
+              <div key={i} style={{position:"relative", flexShrink:0, borderRadius:8, overflow:"hidden", border:`1px solid ${TH.border}`, background:"#000"}}><img src={src} alt=""style={{width:70, height:70, objectFit:"cover", display:"block"}} /><button onClick={() => removePhoto(i)} disabled={busy} style={{position:"absolute", top:2, right:2, background:"rgba(0,0,0,0.75)", border:"none", borderRadius:12, width:20, height:20, color:"#fff", cursor:"pointer", fontSize:11, padding:0, lineHeight:1}}></button></div>
             ))}
             <button onClick={() => fileRef.current?.click()} disabled={busy} style={{
               flexShrink:0, width:70, height:70, background:"transparent",
               border:`2px dashed ${TH.border}`, borderRadius:8, color:TH.textMuted,
               cursor:"pointer", fontSize:24, fontFamily:"inherit",
-            }}>+</button>
-            <input ref={fileRef} type="file" accept="image/*" capture="environment" multiple onChange={pickFiles} style={{display:"none"}} />
-          </div>
-          <div style={{fontSize:10, color:TH.textDim, marginTop:6}}>
+            }}>+</button><input ref={fileRef} type="file"accept="image/*"capture="environment"multiple onChange={pickFiles} style={{display:"none"}} /></div><div style={{fontSize:10, color:TH.textDim, marginTop:6}}>
             {L.pkgPhotoHint || 'On mobile: opens rear camera directly. Max 15MB per photo.'}
-          </div>
-        </div>
+          </div></div>
 
         {/* Recipient name */}
-        <div style={{marginBottom:10}}>
-          <label style={lbl(TH)}>{L.recipientName || 'Recipient name'} *</label>
-          <input value={name} onChange={e => setName(e.target.value)} disabled={busy} autoFocus style={inp(TH)} placeholder="John Smith" />
-        </div>
+        <div style={{marginBottom:10}}><label style={lbl(TH)}>{L.recipientName || 'Recipient name'} *</label><input value={name} onChange={e => setName(e.target.value)} disabled={busy} autoFocus style={inp(TH)} placeholder="John Smith" /></div>
 
         {/* Property + unit */}
-        <div style={{display:"grid", gridTemplateColumns:"1fr 100px", gap:8, marginBottom:10}}>
-          <div>
-            <label style={lbl(TH)}>{L.property || 'Property'} / {L.department || 'Department'}</label>
-            <select value={propId} onChange={e => setPropId(e.target.value)} disabled={busy} style={inp(TH)}>
-              <option value="">—</option>
+        <div style={{display:"grid", gridTemplateColumns:"1fr 100px", gap:8, marginBottom:10}}><div><label style={lbl(TH)}>{L.property || 'Property'} / {L.department || 'Department'}</label><select value={propId} onChange={e => setPropId(e.target.value)} disabled={busy} style={inp(TH)}><option value="">—</option>
               {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={lbl(TH)}>{L.unit || 'Unit'} #</label>
-            <input value={unit} onChange={e => setUnit(e.target.value)} disabled={busy} style={inp(TH)} placeholder="A-105" />
-          </div>
-        </div>
+            </select></div><div><label style={lbl(TH)}>{L.unit || 'Unit'} #</label><input value={unit} onChange={e => setUnit(e.target.value)} disabled={busy} style={inp(TH)} placeholder="A-105" /></div></div>
 
         {/* Notes */}
-        <div style={{marginBottom:14}}>
-          <label style={lbl(TH)}>{L.notes || 'Notes'}</label>
-          <textarea value={notes} onChange={e => setNotes(e.target.value)} disabled={busy} rows={2} style={{...inp(TH), resize:"vertical"}} placeholder={L.pkgNotesPh || 'Optional — courier, size, fragile, etc.'} />
-        </div>
+        <div style={{marginBottom:14}}><label style={lbl(TH)}>{L.notes || 'Notes'}</label><textarea value={notes} onChange={e => setNotes(e.target.value)} disabled={busy} rows={2} style={{...inp(TH), resize:"vertical"}} placeholder={L.pkgNotesPh || 'Optional — courier, size, fragile, etc.'} /></div>
 
-        {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:8, padding:"10px 12px", color:"#C43D3D", fontSize:12, marginBottom:10}}>{error}</div>}
+        {error && <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:8, padding:"10px 12px", color:TH.danger, fontSize:12, marginBottom:10}}>{error}</div>}
 
-        <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}>
-          <button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || 'Cancel'}</button>
-          <button onClick={save} disabled={busy} style={{background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
+        <div style={{display:"flex", gap:8, justifyContent:"flex-end"}}><button onClick={onClose} disabled={busy} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:9, color:TH.textMuted, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.cancel || 'Cancel'}</button><button onClick={save} disabled={busy} style={{background:TH.deep, border:"none", borderRadius:9, color:TH.onDeep, padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:800, fontFamily:"inherit", opacity:busy?0.6:1}}>
             {busy ? (L.saving || 'Saving…') : (L.savePackage || 'Save package')}
-          </button>
-        </div>
-      </div>
-    </div>
+          </button></div></div></div>
   );
 }
 

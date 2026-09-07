@@ -4,18 +4,18 @@
 // Filters by status / property / search.
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from "react";
-import { supabase } from "../../supabase";
-import { tr } from "../../i18n";
-import { formatDate, formatDateShort } from "../../inspection/lib/inspectionUtils";
-import NewPackageModal from "../components/NewPackageModal";
-import PackageDetail from "./PackageDetail";
+import { useState, useEffect } from"react";
+import { supabase } from"../../supabase";
+import { tr } from"../../i18n";
+import { formatDate, formatDateShort } from"../../inspection/lib/inspectionUtils";
+import NewPackageModal from"../components/NewPackageModal";
+import PackageDetail from"./PackageDetail";
 
 const STATUS_META = {
-  received:  { label: "Received",  color: "#B8935A", icon: "📦" },
-  collected: { label: "Collected", color: "#7A9A5B", icon: "✓" },
-  returned:  { label: "Returned",  color: "#8f8f8f", icon: "↩" },
-  lost:      { label: "Lost",      color: "#C43D3D", icon: "⚠" },
+  received:  { label: "Received",  color: "#B8935A", icon: "" },
+  collected: { label: "Collected", color: "#7A9A5B", icon: "" },
+  returned:  { label: "Returned",  color: "#8f8f8f", icon: "" },
+  lost:      { label: "Lost",      color: "#C43D3D", icon: "" },
 };
 
 export default function PackagesTab({ TH, lang = "en", isMobile, isAdmin }) {
@@ -86,43 +86,30 @@ export default function PackagesTab({ TH, lang = "en", isMobile, isAdmin }) {
       )}
 
       {/* Header row */}
-      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, marginBottom:14, flexWrap:"wrap"}}>
-        <div>
-          <div style={{fontSize:14, fontWeight:800, color:TH.text}}>📮 {L.packagesTitle || 'Packages'}</div>
-          <div style={{fontSize:11, color:TH.textMuted, marginTop:2}}>{L.packagesDesc || 'Receive and track postal packages for guests / staff.'}</div>
-        </div>
-        <button
+      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", gap:10, marginBottom:14, flexWrap:"wrap"}}><div><div style={{fontSize:14, fontWeight:800, color:TH.text}}>{L.packagesTitle || 'Packages'}</div><div style={{fontSize:11, color:TH.textMuted, marginTop:2}}>{L.packagesDesc || 'Receive and track postal packages for guests / staff.'}</div></div><button
           onClick={() => setShowNew(true)}
           style={{
-            background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
-            color:"#000", padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer", fontFamily:"inherit",
+            background:TH.deep, border:"none", borderRadius:10,
+            color:TH.onDeep, padding:"12px 20px", fontSize:14, fontWeight:800, cursor:"pointer", fontFamily:"inherit",
             boxShadow:"0 2px 10px rgba(184,147,90,0.3)", display:"flex", alignItems:"center", gap:6,
           }}
-        >📦 {L.newPackage || 'New package'}</button>
-      </div>
+        >{L.newPackage || 'New package'}</button></div>
 
       {/* Status pills */}
-      <div style={{display:"flex", gap:6, marginBottom:12, overflowX:"auto"}}>
-        <PillBtn TH={TH} on={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
-          {L.all || 'All'} <Count on={statusFilter === "all"}>{statusCounts.all || 0}</Count>
-        </PillBtn>
+      <div style={{display:"flex", gap:6, marginBottom:12, overflowX:"auto"}}><PillBtn TH={TH} on={statusFilter === "all"} onClick={() => setStatusFilter("all")}>
+          {L.all || 'All'} <Count on={statusFilter === "all"}>{statusCounts.all || 0}</Count></PillBtn>
         {Object.entries(STATUS_META).map(([k, m]) => (
           <PillBtn key={k} TH={TH} on={statusFilter === k} onClick={() => setStatusFilter(k)}>
-            {m.icon} {m.label} <Count on={statusFilter === k}>{statusCounts[k] || 0}</Count>
-          </PillBtn>
+            {m.icon} {m.label} <Count on={statusFilter === k}>{statusCounts[k] || 0}</Count></PillBtn>
         ))}
       </div>
 
       {/* Search + property */}
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr", gap:8, marginBottom:14}}>
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.packagesSearchPh || 'Search name / package no / unit…'} style={inp(TH)} />
-        <select value={propFilter} onChange={e => setPropFilter(e.target.value)} style={inp(TH)}>
-          <option value="all">{L.allProperties || 'All properties'}</option>
+      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"2fr 1fr", gap:8, marginBottom:14}}><input value={search} onChange={e => setSearch(e.target.value)} placeholder={L.packagesSearchPh || 'Search name / package no / unit…'} style={inp(TH)} /><select value={propFilter} onChange={e => setPropFilter(e.target.value)} style={inp(TH)}><option value="all">{L.allProperties || 'All properties'}</option>
           {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-        </select>
-      </div>
+        </select></div>
 
-      {error && <div style={{background:"rgba(196,61,61,0.1)", border:"1px solid rgba(196,61,61,0.3)", borderRadius:10, padding:"12px 14px", color:"#C43D3D", fontSize:13, marginBottom:14}}>{error}</div>}
+      {error && <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:10, padding:"12px 14px", color:TH.danger, fontSize:13, marginBottom:14}}>{error}</div>}
 
       {loading ? (
         <div style={{padding:30, textAlign:"center", color:TH.textMuted}}>{L.loading || 'Loading…'}</div>
@@ -142,32 +129,21 @@ export default function PackagesTab({ TH, lang = "en", isMobile, isAdmin }) {
                 borderLeft:`3px solid ${sm.color}`, overflow:"hidden",
               }}
               onMouseEnter={e => e.currentTarget.style.background = TH.bgHover}
-              onMouseLeave={e => e.currentTarget.style.background = TH.bgCard}>
-                <div style={{display:"flex", gap:12, padding:14}}>
+              onMouseLeave={e => e.currentTarget.style.background = TH.bgCard}><div style={{display:"flex", gap:12, padding:14}}>
                   {cover ? (
-                    <img src={cover} alt="" style={{width:76, height:76, objectFit:"cover", borderRadius:10, flexShrink:0, background:"#000"}} loading="lazy" />
+                    <img src={cover} alt=""style={{width:76, height:76, objectFit:"cover", borderRadius:10, flexShrink:0, background:"#000"}} loading="lazy" />
                   ) : (
-                    <div style={{width:76, height:76, borderRadius:10, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:34}}>📦</div>
+                    <div style={{width:76, height:76, borderRadius:10, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:34}}></div>
                   )}
-                  <div style={{flex:1, minWidth:0}}>
-                    <div style={{display:"flex", justifyContent:"space-between", gap:8, marginBottom:4}}>
-                      <div style={{fontSize:14, fontWeight:800, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{p.recipient_name}</div>
-                      <span style={{fontSize:9, color:sm.color, fontWeight:700, textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0}}>{sm.icon} {sm.label}</span>
-                    </div>
-                    <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginBottom:6}}>{p.package_no}</div>
-                    <div style={{display:"flex", flexWrap:"wrap", gap:4}}>
-                      {prop && <Chip TH={TH}>🏢 {prop.name}</Chip>}
-                      {p.recipient_unit && <Chip TH={TH} gold>🏠 {p.recipient_unit}</Chip>}
-                      {p.photos?.length > 1 && <Chip TH={TH}>📸 {p.photos.length}</Chip>}
-                    </div>
-                    <div style={{fontSize:10, color:TH.textDim, marginTop:6}}>
+                  <div style={{flex:1, minWidth:0}}><div style={{display:"flex", justifyContent:"space-between", gap:8, marginBottom:4}}><div style={{fontSize:14, fontWeight:800, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{p.recipient_name}</div><span style={{fontSize:9, color:sm.color, fontWeight:700, textTransform:"uppercase", whiteSpace:"nowrap", flexShrink:0}}>{sm.icon} {sm.label}</span></div><div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace", marginBottom:6}}>{p.package_no}</div><div style={{display:"flex", flexWrap:"wrap", gap:4}}>
+                      {prop && <Chip TH={TH}>{prop.name}</Chip>}
+                      {p.recipient_unit && <Chip TH={TH} gold>{p.recipient_unit}</Chip>}
+                      {p.photos?.length > 1 && <Chip TH={TH}>{p.photos.length}</Chip>}
+                    </div><div style={{fontSize:10, color:TH.textDim, marginTop:6}}>
                       {p.status === 'collected' && p.collected_at
                         ? `${L.collectedOn || 'Collected'} · ${formatDateShort(p.collected_at)}`
                         : `${L.receivedOn || 'Received'} · ${formatDateShort(p.received_at)}`}
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    </div></div></div></div>
             );
           })}
         </div>

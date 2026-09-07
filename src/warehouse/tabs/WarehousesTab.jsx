@@ -2,8 +2,8 @@
 // WarehousesTab.jsx — list, create, EDIT, delete warehouses
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect } from "react";
-import { supabase } from "../../supabase";
+import { useState, useEffect } from"react";
+import { supabase } from"../../supabase";
 
 const EMPTY_FORM = { property_id: "", code: "", name: "", location: "", keeper_user_id: "", notes: "" };
 
@@ -131,7 +131,7 @@ export default function WarehousesTab({ TH, isMobile, isAdmin }) {
       alert(`Cannot delete: this warehouse has ${st.assets} asset(s) and ${st.consumableTypes} consumable stock line(s). Move them first.`);
       return;
     }
-    if (!confirm(`Delete warehouse "${editing.name}"? This is a soft delete — records are preserved but the warehouse becomes inactive.`)) return;
+    if (!confirm(`Delete warehouse"${editing.name}"? This is a soft delete — records are preserved but the warehouse becomes inactive.`)) return;
     setDeleting(true); setError(null);
     try {
       const { error } = await supabase.from('warehouses').update({ is_active: false }).eq('id', editing.id);
@@ -148,9 +148,7 @@ export default function WarehousesTab({ TH, isMobile, isAdmin }) {
   const propMap = Object.fromEntries(properties.map(p => [p.id, p]));
 
   return (
-    <div>
-      <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, gap:12, flexWrap:"wrap"}}>
-        <div style={{color:TH.textMuted, fontSize:13}}>
+    <div><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, gap:12, flexWrap:"wrap"}}><div style={{color:TH.textMuted, fontSize:13}}>
           {loading ? "Loading..." : `${warehouses.length} warehouse${warehouses.length===1?"":"s"}`}
         </div>
         {isAdmin && (
@@ -163,15 +161,9 @@ export default function WarehousesTab({ TH, isMobile, isAdmin }) {
       {error && <ErrorBox TH={TH}>{error}</ErrorBox>}
 
       {showForm && (
-        <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:20, marginBottom:20}}>
-          <div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:14}}>New warehouse</div>
-          <FormFields TH={TH} isMobile={isMobile} form={form} setForm={setForm} properties={properties} />
-          <div style={{display:"flex", justifyContent:"flex-end", marginTop:16, paddingTop:14, borderTop:`1px solid ${TH.border}`}}>
-            <button onClick={submitWarehouse} disabled={submitting} style={{...goldBtn(), opacity: submitting?0.6:1}}>
+        <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:20, marginBottom:20}}><div style={{fontSize:15, fontWeight:700, color:TH.text, marginBottom:14}}>New warehouse</div><FormFields TH={TH} isMobile={isMobile} form={form} setForm={setForm} properties={properties} /><div style={{display:"flex", justifyContent:"flex-end", marginTop:16, paddingTop:14, borderTop:`1px solid ${TH.border}`}}><button onClick={submitWarehouse} disabled={submitting} style={{...goldBtn(), opacity: submitting?0.6:1}}>
               {submitting ? "Creating..." : "Create warehouse"}
-            </button>
-          </div>
-        </div>
+            </button></div></div>
       )}
 
       {loading ? (
@@ -190,35 +182,21 @@ export default function WarehousesTab({ TH, isMobile, isAdmin }) {
                 {isAdmin && (
                   <button
                     onClick={() => openEdit(w)}
-                    title="Edit warehouse"
-                    style={{
+                    title="Edit warehouse"style={{
                       position:"absolute", top:12, right:12,
                       background:"transparent", border:`1px solid ${TH.border}`,
                       borderRadius:6, color:TH.textMuted,
-                      width:28, height:28, cursor:"pointer", fontSize:12,
+                      width:28, height:28, cursor:"pointer",
                       display:"flex", alignItems:"center", justifyContent:"center",
                     }}
-                  >✎</button>
+                    aria-label="Edit warehouse"
+                  ><Icon name="edit" size={14} /></button>
                 )}
-                <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10, paddingRight: isAdmin ? 36 : 0}}>
-                  <div style={{flex:1}}>
-                    <div style={{fontSize:11, fontWeight:700, color:TH.accent, letterSpacing:"0.5px"}}>{w.code}</div>
-                    <div style={{fontSize:16, fontWeight:700, color:TH.text, marginTop:2}}>{w.name}</div>
+                <div style={{display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10, paddingRight: isAdmin ? 36 : 0}}><div style={{flex:1}}><div style={{fontSize:11, fontWeight:700, color:TH.accent, letterSpacing:"0.5px"}}>{w.code}</div><div style={{fontSize:16, fontWeight:700, color:TH.text, marginTop:2}}>{w.name}</div>
                     {prop && <div style={{fontSize:12, color:TH.textMuted, marginTop:2}}>{prop.name}</div>}
-                  </div>
-                </div>
-                {w.location && <div style={{fontSize:12, color:TH.textMuted, marginBottom:12, padding:"6px 10px", background:TH.bgInput, borderRadius:6}}>📍 {w.location}</div>}
-                <div style={{display:"flex", gap:12, paddingTop:12, borderTop:`1px solid ${TH.border}`}}>
-                  <div style={{flex:1, textAlign:"center"}}>
-                    <div style={{fontSize:20, fontWeight:800, color:TH.text}}>{st.assets}</div>
-                    <div style={{fontSize:10, color:TH.textMuted, textTransform:"uppercase", fontWeight:600}}>Assets</div>
-                  </div>
-                  <div style={{flex:1, textAlign:"center"}}>
-                    <div style={{fontSize:20, fontWeight:800, color:TH.text}}>{st.consumableTypes}</div>
-                    <div style={{fontSize:10, color:TH.textMuted, textTransform:"uppercase", fontWeight:600}}>Consumables</div>
-                  </div>
-                </div>
-              </div>
+                  </div></div>
+                {w.location && <div style={{fontSize:12, color:TH.textMuted, marginBottom:12, padding:"6px 10px", background:TH.bgInput, borderRadius:6}}>{w.location}</div>}
+                <div style={{display:"flex", gap:12, paddingTop:12, borderTop:`1px solid ${TH.border}`}}><div style={{flex:1, textAlign:"center"}}><div style={{fontSize:20, fontWeight:800, color:TH.text}}>{st.assets}</div><div style={{fontSize:10, color:TH.textMuted, textTransform:"uppercase", fontWeight:600}}>Assets</div></div><div style={{flex:1, textAlign:"center"}}><div style={{fontSize:20, fontWeight:800, color:TH.text}}>{st.consumableTypes}</div><div style={{fontSize:10, color:TH.textMuted, textTransform:"uppercase", fontWeight:600}}>Consumables</div></div></div></div>
             );
           })}
         </div>
@@ -227,40 +205,21 @@ export default function WarehousesTab({ TH, isMobile, isAdmin }) {
       {/* ─── Edit modal ─── */}
       {editing && (
         <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,.7)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:200, padding:20}}
-             onClick={() => !savingEdit && !deleting && setEditing(null)}>
-          <div onClick={e => e.stopPropagation()} style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:24, width:"100%", maxWidth:560, maxHeight:"90vh", overflow:"auto"}}>
-            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}>
-              <div>
-                <div style={{fontSize:11, color:TH.accent, fontWeight:700, letterSpacing:"0.5px"}}>EDIT WAREHOUSE</div>
-                <div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:20, fontWeight:700, color:TH.text, marginTop:2}}>{editing.name}</div>
-              </div>
-              <button onClick={() => setEditing(null)} disabled={savingEdit || deleting} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:24, cursor:"pointer", padding:4, lineHeight:1}}>×</button>
-            </div>
-
-            <FormFields TH={TH} isMobile={isMobile} form={editForm} setForm={setEditForm} properties={properties} />
-
-            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20, paddingTop:16, borderTop:`1px solid ${TH.border}`, gap:8, flexWrap:"wrap"}}>
-              <button onClick={deleteWarehouse} disabled={savingEdit || deleting} style={{
+             onClick={() => !savingEdit && !deleting && setEditing(null)}><div onClick={e => e.stopPropagation()} style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:14, padding:24, width:"100%", maxWidth:560, maxHeight:"90vh", overflow:"auto"}}><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16}}><div><div style={{fontSize:11, color:TH.accent, fontWeight:700, letterSpacing:"0.5px"}}>EDIT WAREHOUSE</div><div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:20, fontWeight:700, color:TH.text, marginTop:2}}>{editing.name}</div></div><button onClick={() => setEditing(null)} disabled={savingEdit || deleting} style={{background:"transparent", border:"none", color:TH.textMuted, fontSize:24, cursor:"pointer", padding:4, lineHeight:1}}>×</button></div><FormFields TH={TH} isMobile={isMobile} form={editForm} setForm={setEditForm} properties={properties} /><div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:20, paddingTop:16, borderTop:`1px solid ${TH.border}`, gap:8, flexWrap:"wrap"}}><button onClick={deleteWarehouse} disabled={savingEdit || deleting} style={{
                 background:"transparent", border:"1px solid rgba(201,80,80,.4)",
-                borderRadius:8, color:"#d67373", padding:"9px 14px",
+                borderRadius:8, color:TH.danger, padding:"9px 14px",
                 cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit",
+                display:"inline-flex", alignItems:"center", gap:6,
                 opacity:(savingEdit || deleting)?0.6:1,
               }}>
-                {deleting ? "Deleting..." : "🗑 Delete"}
-              </button>
-              <div style={{display:"flex", gap:8}}>
-                <button onClick={() => setEditing(null)} disabled={savingEdit || deleting} style={{
+                {deleting ? "Deleting..." : "Delete"}
+              </button><div style={{display:"flex", gap:8}}><button onClick={() => setEditing(null)} disabled={savingEdit || deleting} style={{
                   background:"transparent", border:`1px solid ${TH.border}`,
                   borderRadius:8, color:TH.text, padding:"9px 14px",
                   cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit",
-                }}>Cancel</button>
-                <button onClick={saveEdit} disabled={savingEdit || deleting} style={{...goldBtn(), padding:"9px 18px", opacity:savingEdit?0.6:1}}>
+                }}>Cancel</button><button onClick={saveEdit} disabled={savingEdit || deleting} style={{...goldBtn(), padding:"9px 18px", opacity:savingEdit?0.6:1}}>
                   {savingEdit ? "Saving..." : "Save changes"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+                </button></div></div></div></div>
       )}
     </div>
   );
@@ -269,35 +228,15 @@ export default function WarehousesTab({ TH, isMobile, isAdmin }) {
 // ═══════════════════════════════════════════════════════════════════
 function FormFields({ TH, isMobile, form, setForm, properties }) {
   return (
-    <>
-      <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:12}}>
-        <Field TH={TH} label="Property *">
-          <select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} style={inputStyle(TH)}>
-            <option value="">Select property...</option>
+    <><div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"1fr 1fr", gap:12}}><Field TH={TH} label="Property *"><select value={form.property_id} onChange={e => setForm(f => ({ ...f, property_id: e.target.value }))} style={inputStyle(TH)}><option value="">Select property...</option>
             {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-          </select>
-        </Field>
-        <Field TH={TH} label="Code * (e.g. CR-POOL)">
-          <input value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="Unique short code" style={inputStyle(TH)} />
-        </Field>
-        <Field TH={TH} label="Name *">
-          <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Warehouse name" style={inputStyle(TH)} />
-        </Field>
-        <Field TH={TH} label="Location">
-          <input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Building, floor, etc." style={inputStyle(TH)} />
-        </Field>
-      </div>
-      <Field TH={TH} label="Notes" style={{marginTop:12}}>
-        <textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={3} style={{...inputStyle(TH), minHeight:60, resize:"vertical"}} />
-      </Field>
-    </>
+          </select></Field><Field TH={TH} label="Code * (e.g. CR-POOL)"><input value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="Unique short code"style={inputStyle(TH)} /></Field><Field TH={TH} label="Name *"><input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Warehouse name"style={inputStyle(TH)} /></Field><Field TH={TH} label="Location"><input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Building, floor, etc."style={inputStyle(TH)} /></Field></div><Field TH={TH} label="Notes"style={{marginTop:12}}><textarea value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} rows={3} style={{...inputStyle(TH), minHeight:60, resize:"vertical"}} /></Field></>
   );
 }
 
 function Field({ TH, label, children, style }) {
   return (
-    <div style={style}>
-      <label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{label}</label>
+    <div style={style}><label style={{display:"block", color:TH.textMuted, fontSize:12, marginBottom:6, fontWeight:600}}>{label}</label>
       {children}
     </div>
   );
@@ -306,8 +245,8 @@ function inputStyle(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
 }
 function goldBtn() {
-  return { background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10, color:"#000", padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit" };
+  return { background:"linear-gradient(135deg,#C9A960,#8B7A44)", border:"none", borderRadius:10, color:TH.onDeep, padding:"10px 16px", cursor:"pointer", fontSize:13, fontWeight:700, fontFamily:"inherit" };
 }
 function ErrorBox({ TH, children }) {
-  return <div style={{background:"rgba(201,80,80,.10)", border:"1px solid rgba(201,80,80,.35)", borderRadius:9, padding:"10px 14px", color:"#d67373", fontSize:13, marginBottom:16}}>{children}</div>;
+  return <div style={{background:TH.dangerBg, border:`1px solid ${TH.danger}55`, borderRadius:9, padding:"10px 14px", color:TH.danger, fontSize:13, marginBottom:16}}>{children}</div>;
 }

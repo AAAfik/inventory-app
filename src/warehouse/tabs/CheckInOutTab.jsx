@@ -3,11 +3,11 @@
 // Uses native BarcodeDetector (Chrome/Android). Fallback: type asset no.
 // ═══════════════════════════════════════════════════════════════════
 
-import { useState, useEffect, useRef } from "react";
-import { supabase } from "../../supabase";
-import { fmtDate, daysUntil } from "../lib/warehouseUtils";
-import { tr } from "../../i18n";
-import AssetDetail from "./AssetDetail";
+import { useState, useEffect, useRef } from"react";
+import { supabase } from"../../supabase";
+import { fmtDate, daysUntil } from"../lib/warehouseUtils";
+import { tr } from"../../i18n";
+import AssetDetail from"./AssetDetail";
 
 export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) {
   const L = tr(lang);
@@ -45,7 +45,7 @@ export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) 
     const no = assetNo.trim().toUpperCase();
     if (!no) return;
     const { data, error: e } = await supabase.from('assets').select('id').eq('asset_no', no).maybeSingle();
-    if (e || !data) { setError(`Asset "${no}" not found`); return; }
+    if (e || !data) { setError(`Asset"${no}"not found`); return; }
     stopScan();
     setSelected(data.id);
   }
@@ -100,28 +100,20 @@ export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) 
   return (
     <div>
       {/* Scan bar */}
-      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16, marginBottom:16}}>
-        <div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:10}}>{L.scanTitle}</div>
+      <div style={{background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, padding:16, marginBottom:16}}><div style={{fontSize:14, fontWeight:700, color:TH.text, marginBottom:10}}>{L.scanTitle}</div>
         {!scanning ? (
-          <div style={{display:"flex", gap:8, flexWrap:"wrap"}}>
-            <button onClick={startScan} style={{
-              background:"linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:10,
-              color:"#000", padding:"12px 22px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
-            }}>{L.scanQR}</button>
-            <input
+          <div style={{display:"flex", gap:8, flexWrap:"wrap"}}><button onClick={startScan} style={{
+              background:TH.deep, border:"none", borderRadius:10,
+              color:TH.onDeep, padding:"12px 22px", cursor:"pointer", fontSize:14, fontWeight:800, fontFamily:"inherit",
+            }}>{L.scanQR}</button><input
               value={manualNo}
               onChange={e => setManualNo(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && openByNo(manualNo)}
               placeholder={L.typeAssetNo}
               style={{flex:1, minWidth:180, background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:10, padding:"11px 12px", color:TH.text, fontSize:14, outline:"none", fontFamily:"monospace", boxSizing:"border-box"}}
-            />
-            <button onClick={() => openByNo(manualNo)} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.text, padding:"11px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.open}</button>
-          </div>
+            /><button onClick={() => openByNo(manualNo)} style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.text, padding:"11px 18px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.open}</button></div>
         ) : (
-          <div>
-            <video ref={videoRef} muted playsInline style={{width:"100%", maxHeight:320, borderRadius:10, background:"#000", objectFit:"cover"}} />
-            <button onClick={stopScan} style={{marginTop:10, width:"100%", background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.stopScan}</button>
-          </div>
+          <div><video ref={videoRef} muted playsInline style={{width:"100%", maxHeight:320, borderRadius:10, background:"#000", objectFit:"cover"}} /><button onClick={stopScan} style={{marginTop:10, width:"100%", background:"transparent", border:`1px solid ${TH.border}`, borderRadius:10, color:TH.textMuted, padding:"11px", cursor:"pointer", fontSize:13, fontWeight:600, fontFamily:"inherit"}}>{L.stopScan}</button></div>
         )}
       </div>
 
@@ -149,28 +141,19 @@ export default function CheckInOutTab({ TH, lang = "en", isMobile, onChanged }) 
                 display:"flex", gap:12, alignItems:"center",
               }}>
                 {a.photo_url ? (
-                  <img src={a.photo_url} alt="" style={{width:52, height:52, objectFit:"cover", borderRadius:9, flexShrink:0, background:"#000"}} loading="lazy" />
+                  <img src={a.photo_url} alt=""style={{width:52, height:52, objectFit:"cover", borderRadius:9, flexShrink:0, background:"#000"}} loading="lazy" />
                 ) : (
-                  <div style={{width:52, height:52, borderRadius:9, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22}}>📦</div>
+                  <div style={{width:52, height:52, borderRadius:9, flexShrink:0, background:TH.bgInput, display:"flex", alignItems:"center", justifyContent:"center", fontSize:22}}></div>
                 )}
-                <div style={{flex:1, minWidth:0}}>
-                  <div style={{fontSize:14, fontWeight:700, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div>
-                  <div style={{fontSize:12, color:TH.textMuted}}>👤 {a.holder_name || 'unknown'}{a.holder_phone ? ` · ${a.holder_phone}` : ''}</div>
-                  <div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace"}}>{a.asset_no}</div>
-                </div>
-                <div style={{textAlign:"right", flexShrink:0}}>
+                <div style={{flex:1, minWidth:0}}><div style={{fontSize:14, fontWeight:700, color:TH.text, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap"}}>{a.name}</div><div style={{fontSize:12, color:TH.textMuted}}>{a.holder_name || 'unknown'}{a.holder_phone ? ` · ${a.holder_phone}` : ''}</div><div style={{fontSize:10, color:TH.textDim, fontFamily:"monospace"}}>{a.asset_no}</div></div><div style={{textAlign:"right", flexShrink:0}}>
                   {a.expected_return_at ? (
-                    <>
-                      <div style={{fontSize:11, color: overdue ? "#B8935A" : TH.textMuted, fontWeight: overdue ? 800 : 500}}>
+                    <><div style={{fontSize:11, color: overdue ? "#B8935A" : TH.textMuted, fontWeight: overdue ? 800 : 500}}>
                         {overdue ? `${L.overdue} ${-d}d` : d === 0 ? L.dueToday : `${d}${L.daysLeft}`}
-                      </div>
-                      <div style={{fontSize:10, color:TH.textDim}}>{fmtDate(a.expected_return_at)}</div>
-                    </>
+                      </div><div style={{fontSize:10, color:TH.textDim}}>{fmtDate(a.expected_return_at)}</div></>
                   ) : (
                     <div style={{fontSize:11, color:TH.textDim}}>{L.noReturnDate}</div>
                   )}
-                </div>
-              </div>
+                </div></div>
             );
           })}
         </div>
