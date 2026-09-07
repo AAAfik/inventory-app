@@ -9,6 +9,7 @@ import ProcureHub from "./procurement/ProcureHub";
 import ProcurementHub from "./procurement/ProcurementHub";
 import MaintenanceTracker from "./maintenance/MaintenanceTracker";
 import PWAInstall from "./PWAInstall";
+import ErrorBoundary from "./ErrorBoundary";
 import { tr } from "./i18n";
 
 // ─── Feature flags ──────────────────────────────────────────────────
@@ -308,14 +309,14 @@ export default function InventorySystem() {
                 })} </div>))} <div style={{flex:1}} /><div style={{padding:"12px"}}><PWAInstall TH={TH} isMobile={isMobile} /></div></aside>)}
 
         {/* ═══ MAIN ═══ */} <main style={{flex:1, minWidth:0, padding: isMobile?"14px 12px":"22px 26px", overflow:"auto"}}>{allTabs.length === 0 && ( <div style={{maxWidth:520, margin:"80px auto", textAlign:"center", padding:"40px 32px", background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:16, boxShadow:TH.cardGlow}}><div style={{fontSize:38, marginBottom:12, color:TH.accent, fontFamily:"'Playfair Display',Georgia,serif"}}>⊘</div><div style={{fontFamily:"'Playfair Display',Georgia,serif", fontSize:22, fontWeight:400, color:TH.text, marginBottom:8}}>{t.noAccessTitle}</div><div style={{color:TH.textMuted, fontSize:14, lineHeight:1.6}}>{t.noAccessDesc} </div><div style={{marginTop:16, fontSize:12, color:TH.textDim}}>{email}</div></div>)}
-          {tab==="dashboard" && canSeeDashboard   && <DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} userName={userName} />}
-          {tab==="warehouse" && WAREHOUSE_ENABLED  && canSeeWarehouse  && <WarehouseHub  TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="inspection" && INSPECTION_ENABLED && canSeeInspection && <InspectionHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="pools" && POOLS_ENABLED      && canSeePools      && <PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="procure" && PROCURE_ENABLED    && canSeeProcure    && <ProcureHub    TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="requests" && REQUESTS_ENABLED   && canSeeRequests   && <ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="maintenance" && MAINTENANCE_ENABLED && canSeeMaintenance && <MaintenanceTracker TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} />}
-          {tab==="users" && canSeeUsers        && <UsersTab TH={TH} lang={lang} isMobile={isMobile} />} </main></div></div>);
+          {tab==="dashboard" && canSeeDashboard   && <ErrorBoundary TH={TH} name="Dashboard"><DashboardTab TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} onNav={setTab} userName={userName} /></ErrorBoundary>}
+          {tab==="warehouse" && WAREHOUSE_ENABLED  && canSeeWarehouse  && <ErrorBoundary TH={TH} name="Asset Management"><WarehouseHub  TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /></ErrorBoundary>}
+          {tab==="inspection" && INSPECTION_ENABLED && canSeeInspection && <ErrorBoundary TH={TH} name="Inspections"><InspectionHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /></ErrorBoundary>}
+          {tab==="pools" && POOLS_ENABLED      && canSeePools      && <ErrorBoundary TH={TH} name="Pool Control"><PoolControlHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /></ErrorBoundary>}
+          {tab==="procure" && PROCURE_ENABLED    && canSeeProcure    && <ErrorBoundary TH={TH} name="Procure"><ProcureHub    TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /></ErrorBoundary>}
+          {tab==="requests" && REQUESTS_ENABLED   && canSeeRequests   && <ErrorBoundary TH={TH} name="Requests"><ProcurementHub TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /></ErrorBoundary>}
+          {tab==="maintenance" && MAINTENANCE_ENABLED && canSeeMaintenance && <ErrorBoundary TH={TH} name="Maintenance"><MaintenanceTracker TH={TH} lang={lang} isMobile={isMobile} isAdmin={isAdmin} /></ErrorBoundary>}
+          {tab==="users" && canSeeUsers        && <ErrorBoundary TH={TH} name="Team & access"><UsersTab TH={TH} lang={lang} isMobile={isMobile} /></ErrorBoundary>} </main></div></div>);
 }
 
 // ═══════════════════════════════════════════════════════════════════

@@ -36,10 +36,12 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
   async function load() {
     setLoading(true); setError(null);
     try {
-      const itemsQ = supabase.from('items')
-        .select('id, code, name, description, category, unit, min_qty, last_unit_cost, currency, current_qty, default_supplier_id, is_active')
-        .order('name');
-      if (!showInactive) itemsQ.eq('is_active', true);
+      // NOTE: filters must be applied BEFORE .order() — .order() returns a
+      // transform builder that has no .eq() in supabase-js v2.
+      let itemsQ = supabase.from('items')
+        .select('id, code, name, description, category, unit, min_qty, last_unit_cost, currency, current_qty, default_supplier_id, is_active');
+      if (!showInactive) itemsQ = itemsQ.eq('is_active', true);
+      itemsQ = itemsQ.order('name');
 
       const [rI, rS, rW] = await Promise.all([
         itemsQ,
