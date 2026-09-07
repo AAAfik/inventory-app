@@ -64,13 +64,31 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
   const rows = [];
   items.forEach(item => {
     if (search && !`${item.name} ${item.code || ''} ${item.category || ''}`.toLowerCase().includes(search.toLowerCase())) return;
-    whList.forEach(w => {
+
+    if (whFilter === "all") {
+      // ─── One row per item: total across every warehouse ─────────
+      let total = 0;
+      const breakdown = [];
+      warehouses.forEach(w => {
+        const q = stockMap[`${item.id}-${w.id}`] ?? 0;
+        total += q;
+        if (q !== 0) breakdown.push({ code: w.code, qty: q });
+      });
+      const low = item.min_qty != null && total < Number(item.min_qty);
+      // Hide items with no stock anywhere unless they're genuinely low-flagged and we're hunting for those
+      if (total === 0 && !lowOnly) return;
+      if (lowOnly && !low) return;
+      rows.push({ item, warehouse: null, qty: total, low, breakdown });
+    } else {
+      // ─── Specific warehouse: show its own stock line ────────────
+      const w = warehouses.find(x => String(x.id) === whFilter);
+      if (!w) return;
       const qty = stockMap[`${item.id}-${w.id}`] ?? 0;
       const low = item.min_qty != null && qty < Number(item.min_qty);
       if (lowOnly && !low) return;
-      if (whFilter === "all" && qty === 0 && !low) return;
-      rows.push({ item, warehouse: w, qty, low });
-    });
+      if (!lowOnly && qty === 0) return;
+      rows.push({ item, warehouse: w, qty, low, breakdown: null });
+    }
   });
 
   // Item catalog view (no warehouse breakdown)
@@ -138,12 +156,14 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
               No items yet.
               {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(), marginTop:12}}>+ Create your first item</button></>}
             </>
-          ) : "No stock rows. Try picking a specific warehouse or using ↓ Receive to add stock."}
+          ) : lowOnly
+            ? "Nothing is below its minimum level."
+            : "No stock on hand. Use ↓ Receive to bring items in, or switch to Items catalog to see all products."}
         </div>
       ) : (
         <div style={{display:"flex", flexDirection:"column", gap:8}}>
-          {rows.map(({ item, warehouse, qty, low }) => (
-            <div key={`${item.id}-${warehouse.id}`} style={{
+          {rows.map(({ item, warehouse, qty, low, breakdown }) => (
+            <div key={warehouse ? `${item.id}-${warehouse.id}` : `${item.id}-all`} style={{
               background:TH.bgCard, border:`1px solid ${low ? "rgba(139,112,64,0.5)" : TH.border}`,
               borderRadius:10, padding:"12px 14px",
               display:"flex", alignItems:"center", gap:12,
@@ -151,8 +171,19 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
               <div style={{flex:1, minWidth:0, cursor:"pointer"}} onClick={() => setHistoryItem(item)}>
                 <div style={{fontSize:13, fontWeight:700, color:TH.text}}>{item.name}</div>
                 <div style={{fontSize:10, color:TH.textDim}}>
-                  {item.code ? `${item.code} · ` : ''}{warehouse.code}{item.category ? ` · ${item.category}` : ''}
+                  {item.code ? `${item.code} · ` : ''}
+                  {warehouse ? warehouse.code : (item.department || '')}
+                  {item.category ? ` · ${item.category}` : ''}
                 </div>
+                {breakdown && breakdown.length > 0 && (
+                  <div style={{display:"flex", gap:4, marginTop:5, flexWrap:"wrap"}}>
+                    {breakdown.map(b => (
+                      <span key={b.code} style={{fontSize:9, color:TH.textMuted, background:TH.bgInput, border:`1px solid ${TH.border}`, padding:"1px 6px", borderRadius:3}}>
+                        {b.code}: <b style={{color:TH.text}}>{b.qty}</b>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
               <div style={{textAlign:"right"}}>
                 <div style={{fontSize:18, fontWeight:800, color: low ? "#B8935A" : TH.text, lineHeight:1}}>
