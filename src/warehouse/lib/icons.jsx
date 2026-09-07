@@ -61,6 +61,12 @@ const P = {
   dot:       <circle cx="12" cy="12" r="4.5" />,
   chevron:   <path d="M9 6l6 6-6 6"/>,
   chevronDown: <path d="M6 9l6 6 6-6"/>,
+  chart:     <><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></>,
+  filter:    <path d="M3 5h18l-7 8v6l-4-2v-4z"/>,
+  download:  <><path d="M12 3v12M7 11l5 5 5-5"/><path d="M4 20h16"/></>,
+  upload:    <><path d="M12 16V4M7 8l5-5 5 5"/><path d="M4 20h16"/></>,
+  list:      <><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></>,
+  tag:       <><path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><path d="M7.5 7.5h.01"/></>,
 };
 
 export function Icon({ name, size = 16, sw = 1.75, style, title }) {

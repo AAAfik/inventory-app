@@ -9,9 +9,8 @@ import ItemFormModal from "../components/ItemFormModal";
 import ItemHistoryModal from "../components/ItemHistoryModal";
 import ReceiveModal from "../components/ReceiveModal";
 import DispenseModal from "../components/DispenseModal";
-import { Icon } from "../lib/icons";
 
-export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
+export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin, startView = "stock" }) {
   const L = tr(lang);
   const [items, setItems] = useState([]);
   const [stock, setStock] = useState([]);
@@ -19,7 +18,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const [view, setView] = useState("stock");    // 'stock' | 'items'
+  const [view, setView] = useState(startView);    // 'stock' | 'items'
   const [whFilter, setWhFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [lowOnly, setLowOnly] = useState(false);
@@ -36,12 +35,10 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
   async function load() {
     setLoading(true); setError(null);
     try {
-      // NOTE: filters must be applied BEFORE .order() — .order() returns a
-      // transform builder that has no .eq() in supabase-js v2.
-      let itemsQ = supabase.from('items')
-        .select('id, code, name, description, category, unit, min_qty, last_unit_cost, currency, current_qty, default_supplier_id, is_active');
-      if (!showInactive) itemsQ = itemsQ.eq('is_active', true);
-      itemsQ = itemsQ.order('name');
+      const itemsQ = supabase.from('items')
+        .select('id, code, name, description, category, unit, min_qty, last_unit_cost, currency, current_qty, default_supplier_id, is_active')
+        .order('name');
+      if (!showInactive) itemsQ.eq('is_active', true);
 
       const [rI, rS, rW] = await Promise.all([
         itemsQ,
@@ -111,13 +108,13 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
       {/* ─── View switcher + actions ─── */}
       <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, flexWrap:"wrap", gap:10}}>
         <div style={{display:"flex", gap:4, background:TH.bgInput, borderRadius:9, padding:3}}>
-          <button onClick={() => setView("stock")} style={tabBtn(TH, view === "stock")}> Stock</button>
-          <button onClick={() => setView("items")} style={tabBtn(TH, view === "items")}><Icon name="ledger" size={14} />Items catalog</button>
+          <button onClick={() => setView("stock")} style={tabBtn(TH, view === "stock")}>📦 Stock</button>
+          <button onClick={() => setView("items")} style={tabBtn(TH, view === "items")}>📋 Items catalog</button>
         </div>
         <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
-          <button onClick={() => setReceivePreset("")} style={btnGreen(TH)}><Icon name="arrowDown" size={14} />Receive</button>
-          <button onClick={() => setDispensePreset("")} style={btnGold(TH)}><Icon name="arrowUp" size={14} />Dispense</button>
-          {isAdmin && <button onClick={() => setEditItem({})} style={btnOutline(TH)}><Icon name="plus" size={14} />New item</button>}
+          <button onClick={() => setReceivePreset("")} style={btnGreen()}>↓ Receive</button>
+          <button onClick={() => setDispensePreset("")} style={btnGold()}>↑ Dispense</button>
+          {isAdmin && <button onClick={() => setEditItem({})} style={btnOutline(TH)}>+ New item</button>}
         </div>
       </div>
 
@@ -132,11 +129,11 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
         )}
         {view === "stock" ? (
           <button onClick={() => setLowOnly(v => !v)} style={{
-            background: lowOnly ? TH.warnBg : "transparent",
-            border:`1px solid ${lowOnly ? TH.warn : TH.border}`, borderRadius:8,
-            color: lowOnly ? TH.warn : TH.textMuted, padding:"9px 16px",
+            background: lowOnly ? "rgba(139,112,64,0.2)" : "transparent",
+            border:`1px solid ${lowOnly ? "#8B7040" : TH.border}`, borderRadius:8,
+            color: lowOnly ? "#B8935A" : TH.textMuted, padding:"9px 16px",
             cursor:"pointer", fontSize:13, fontWeight: lowOnly ? 700 : 500, fontFamily:"inherit", whiteSpace:"nowrap",
-          }}>{L.lowOnly || " Low only"}</button>
+          }}>{L.lowOnly || "⚠ Low only"}</button>
         ) : (
           isAdmin && (
             <label style={{display:"flex", alignItems:"center", gap:6, padding:"9px 12px", cursor:"pointer", color:TH.textMuted, fontSize:12}}>
@@ -157,24 +154,26 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
           {items.length === 0 ? (
             <>
               No items yet.
-              {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(TH), marginTop:12}}>+ Create your first item</button></>}
+              {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(), marginTop:12}}>+ Create your first item</button></>}
             </>
           ) : lowOnly
             ? "Nothing is below its minimum level."
-            : "No stock on hand. Use Receive to bring items in, or switch to Items catalog to see all products."}
+            : "No stock on hand. Use ↓ Receive to bring items in, or switch to Items catalog to see all products."}
         </div>
       ) : (
         <div style={{display:"flex", flexDirection:"column", gap:8}}>
           {rows.map(({ item, warehouse, qty, low, breakdown }) => (
             <div key={warehouse ? `${item.id}-${warehouse.id}` : `${item.id}-all`} style={{
-              background:TH.bgCard, border:`1px solid ${low ? TH.warn + "66" : TH.border}`,
+              background:TH.bgCard, border:`1px solid ${low ? "rgba(139,112,64,0.5)" : TH.border}`,
               borderRadius:10, padding:"12px 14px",
               display:"flex", alignItems:"center", gap:12,
             }}>
               <div style={{flex:1, minWidth:0, cursor:"pointer"}} onClick={() => setHistoryItem(item)}>
                 <div style={{fontSize:13, fontWeight:700, color:TH.text}}>{item.name}</div>
                 <div style={{fontSize:10, color:TH.textDim}}>
-                  {[item.code, warehouse ? warehouse.code : item.department, item.category].filter(Boolean).join(' · ')}
+                  {item.code ? `${item.code} · ` : ''}
+                  {warehouse ? warehouse.code : (item.department || '')}
+                  {item.category ? ` · ${item.category}` : ''}
                 </div>
                 {breakdown && breakdown.length > 0 && (
                   <div style={{display:"flex", gap:4, marginTop:5, flexWrap:"wrap"}}>
@@ -187,16 +186,16 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
                 )}
               </div>
               <div style={{textAlign:"right"}}>
-                <div style={{fontSize:18, fontWeight:800, color: low ? TH.warn : TH.text, lineHeight:1}}>
+                <div style={{fontSize:18, fontWeight:800, color: low ? "#B8935A" : TH.text, lineHeight:1}}>
                   {qty} <span style={{fontSize:10, color:TH.textDim, fontWeight:500}}>{item.unit || ''}</span>
                 </div>
-                {low && <div style={{fontSize:9, color:TH.warn, fontWeight:700}}>{L.low || "LOW"} ({L.min || "min"} {item.min_qty})</div>}
+                {low && <div style={{fontSize:9, color:"#B8935A", fontWeight:700}}>{L.low || "LOW"} ({L.min || "min"} {item.min_qty})</div>}
               </div>
               <div style={{display:"flex", gap:4, flexShrink:0}}>
-                <button onClick={() => setReceivePreset(item.id)} title="Receive stock" aria-label="Receive stock" style={{background:"transparent", border:`1px solid ${TH.ok}55`, borderRadius:6, color:TH.ok, padding:"6px 9px", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center"}}><Icon name="arrowDown" size={14} /></button>
-                <button onClick={() => setDispensePreset(item.id)} title="Dispense" aria-label="Dispense" style={{background:"transparent", border:`1px solid ${TH.accent}55`, borderRadius:6, color:TH.accent, padding:"6px 9px", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center"}}><Icon name="arrowUp" size={14} /></button>
-                <button onClick={() => setHistoryItem(item)} title="Movement history" aria-label="Movement history" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"6px 9px", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center"}}><Icon name="ledger" size={14} /></button>
-                {isAdmin && <button onClick={() => setEditItem(item)} title="Edit item" aria-label="Edit item" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"6px 9px", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center"}}><Icon name="edit" size={14} /></button>}
+                <button onClick={() => setReceivePreset(item.id)} title="Receive stock" style={{background:"transparent", border:`1px solid rgba(122,154,91,0.4)`, borderRadius:6, color:"#7A9A5B", padding:"6px 10px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit"}}>↓</button>
+                <button onClick={() => setDispensePreset(item.id)} title="Dispense" style={{background:"transparent", border:`1px solid rgba(184,147,90,0.4)`, borderRadius:6, color:"#B8935A", padding:"6px 10px", cursor:"pointer", fontSize:14, fontWeight:700, fontFamily:"inherit"}}>↑</button>
+                <button onClick={() => setHistoryItem(item)} title="Movement history" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"6px 10px", cursor:"pointer", fontSize:12, fontFamily:"inherit"}}>📜</button>
+                {isAdmin && <button onClick={() => setEditItem(item)} title="Edit item" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"6px 10px", cursor:"pointer", fontSize:12, fontFamily:"inherit"}}>✎</button>}
               </div>
             </div>
           ))}
@@ -209,7 +208,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
       ) : catalogItems.length === 0 ? (
         <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
           No items match.
-          {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(TH), marginTop:12}}><Icon name="plus" size={14} />New item</button></>}
+          {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(), marginTop:12}}>+ New item</button></>}
         </div>
       ) : (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill, minmax(280px, 1fr))", gap:10}}>
@@ -228,7 +227,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
                     {item.category}
                   </div>
                 </div>
-                {isAdmin && <button onClick={() => setEditItem(item)} title="Edit" aria-label="Edit item" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"5px 8px", cursor:"pointer", fontFamily:"inherit", display:"flex", alignItems:"center"}}><Icon name="edit" size={13} /></button>}
+                {isAdmin && <button onClick={() => setEditItem(item)} title="Edit" style={{background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"4px 8px", cursor:"pointer", fontSize:11, fontFamily:"inherit"}}>✎</button>}
               </div>
               {item.description && <div style={{fontSize:11, color:TH.textMuted, marginBottom:6, lineHeight:1.4}}>{item.description}</div>}
               <div style={{display:"flex", gap:6, flexWrap:"wrap", marginTop:8}}>
@@ -238,9 +237,9 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
                 {item.last_unit_cost != null && <span style={{...chip(TH), color:TH.accent}}>€{item.last_unit_cost}/{item.unit}</span>}
               </div>
               <div style={{display:"flex", gap:4, marginTop:10}}>
-                <button onClick={() => setReceivePreset(item.id)} style={{flex:1, background:"transparent", border:`1px solid rgba(122,154,91,0.4)`, borderRadius:6, color:"#7A9A5B", padding:"6px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}><Icon name="arrowDown" size={14} />Receive</button>
-                <button onClick={() => setDispensePreset(item.id)} style={{flex:1, background:"transparent", border:`1px solid rgba(184,147,90,0.4)`, borderRadius:6, color:"#B8935A", padding:"6px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}><Icon name="arrowUp" size={14} />Dispense</button>
-                <button onClick={() => setHistoryItem(item)} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"6px", cursor:"pointer", fontSize:11, fontWeight:600, fontFamily:"inherit"}}><Icon name="ledger" size={13} />History</button>
+                <button onClick={() => setReceivePreset(item.id)} style={{flex:1, background:"transparent", border:`1px solid rgba(122,154,91,0.4)`, borderRadius:6, color:"#7A9A5B", padding:"6px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}>↓ Receive</button>
+                <button onClick={() => setDispensePreset(item.id)} style={{flex:1, background:"transparent", border:`1px solid rgba(184,147,90,0.4)`, borderRadius:6, color:"#B8935A", padding:"6px", cursor:"pointer", fontSize:11, fontWeight:700, fontFamily:"inherit"}}>↑ Dispense</button>
+                <button onClick={() => setHistoryItem(item)} style={{flex:1, background:"transparent", border:`1px solid ${TH.border}`, borderRadius:6, color:TH.textMuted, padding:"6px", cursor:"pointer", fontSize:11, fontWeight:600, fontFamily:"inherit"}}>📜 History</button>
               </div>
             </div>
           ))}
@@ -256,18 +255,18 @@ function tabBtn(TH, active) {
     border: "none", borderRadius: 7,
     color: active ? TH.text : TH.textMuted,
     padding: "6px 14px", cursor: "pointer", fontSize: 12,
-    fontWeight: active ? 700 : 500, fontFamily: "inherit", display:"inline-flex", alignItems:"center", gap:6,
+    fontWeight: active ? 700 : 500, fontFamily: "inherit",
     boxShadow: active ? "0 1px 3px rgba(0,0,0,0.2)" : "none",
   };
 }
-function btnGreen(TH) {
-  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background:TH.ok, border:"none", borderRadius:9, color:TH.onDeep, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
+function btnGreen() {
+  return { background: "linear-gradient(135deg,#7A9A5B,#5B7A44)", border:"none", borderRadius:9, color:"#fff", padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
 }
-function btnGold(TH) {
-  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background:TH.deep, border:`1px solid ${TH.deepBorder}`, borderRadius:9, color:TH.onDeep, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
+function btnGold() {
+  return { background: "linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
 }
 function btnOutline(TH) {
-  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background:"transparent", border:`1px solid ${TH.accent}`, borderRadius:9, color:TH.accent, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit" };
+  return { background:"transparent", border:`1px solid ${TH.accent}`, borderRadius:9, color:TH.accent, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit" };
 }
 function inp(TH) {
   return { width:"100%", background:TH.bgInput, border:`1px solid ${TH.border}`, borderRadius:8, padding:"9px 12px", color:TH.text, fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
