@@ -113,8 +113,8 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
           <button onClick={() => setView("items")} style={tabBtn(TH, view === "items")}><Icon name="ledger" size={14} />Items catalog</button>
         </div>
         <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
-          <button onClick={() => setReceivePreset("")} style={btnGreen()}><Icon name="arrowDown" size={14} />Receive</button>
-          <button onClick={() => setDispensePreset("")} style={btnGold()}><Icon name="arrowUp" size={14} />Dispense</button>
+          <button onClick={() => setReceivePreset("")} style={btnGreen(TH)}><Icon name="arrowDown" size={14} />Receive</button>
+          <button onClick={() => setDispensePreset("")} style={btnGold(TH)}><Icon name="arrowUp" size={14} />Dispense</button>
           {isAdmin && <button onClick={() => setEditItem({})} style={btnOutline(TH)}><Icon name="plus" size={14} />New item</button>}
         </div>
       </div>
@@ -155,7 +155,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
           {items.length === 0 ? (
             <>
               No items yet.
-              {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(), marginTop:12}}>+ Create your first item</button></>}
+              {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(TH), marginTop:12}}>+ Create your first item</button></>}
             </>
           ) : lowOnly
             ? "Nothing is below its minimum level."
@@ -207,7 +207,7 @@ export default function ConsumablesTab({ TH, lang = "en", isMobile, isAdmin }) {
       ) : catalogItems.length === 0 ? (
         <div style={{padding:40, background:TH.bgCard, border:`1px solid ${TH.border}`, borderRadius:12, color:TH.textMuted, textAlign:"center"}}>
           No items match.
-          {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(), marginTop:12}}><Icon name="plus" size={14} />New item</button></>}
+          {isAdmin && <><br/><button onClick={() => setEditItem({})} style={{...btnGold(TH), marginTop:12}}><Icon name="plus" size={14} />New item</button></>}
         </div>
       ) : (
         <div style={{display:"grid", gridTemplateColumns:isMobile?"1fr":"repeat(auto-fill, minmax(280px, 1fr))", gap:10}}>
@@ -258,11 +258,11 @@ function tabBtn(TH, active) {
     boxShadow: active ? "0 1px 3px rgba(0,0,0,0.2)" : "none",
   };
 }
-function btnGreen() {
-  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background: TH ? TH.ok : "#4E7B3A", border:"none", borderRadius:9, color:"#fff", padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
+function btnGreen(TH) {
+  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background:TH.ok, border:"none", borderRadius:9, color:TH.onDeep, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
 }
-function btnGold() {
-  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background: "linear-gradient(135deg,#B8935A,#8B7040)", border:"none", borderRadius:9, color:"#000", padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
+function btnGold(TH) {
+  return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background:TH.deep, border:`1px solid ${TH.deepBorder}`, borderRadius:9, color:TH.onDeep, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:800, fontFamily:"inherit" };
 }
 function btnOutline(TH) {
   return { display:"inline-flex", alignItems:"center", justifyContent:"center", gap:6, background:"transparent", border:`1px solid ${TH.accent}`, borderRadius:9, color:TH.accent, padding:"9px 16px", cursor:"pointer", fontSize:12, fontWeight:700, fontFamily:"inherit" };
